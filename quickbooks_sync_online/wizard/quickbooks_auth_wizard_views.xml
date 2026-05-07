@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_qbo_auth_wizard_form" model="ir.ui.view">
+        <field name="name">quickbooks.auth.wizard.form.view</field>
+        <field name="model">quickbooks.auth.wizard</field>
+        <field name="arch" type="xml">
+            <form string="QuickBooks Application Authentication" create="0">
+                <sheet>
+                    <group string="Application Credentials">
+                        <field name="qi_id" invisible="1"/>  <!-- Required because it is used in the fields domains in the model -->
+                        <field name="access_granted" invisible="1"/>  <!-- Required because it is used in the fields domains in the model -->
+                        <field name="request_in_progress" invisible="1"/> <!-- Required because it is used in the fields domains in the model -->
+                        <field name="environment" widget="radio" readonly="access_granted"/>
+                        <field name="client_id" password="True" required="1" readonly="access_granted"/>
+                        <field name="client_secret" password="True" required="1" readonly="access_granted"/>
+                    </group>
+                    <group string="Redirect URI">
+                        <field name="redirect_uri" widget="CopyClipboardChar"/>
+                        <div class="text-muted" colspan="2">
+                            Use the Redirect URI above in your Intuit app settings (`https://developer.intuit.com`).
+                        </div>
+                    </group>
+
+                    <!-- Notes -->
+                    <group string="Notes" invisible="not request_in_progress">
+                        <div class="alert alert-warning" role="alert" colspan="2">
+                            <i class="fa fa-exclamation-triangle me-2" title="OAuth in Progress"/>
+                            <strong>OAuth in Progress</strong> - You've been redirected to Quickbooks in another tab
+                            to complete authentication. This tab may now be outdated - please close it or refresh
+                            to see the latest status.
+                        </div>
+                    </group>
+
+                    <!-- API status badge -->
+                    <div class="mt-3">
+                        <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button"
+                                invisible="not access_granted"
+                                title="API Access Granted">
+                            <i class="fa fa-check-circle me-2" style="font-size: 1.1rem;" title="API Access Granted"/>
+                            <span>API Access Granted</span>
+                        </span>
+                        <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button api-access-not-granted"
+                                invisible="access_granted"
+                                title="API Access Not Granted">
+                            <i class="fa fa-exclamation-circle me-2" style="font-size: 1.1rem;" title="API Access Not Granted"/>
+                            <span>API Access Not Granted</span>
+                        </span>
+                    </div>
+
+                    <footer>
+                        <button name="action_get_app_access"
+                                type="object"
+                                string="Get App Access"
+                                class="btn-primary"
+                        />
+                        <div class="ms-auto d-flex align-items-center gap-2">
+                            <button name="action_revoke_app_access"
+                                    type="object"
+                                    string="Revoke App Access"
+                                    class="btn-outline-danger ms-3"
+                                    invisible="not access_granted"
+                            />
+                            <button name="action_refresh_access_token"
+                                    type="object"
+                                    string="Refresh Access Token"
+                                    class="btn-secondary"
+                                    invisible="not access_granted"
+                            />
+
+                            <!-- Help & Support -->
+                            <a href="https://support.ventor.tech/"
+                               role="button"
+                               target="_blank"
+                               class="btn btn-outline-info">Help &amp; Support</a>
+                        </div>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_quickbooks_integration_authentication" model="ir.actions.act_window">
+        <field name="name">QuickBooks Application Authentication</field>
+        <field name="path">quickbooks-auth</field>
+        <field name="res_model">quickbooks.auth.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="quickbooks_sync_online.view_qbo_auth_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_payment_form" model="ir.ui.view">
+        <field name="name">account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group1']/field[@name='payment_type']/." position="before">
+                <field name="is_qbo_sync_done" invisible="1"/> <!-- For the next span visibility -->
+                <span class="o_form_label2" invisible="not is_qbo_sync_done">
+                    <span class="badge rounded-pill" style="color: #2B9E1B !important; border: 1px solid #2B9E1B; background-color: #EEF9EC;">
+                        <i class="fa fa-fw fa-check-circle-o pe-2"></i>Synced with QuickBooks
+                    </span>
+                </span>
+            </xpath>
+            <xpath expr="//sheet/." position="inside">
+                <notebook invisible="payment_type == 'transfer'">
+                    <page name="quickbooks_online" string="QuickBooks Online">
+                        <group>
+                            <field name="is_excluded_from_qbo_sync" widget="boolean_toggle"/>
+                            <field name="qbo_mapping_ids">
+                                <list>
+                                    <field name="qbo_id"/>
+                                    <field name="qbo_name"/>
+                                    <field name="invoice_id"/>
+                                    <field name="txn_amount"/>
+                                </list>
+                            </field>
+                        </group>
+                        <group groups="base.group_no_one">
+                            <div colspan="2">
+                                <button type="object"
+                                        name="to_qbo_json"
+                                        class="btn btn-outline-primary"
+                                        string="DISPLAY EXPORT JSON: debug"
+                                />
+                            </div>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_payment_export_to_quickbooks_server" model="ir.actions.server">
+        <field name="name">Export to QuickBooks</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="code">
+action = records.with_context(qbo_export_payment_manual=True).action_export_to_quickbooks()
+        </field>
+    </record>
+
+</odoo>

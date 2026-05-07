@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_quickbooks_integration_kanban" model="ir.ui.view">
+        <field name="name">quickbooks.integration.kanban.view</field>
+        <field name="model">quickbooks.integration</field>
+        <field name="arch" type="xml">
+            <kanban class="o_integration_kanban" default_order="state,name">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="company_id"/>
+                <field name="qb_env"/>
+                <field name="qb_access_granted"/>
+                <field name="qb_company_id"/>
+
+                <templates>
+                    <t t-name="card">
+                        <t t-set="card_opacity" t-if="record.state.raw_value == 'draft'" t-value="'opacity: 0.6;'"/>
+                        <t t-set="card_opacity" t-else="" t-value="''"/>
+
+                        <div class="p-0 h-100" t-att-style="card_opacity">
+                            <div class="d-flex flex-column h-100 p-3">
+                                <!-- Header: Logo + Name -->
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <img src="/quickbooks_sync_online/static/description/icon.png"
+                                         alt="QuickBooks"
+                                         class="rounded"
+                                         style="width: 40px; height: 40px; object-fit: contain;"/>
+                                    <h3 class="mb-0 fw-bold flex-grow-1">
+                                        <field name="name"/>
+                                    </h3>
+                                    <a class="btn btn-outline-secondary btn-sm px-2"
+                                       type="open"
+                                       role="button"
+                                       title="Open Configuration">
+                                        <i class="fa fa-cog me-1" title="Configure"/> Configure
+                                    </a>
+                                    <button name="action_open_auth_wizard"
+                                            type="object"
+                                            class="btn btn-outline-secondary btn-sm px-2"
+                                            title="Connect to QuickBooks">
+                                        <i class="fa fa-plug me-1" title="Connect"/> Connect
+                                    </button>
+                                </div>
+
+                                <!-- Two column layout: Info + Action Buttons -->
+                                <div class="row flex-grow-1 mb-3">
+                                    <!-- Left column: Info -->
+                                    <div class="col-6 pe-2">
+                                        <div class="text-muted small mb-2">
+                                            <i class="fa fa-building-o me-1" title="Company"/>
+                                            <field name="company_id"/>
+                                        </div>
+                                        <div class="text-muted small mb-2">
+                                            <i class="fa fa-sliders me-1" title="Environment"/>
+                                            <field name="qb_env"/>
+                                        </div>
+
+                                        <t t-if="record.qb_access_granted.raw_value">
+                                            <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button quickbooks-api-badge-button--kanban">
+                                                <i class="fa fa-check-circle" title="Access granted"/>
+                                                <span>Access granted</span>
+                                            </span>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button quickbooks-api-badge-button--kanban api-access-not-granted">
+                                                <i class="fa fa-exclamation-circle" title="Not connected"/>
+                                                <span>Not connected</span>
+                                            </span>
+                                        </t>
+
+                                        <t t-if="record.qb_company_info.raw_value">
+                                            <div class="text-muted small mt-2" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="QuickBooks Company ID">
+                                                <i class="fa fa-id-badge me-1" title="Company ID"/>
+                                                <field name="qb_company_info"/>
+                                            </div>
+                                        </t>
+                                    </div>
+
+                                    <!-- Right column: intentionally left blank to keep layout like integration module -->
+                                    <div class="col-6 ps-2 d-flex align-items-center"/>
+                                </div>
+
+                                <!-- Footer: State actions -->
+                                <div class="d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
+                                    <div class="text-muted small">
+                                        <i class="fa fa-info-circle me-1" title="State"/>
+                                        <field name="state"/>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <button string="Activate"
+                                                name="action_active"
+                                                type="object"
+                                                invisible="state == 'active' or not qb_access_granted"
+                                                class="btn btn-primary btn-sm px-3"
+                                        />
+                                        <button string="Deactivate"
+                                                name="action_draft"
+                                                type="object"
+                                                invisible="state == 'draft'"
+                                                class="btn btn-outline-danger btn-sm px-2"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="quickbooks_integration_form" model="ir.ui.view">
+        <field name="name">quickbooks.integration.form.view</field>
+        <field name="model">quickbooks.integration</field>
+        <field name="arch" type="xml">
+            <form string="Connection">
+                <header>
+                    <field name="qb_access_granted" invisible="1"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+
+                    <button name="action_active"
+                            type="object"
+                            string="Activate"
+                            class="btn-primary m-0"
+                            invisible="not qb_access_granted or state != 'draft'"
+                    />
+                    <button name="action_draft"
+                            type="object"
+                            string="Deactivate"
+                            class="btn-danger m-0"
+                            invisible="state != 'active'"
+                    />
+                </header>
+
+                <sheet>
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <img class="w-100"
+                                 src="/quickbooks_sync_online/static/description/icon.png"
+                                 alt="QuickBooks Connector Logo"/>
+                        </div>
+
+                        <div class="col-md-10 d-flex flex-column justify-content-center mb-3">
+                            <h1>
+                                <field name="name" placeholder="Enter integration name" style="width:100%" required="1"/>
+                            </h1>
+
+                            <h2 class="text-muted">
+                                <field name="company_id" placeholder="Select company" style="width:100%" required="1"/>
+                            </h2>
+
+                            <div class="d-flex align-items-center mt-2 gap-2 flex-wrap">
+                                <button name="check_quickbooks_connection"
+                                        type="object"
+                                        class="btn p-0 border-0 bg-transparent shadow-none"
+                                        invisible="not qb_access_granted"
+                                        title="Click to test connection">
+                                    <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button">
+                                        <i class="fa fa-check-circle me-2" style="font-size: 1.1rem;" title="Access granted"/>
+                                        <span>Access granted</span>
+                                    </span>
+                                </button>
+
+                                <button name="action_open_auth_wizard"
+                                        type="object"
+                                        class="btn p-0 border-0 bg-transparent shadow-none"
+                                        invisible="qb_access_granted"
+                                        title="Click to connect">
+                                    <span class="badge rounded-pill d-inline-flex align-items-center quickbooks-api-badge-button api-access-not-granted">
+                                        <i class="fa fa-exclamation-circle me-2" style="font-size: 1.1rem;" title="Not connected"/>
+                                        <span>Not connected</span>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="text-muted mt-3" invisible="not qb_access_granted">
+                                <field name="qb_company_info" readonly="1"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Authentication Block -->
+                    <div name="authentication_block" class="border border-warning p-4 mb-4" invisible="qb_access_granted">
+                        <div class="d-flex align-items-start">
+                            <i class="fa fa-lock fa-2x text-warning me-3 mt-1" style="font-size: 2rem;" title="Authentication Required"/>
+                            <div class="flex-grow-1">
+                                <h4 style="color: inherit; margin-bottom: 0.5rem;">Connect QuickBooks Online</h4>
+                                <p class="mb-3">
+                                    Configure your Intuit app credentials, then click the button below to authorize Odoo to access your QuickBooks company.
+                                </p>
+                                <button name="action_open_auth_wizard"
+                                        type="object"
+                                        string="Start Authentication"
+                                        class="btn btn-primary"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Connected Block -->
+                    <div name="configuration_block" class="border border-info p-4 mb-4" invisible="not qb_access_granted">
+                        <div class="d-flex align-items-start">
+                            <i class="fa fa-cog fa-2x text-info me-3 mt-1" style="font-size: 2rem;" title="Connection"/>
+                            <div class="flex-grow-1">
+                                <h4 style="color: inherit; margin-bottom: 0.5rem;">Connection is Active</h4>
+                                <p class="mb-3">
+                                    Your connector is authorized. You can test the connection, or revoke access.
+                                </p>
+                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                    <button name="action_open_import_form"
+                                            type="object"
+                                            string="Initial Import"
+                                            class="btn-outline-success"
+                                            invisible="not qb_access_granted"
+                                    />
+                                    <div class="d-flex flex-wrap gap-2 ms-auto justify-content-end">
+                                        <button name="check_quickbooks_connection"
+                                                type="object"
+                                                string="Test Connection"
+                                                class="btn btn-outline-primary"
+                                        />
+                                        <button name="action_open_auth_wizard"
+                                                type="object"
+                                                string="Re-authenticate Connection"
+                                                class="btn-outline-secondary"
+                                                invisible="not qb_access_granted"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <field name="qb_is_us_company" invisible="1"/>  <!-- Used in expression for invisible field-->
+
+                    <notebook>
+                        <page string="Invoices">
+                            <group name="quickbooks_invoices">
+                                <group string="Automation">
+                                    <field name="enable_invoices_auto_export" widget="boolean_toggle"/>
+                                    <field name="auto_export_next_call_point" invisible="not enable_invoices_auto_export"/>
+                                    <div colspan="2">
+                                        <div class="text-muted small" invisible="not enable_invoices_auto_export">
+                                            <span>Scheduled Action: QuickBooks Online: Export Invoices (Odoo → QuickBooks)</span>
+                                            <button name="export_invoices_to_quickbooks" type="object" string="perform" icon="fa-play-circle" class="btn btn-sm btn-link py-0 px-1"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Invoice Types">
+                                    <div colspan="2">
+                                        <div class="alert alert-warning" role="alert" invisible="not enable_invoices_auto_export or allow_out_invoice_export or allow_out_refund_export or allow_in_invoice_export or allow_in_refund_export">
+                                            <i class="fa fa-exclamation-circle me-1" title="Warning"/> Select at least one invoice type to enable export.
+                                        </div>
+                                    </div>
+                                    <field name="allow_out_invoice_export" widget="boolean_toggle"/>
+                                    <field name="allow_out_refund_export" widget="boolean_toggle"/>
+                                    <field name="allow_in_invoice_export" widget="boolean_toggle"/>
+                                    <field name="allow_in_refund_export" widget="boolean_toggle"/>
+                                </group>
+                                <group string="Invoice Settings">
+                                    <div colspan="2">
+                                        <div class="alert alert-info" role="alert">
+                                            <span>
+                                                Method in which tax is applied. Not applicable to US companies, required for non-US companies.
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <field name="export_invoice_as_tax_included" widget="boolean_toggle" readonly="qb_is_us_company"/>
+                                </group>
+                                <group string="Product Settings">
+                                    <field name="include_product_to_invoice" widget="boolean_toggle"/>
+                                    <field name="sync_product_as_category" widget="boolean_toggle" readonly="not include_product_to_invoice"/>
+                                    <field name="send_storable_product_as_consumable" widget="boolean_toggle" readonly="not include_product_to_invoice"/>
+                                </group>
+
+                            </group>
+                        </page>
+                        <page string="Payments">
+                            <group name="quickbooks_payments">
+                                <group string="Automation" readonly="not enable_invoices_auto_export">
+                                    <div colspan="2">
+                                        <div class="alert alert-info" role="alert" invisible="enable_invoices_auto_export">
+                                            Enable "Auto-export Invoices to QuickBooks" ("Invoices" tab) option to acquire payments synchronization settings.
+                                        </div>
+                                    </div>
+                                    <field name="enable_payments_sync_in" widget="boolean_toggle" readonly="not enable_invoices_auto_export"/>
+                                    <field name="payments_import_next_call_point" invisible="not enable_payments_sync_in"/>
+                                    <div colspan="2">
+                                        <div class="text-muted small" invisible="not enable_payments_sync_in">
+                                            <span>Scheduled Action: QuickBooks Online: Import Payments (QuickBooks → Odoo)</span>
+                                            <button name="import_quickbooks_payments" type="object" string="perform" icon="fa-play-circle" class="btn btn-sm btn-link py-0 px-1"/>
+                                        </div>
+                                    </div>
+                                    <field name="enable_payments_sync_out" widget="boolean_toggle" readonly="not enable_invoices_auto_export"/>
+                                    <field name="payments_export_next_call_point" invisible="not enable_payments_sync_out"/>
+                                    <div colspan="2">
+                                        <div class="text-muted small" invisible="not enable_payments_sync_out">
+                                            <span>Scheduled Action: QuickBooks Online: Export Payments (Odoo → QuickBooks)</span>
+                                            <button name="export_payments_to_quickbooks" type="object" string="perform" icon="fa-play-circle" class="btn btn-sm btn-link py-0 px-1"/>
+                                        </div>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Misc">
+                            <group name="quickbooks_misc">
+                                <group string="Automation">
+                                    <field name="enable_updates_auto_export" widget="boolean_toggle"/>
+                                    <field name="allow_update_partners" widget="boolean_toggle" readonly="not enable_updates_auto_export"/>
+                                    <field name="allow_update_products" widget="boolean_toggle" readonly="not enable_updates_auto_export"/>
+                                    <field name="send_update_next_call_point" invisible="not enable_updates_auto_export"/>
+                                    <div colspan="2">
+                                        <div class="text-muted small" invisible="not enable_updates_auto_export">
+                                            <span>Scheduled Action: QuickBooks Online: Synchronize Data (Odoo → QuickBooks)</span>
+                                        </div>
+                                    </div>
+                                </group>
+                                <group string="Inventory">
+                                    <div colspan="2">
+                                        <div class="alert alert-info" role="alert">
+                                            <span>
+                                                This checkbox controls whether stock is included in product data during export.
+                                                When enabled, stock is included but not automatically synced.
+                                                To enable automatic stock updates, “Allow Products Updates” must also be turned on.
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <field name="sync_product_stock" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Defaults">
+                            <group name="quickbooks_defaults">
+                                <group string="Storable Product Default Stock Valuation Account">
+                                    <field name="qi_default_stock_valuation_account_id"/>
+                                </group>
+                                <group string="Register Payment Default Write-off Account">
+                                    <field name="qi_default_write_off_account_id"/>
+                                </group>
+                                <group string="Inventory Adjustment QuickBooks Account">
+                                    <field name="qi_adjust_inventory_account_id"/>
+                                </group>
+                                <group string="Register Payment Default Journal">
+                                    <field name="qi_default_journal_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Technical" groups="base.group_no_one">
+                            <group name="quickbooks_technical">
+                                <group string="Import / Export Points">
+                                    <field name="auto_export_cut_off_date"/>
+                                    <field name="auto_export_batch_limit"/>
+                                </group>
+                                <group string="Private Fields">
+                                    <field name="last_customer_payment_point"/>
+                                    <field name="last_vendor_payment_point"/>
+                                </group>
+                                <group string="Debug Tools">
+                                    <div colspan="2">
+                                        <button name="print_quickbooks_settings"
+                                                type="object"
+                                                string="Print QuickBooks Company Settings"
+                                                class="btn btn-secondary"
+                                                invisible="not qb_access_granted"
+                                        />
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="quickbooks_integration_import_form" model="ir.ui.view">
+        <field name="name">quickbooks.integration.form.import</field>
+        <field name="model">quickbooks.integration</field>
+        <field name="priority">32</field>
+        <field name="arch" type="xml">
+            <form string="Initial Import">
+                <sheet>
+                    <div colspan="2">
+                        <div class="alert alert-info" role="alert">
+                            <ul class="mb-0">
+                                <li>Import master data from QuickBooks into Odoo mapping tables.</li>
+                                <li>Use <strong>Import All</strong>  to import all types of records, or import records separately.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <group name="quickbooks_integration_import_form_content">
+                        <group string="Import All" colspan="2">
+                            <button type="object" name="import_all_from_qbo" string="All" class="btn btn-outline-primary px-4"/>
+                        </group>
+                        <group string="Import by Resource" colspan="2">
+                            <div colspan="2">
+                                <div class="gap-2">
+                                    <button type="object" name="import_accounts_from_qbo" string="Accounts" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_departments_from_qbo" string="Departments" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_partners_from_qbo" string="Partners" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_payment_methods_from_qbo" string="Payment Methods" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_terms_from_qbo" string="Payment Terms" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_products_from_qbo" string="Products" class="btn btn-outline-secondary px-4 me-3 mb-3"/>
+                                    <button type="object" name="import_taxes_from_qbo" string="Taxes" class="btn btn-outline-secondary px-4 mt-0 mb-3"/>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_close" type="object" string="Close" class="btn btn-secondary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="quickbooks_integrations_list_action" model="ir.actions.act_window">
+        <field name="name">Connections</field>
+        <field name="path">qi-connection</field>
+        <field name="res_model">quickbooks.integration</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="view_quickbooks_integration_kanban"/>
+        <field name="help" type="html">
+            <div>
+                <img class="img img-fluid mb-4"
+                     src="/quickbooks_sync_online/static/description/icon.png"
+                     alt="QuickBooks"
+                     style="width: 200px; height: 200px; object-fit: contain;"/>
+
+                <p class="lead">
+                    Welcome to the QuickBooks Connections module. Here you can configure and manage connections with QuickBooks.
+                </p>
+
+            </div>
+        </field>
+    </record>
+
+    <record id="action_get_all_pending_invoices_server" model="ir.actions.server">
+        <field name="name">Pending Invoices</field>
+        <field name="model_id" ref="quickbooks_sync_online.model_quickbooks_integration"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.action_get_all_pending_invoices()
+        </field>
+    </record>
+
+    <record id="action_get_all_pending_payments_server" model="ir.actions.server">
+        <field name="name">Pending Payments</field>
+        <field name="model_id" ref="quickbooks_sync_online.model_quickbooks_integration"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.action_get_all_pending_payments()
+        </field>
+    </record>
+
+    <record id="action_get_all_pending_partners_server" model="ir.actions.server">
+        <field name="name">Pending Partners</field>
+        <field name="model_id" ref="quickbooks_sync_online.model_quickbooks_integration"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.action_get_all_pending_partners()
+        </field>
+    </record>
+
+    <record id="action_get_all_pending_products_server" model="ir.actions.server">
+        <field name="name">Pending Products</field>
+        <field name="model_id" ref="quickbooks_sync_online.model_quickbooks_integration"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.action_get_all_pending_products()
+        </field>
+    </record>
+
+</odoo>

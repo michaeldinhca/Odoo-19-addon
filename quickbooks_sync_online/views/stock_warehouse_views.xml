@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_warehouse" model="ir.ui.view">
+        <field name="name">stock.warehouse.form.inherit</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="quickbooks_online" string="QuickBooks Online">
+                    <group>
+                        <field name="qbo_mapping_ids">
+                            <list>
+                                <field name="qbo_id"/>
+                                <field name="qbo_name"/>
+                                <field name="quickbooks_integration_id"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_warehouse_export_to_quickbooks_server" model="ir.actions.server">
+        <field name="name">Export to QuickBooks</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="stock.model_stock_warehouse"/>
+        <field name="binding_model_id" ref="stock.model_stock_warehouse"/>
+        <field name="code">
+action = records.action_export_to_quickbooks()
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+
+    <record id="view_qbo_map_account_tree" model="ir.ui.view">
+        <field name="model">qbo.map.account</field>
+        <field name="name">qbo.map.account.list</field>
+        <field name="inherit_id" ref="quickbooks_sync_online.view_qbo_map_model_tree"/>
+        <field name="mode">primary</field>
+        <field type="xml" name="arch">
+            <xpath expr="//field[@name='qbo_name']" position="after">
+                <field name="classification" optional="hide"/>
+                <field name="account_type" optional="hide"/>
+                <field name="account_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_qbo_map_account_form" model="ir.ui.view">
+        <field name="model">qbo.map.account</field>
+        <field name="name">qbo.map.account.form</field>
+        <field name="inherit_id" ref="quickbooks_sync_online.view_qbo_map_model_form"/>
+        <field name="mode">primary</field>
+        <field type="xml" name="arch">
+            <xpath expr="//field[@name='qbo_name']" position="after">
+                <field name="classification"/>
+                <field name="account_type"/>
+                <field name="account_sub_type"/>
+                <field name="account_id"
+                    domain="[('company_ids', 'in', company_id)]"
+                       options="{'no_create': True, 'no_quick_create': True, 'no_create_edit': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_qbo_map_account_search" model="ir.ui.view">
+        <field name="model">qbo.map.account</field>
+        <field name="name">qbo.map.account.search</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="qbo_id"/>
+                <field name="qbo_name"/>
+                <field name="account_id"/>
+                <field name="classification"/>
+                <field name="account_type"/>
+                <filter
+                    name="revenue"
+                    string="Revenue"
+                    domain="[('classification', '=', 'Revenue')]"
+                />
+                <filter
+                    name="expense"
+                    string="Expense"
+                    domain="[('classification', '=', 'Expense')]"
+                />
+                <filter
+                    name="liability"
+                    string="Liability"
+                    domain="[('classification', '=', 'Liability')]"
+                />
+                <filter
+                    name="asset"
+                    string="Asset"
+                    domain="[('classification', '=', 'Asset')]"
+                />
+                <filter string="Not Mapped" name="not_mapped" domain="[('account_id', '=', False)]"/>
+
+                <!-- Group by -->
+                <group>
+                    <filter string="Connection" name="group_quickbooks_integration_id" context="{'group_by': 'quickbooks_integration_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_menu_data_qbo_map_account" model="ir.actions.act_window">
+        <field name="name">Accounts</field>
+        <field name="path">qi-accounts</field>
+        <field name="res_model">qbo.map.account</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_qbo_map_account_tree"/>
+        <field name="context">
+            {
+                'search_default_not_mapped': 1,
+            }
+        </field>
+    </record>
+
+    <record id="action_qbo_map_account_try_map" model="ir.actions.server">
+        <field name="name">Map by Name</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="quickbooks_sync_online.model_qbo_map_account"/>
+        <field name="binding_model_id" ref="quickbooks_sync_online.model_qbo_map_account"/>
+        <field name="code">
+action = records.try_to_map(do_create=False)
+        </field>
+    </record>
+
+</odoo>

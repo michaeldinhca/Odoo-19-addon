@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="quickbooks_installation_wizard_form" model="ir.ui.view">
+            <field name="name">quickbooks.installation.wizard.form.view</field>
+            <field name="model">quickbooks.installation.wizard</field>
+            <field name="arch" type="xml">
+                <form name="Installation Wizard">
+                    <sheet>
+                        <field name="state" invisible="1"/>
+
+                        <div name="main" invisible="state != 'step_main'">
+                            <p class="mb-0">
+                                This quick check will confirm the QuickBooks Online connector is ready to function as intended.
+                                Click 'Validate Configuration' button below to verify your settings.
+                            </p>
+                        </div>
+
+                        <div name="success" invisible="state != 'step_success'">
+                            <div class="alert alert-info p-3 mb-3" role="alert">
+                                <p>
+                                    We checked your configuration and it looks like everything is good.
+                                    You can now start configuring the connection to QuickBooks.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div name="errors" invisible="state != 'step_error'">
+                            <div class="alert alert-danger mb-4 p-3" role="alert">
+                                <h3 class="mb-2">
+                                    <span class="fa fa-exclamation-circle me-2" aria-label="Alert"></span>
+                                    Configuration adjustments needed
+                                </h3>
+                                <p>
+                                    We've detected a few configuration settings that need your attention.
+                                    Please address the following:
+                                </p>
+
+                                <b>
+                                    <field name="errors" readonly="1"/>
+                                </b>
+
+                            </div>
+
+                           <div>
+                                <h4 class="mb-3">Example 'odoo.conf' configuration</h4>
+
+                                <ul>
+                                    <li>File Location: Depends on your server configuration (e.g., "/home/odoo/.config/odoo/odoo.conf" for Odoo.sh)</li>
+                                    <li>Example settings:</li>
+                                    <pre class="mt-2">
+                                        <code><field name="config_template" no_label="1" readonly="1"/></code>
+                                    </pre>
+                                </ul>
+                            </div>
+
+                        </div>
+
+                        <footer>
+                            <div class="d-flex justify-content-between w-100">
+                                <div class="d-flex align-items-center align-content-around flex-wrap gap-1">
+                                    <button name="check_odoo_setup_for_quickbooks"
+                                            type="object"
+                                            string="Validate Configuration"
+                                            class="btn-primary"
+                                            invisible="state != 'step_main'"
+                                    />
+                                    <button name="check_odoo_setup_for_quickbooks"
+                                            type="object"
+                                            string="Re-check Configuration"
+                                            class="btn-primary"
+                                            invisible="state != 'step_error'"
+                                    />
+                                </div>
+
+                                <div class="d-flex align-items-center align-content-around flex-wrap gap-1">
+                                    <button string="Close"
+                                            type="object"
+                                            name="close_wizard"
+                                            class="btn btn-outline-secondary"
+                                    />
+                                </div>
+                            </div>
+                        </footer>
+                    </sheet>
+                </form>
+
+            </field>
+        </record>
+
+        <record id="quickbooks_installer_action" model="ir.actions.act_window">
+            <field name="name">Let's Ensure a Seamless Setup!</field>
+            <field name="res_model">quickbooks.installation.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="quickbooks_installation_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+
+    <data noupdate="1">
+
+        <record id="quickbooks_installer_todo" model="ir.actions.todo">
+            <field name="action_id" ref="quickbooks_installer_action"/>
+            <field name="sequence">100</field>
+            <field name="state">open</field>
+        </record>
+
+    </data>
+
+</odoo>
+

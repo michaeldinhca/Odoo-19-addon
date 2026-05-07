@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_category_form_view" model="ir.ui.view">
+        <field name="name">product.category.form.inherit</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/." position="inside">
+                <notebook>
+                    <page name="quickbooks_online" string="QuickBooks Online">
+                        <group>
+                            <field name="qbo_detailed_type"/>
+                            <field name="qbo_mapping_ids">
+                                <list>
+                                    <field name="qbo_id"/>
+                                    <field name="qbo_name"/>
+                                    <field name="product_type"/>
+                                    <field name="quickbooks_integration_id"/>
+                                </list>
+                            </field>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_product_category_export_to_quickbooks_server" model="ir.actions.server">
+        <field name="name">Export to QuickBooks</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category"/>
+        <field name="code">
+action = records.action_export_to_quickbooks()
+        </field>
+    </record>
+
+</odoo>

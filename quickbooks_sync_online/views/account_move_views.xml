@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="apply_qbo_taxes" string="Apply QuickBooks Taxes" type="object"
+                        groups="account.group_account_invoice"
+                        invisible="not qbo_mapping_ids or state != 'draft' or move_type in ('in_invoice', 'in_refund')"
+                />
+                <button name="send_qbo_link" string="Send QuickBooks Payment Link" type="object"
+                        groups="account.group_account_invoice"
+                        invisible="state != 'posted' or qbo_warning_txt or not qbo_mapping_ids or move_type != 'out_invoice'"
+                />
+            </xpath>
+
+            <xpath expr="//field[@name='highest_name']/../." position='before'>
+                <field name="is_qbo_sync_done" invisible="1"/> <!-- For the next span visibility -->
+                <span class="o_form_label2 ms-3" invisible="not is_qbo_sync_done">
+                    <span class="badge rounded-pill" style="color: #2B9E1B !important; border: 1px solid #2B9E1B; background-color: #EEF9EC;">
+                        <i class="fa fa-fw fa-check-circle-o pe-2"></i>Synced with QuickBooks
+                    </span>
+                </span>
+            </xpath>
+            <xpath expr="//notebook/page[@id='invoice_tab']/field[@name='invoice_line_ids']/list/." position="inside">
+                <field name="is_qbo_sync_done" optional="hide"/>
+            </xpath>
+            <xpath expr="//group[@id='header_left_group']/.." position="before">
+                <div class="alert alert-warning" role="alert" invisible="not qbo_mapping_ids or not qbo_warning_txt">
+                    <h5 class="alert-heading" role="alert">Warning!</h5>
+                    <p>
+                        <field name="qbo_warning_txt"/>
+                    </p>
+                </div>
+            </xpath>
+
+            <xpath expr="//page[last()]" position="after">
+                <page name="quickbooks_online" string="QuickBooks Online">
+                    <group>
+                        <field name="is_excluded_from_qbo_sync" widget="boolean_toggle"/>
+                        <field name="qbo_mapping_ids">
+                            <list>
+                                <field name="qbo_id"/>
+                                <field name="qbo_name"/>
+                                <field name="qbo_lib_type"/>
+                                <field name="total_amt"/>
+                                <field name="total_tax"/>
+                                <field name="company_id"/>
+                            </list>
+                        </field>
+                        <field name="qbo_invoice_link" widget="url"/>
+                    </group>
+                    <group groups="base.group_no_one">
+                        <div colspan="2">
+                            <button type="object"
+                                    name="to_qbo_json"
+                                    class="btn btn-outline-primary"
+                                    string="DISPLAY EXPORT JSON: debug"
+                            />
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_invoice_export_to_quickbooks_server" model="ir.actions.server">
+        <field name="name">Export to QuickBooks</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="code">
+action = records.action_export_to_quickbooks()
+        </field>
+    </record>
+
+</odoo>

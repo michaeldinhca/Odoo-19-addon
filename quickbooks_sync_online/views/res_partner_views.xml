@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_type']" position='after'>
+                <field name="is_qbo_sync_done" invisible="1"/> <!-- For the next span visibility -->
+                <span class="o_form_label2 ms-3" invisible="not is_qbo_sync_done">
+                        <span class="badge rounded-pill" style="color: #2B9E1B !important; border: 1px solid #2B9E1B; background-color: #EEF9EC;">
+                            <i class="fa fa-fw fa-check-circle-o pe-2"></i>Synced with QuickBooks
+                        </span>
+                </span>
+            </xpath>
+            <xpath expr="//page[last()]" position="after">
+                <page name="quickbooks_online" string="QuickBooks Online">
+                    <group>
+                        <field name="qbo_mapping_ids">
+                                <list>
+                                <field name="qbo_id"/>
+                                <field name="qbo_name"/>
+                                <field name="qbo_lib_type"/>
+                                <field name="quickbooks_integration_id"/>
+                            </list>
+                        </field>
+                        <field name="is_qbo_update_required" widget="boolean_toggle"/>
+                    </group>
+                    <group groups="base.group_no_one">
+                        <div colspan="2">
+                            <button type="object"
+                                    name="to_qbo_json"
+                                    class="btn btn-outline-primary"
+                                    string="DISPLAY EXPORT JSON: debug"
+                            />
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_partner_export_to_quickbooks_server" model="ir.actions.server">
+        <field name="name">Export to QuickBooks</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="code">
+action = records.action_export_to_quickbooks()
+        </field>
+    </record>
+
+</odoo>

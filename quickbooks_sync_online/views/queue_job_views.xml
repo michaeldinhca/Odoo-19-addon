@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_queue_job_tree" model="ir.actions.act_window">
+        <field name="name">Server Jobs</field>
+        <field name="res_model">queue.job</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="integration_queue_job.view_queue_job_tree"/>
+        <field name="context">
+            {'search_default_pending': 1,
+            'search_default_enqueued': 1,
+            'search_default_started': 1,
+            'search_default_failed': 1}
+        </field>
+        <field name="target">current</field>
+    </record>
+
+</odoo>

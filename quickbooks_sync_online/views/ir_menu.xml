@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- MAIN -->
+    <menuitem
+        id="menu_quickbooks_sync_online"
+        name="QuickBooks Online"
+        web_icon="quickbooks_sync_online,static/description/icon.png"
+        sequence="10"/>
+
+
+    <!-- INTEGRATIONS -->
+    <menuitem
+        id="menu_quickbooks_integrations"
+        name="Connections"
+        parent="menu_quickbooks_sync_online"
+        action="quickbooks_integrations_list_action"
+        sequence="20"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+ <!-- MAPPINGS -->
+    <menuitem
+        id="menu_quickbooks_mappings"
+        parent="menu_quickbooks_sync_online"
+        name="Mappings"
+        sequence="30"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_account"
+        id="menu_menu_data_qbo_map_account"
+        parent="menu_quickbooks_mappings"
+        name="Accounts"
+        sequence="10"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_department"
+        id="menu_menu_data_qbo_map_department"
+        parent="menu_quickbooks_mappings"
+        name="Departments"
+        sequence="20"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_partner"
+        id="menu_menu_data_qbo_map_partner"
+        parent="menu_quickbooks_mappings"
+        name="Partners"
+        sequence="30"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_payment_method"
+        id="menu_menu_data_qbo_map_payment_method"
+        parent="menu_quickbooks_mappings"
+        name="Payment Methods / Journals"
+        sequence="40"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_term"
+        id="menu_menu_data_qbo_map_term"
+        parent="menu_quickbooks_mappings"
+        name="Payment Terms"
+        sequence="50"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_product"
+        id="menu_menu_data_qbo_map_product"
+        parent="menu_quickbooks_mappings"
+        name="Products"
+        sequence="60"/>
+
+    <menuitem
+        action="action_menu_data_qbo_map_tax"
+        id="menu_menu_data_qbo_map_tax"
+        parent="menu_quickbooks_mappings"
+        name="Taxes"
+        sequence="70"/>
+
+    <menuitem
+        id="menu_qbo_mapping_technical"
+        parent="menu_quickbooks_mappings"
+        name="Technical"
+        sequence="80"
+        groups="base.group_no_one"
+    >
+        <menuitem
+            action="action_menu_data_qbo_map_invoice"
+            id="menu_menu_data_qbo_map_invoice"
+            name="Invoices"
+            sequence="10"
+        />
+
+        <menuitem
+            action="action_menu_data_qbo_map_payment"
+            id="menu_menu_data_qbo_map_payment"
+            name="Payments"
+            sequence="20"
+        />
+
+        <menuitem
+            action="action_menu_data_qbo_map_taxcode"
+            id="menu_menu_data_qbo_map_taxcode"
+            name="Taxcodes"
+            sequence="30"
+        />
+
+        <menuitem
+            action="action_menu_data_qbo_map_inventory_adjustment"
+            id="menu_menu_data_qbo_map_inventory_adjustment"
+            name="Inventory Adjustments"
+            sequence="40"
+        />
+
+        <menuitem
+            action="action_menu_data_qbo_map_sale_order"
+            id="menu_menu_data_qbo_map_sale_order"
+            name="Sale Receipts"
+            groups="base.group_no_one"
+            sequence="50"
+        />
+
+    </menuitem>
+
+    <!-- PENDING ITEMS -->
+    <menuitem
+        id="menu_quickbooks_pending_items"
+        parent="menu_quickbooks_sync_online"
+        name="Pending Items"
+        sequence="40"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <menuitem
+        id="menu_qbo_export_list_invoice"
+        parent="menu_quickbooks_pending_items"
+        name="Invoices"
+        action="action_get_all_pending_invoices_server"
+        sequence="10"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <menuitem
+        id="menu_qbo_export_list_payment"
+        parent="menu_quickbooks_pending_items"
+        name="Payments"
+        action="action_get_all_pending_payments_server"
+        sequence="20"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <menuitem
+        id="menu_qbo_export_list_partner"
+        parent="menu_quickbooks_pending_items"
+        name="Partners"
+        action="action_get_all_pending_partners_server"
+        sequence="30"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <menuitem
+        id="menu_qbo_export_list_product"
+        parent="menu_quickbooks_pending_items"
+        name="Products"
+        action="action_get_all_pending_products_server"
+        sequence="40"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <!-- JOBS -->
+    <menuitem
+        id="qbo_queue_job_menu"
+        name="Jobs"
+        parent="menu_quickbooks_sync_online"
+        action="integration_queue_job.action_queue_job"
+        sequence="50"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+
+    <!-- SETTINGS -->
+    <menuitem id="qbo_settings_menu"
+        name="Settings"
+        parent="menu_quickbooks_sync_online"
+        action="quickbooks_res_config_settings_action"
+        sequence="60"
+        groups="quickbooks_sync_online.qbo_security_group_manager"/>
+</odoo>
