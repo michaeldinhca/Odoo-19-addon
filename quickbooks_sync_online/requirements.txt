@@ -1,0 +1,2 @@
+python-quickbooks==0.9.12
+pycountry==20.7.3

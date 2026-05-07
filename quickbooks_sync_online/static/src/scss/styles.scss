@@ -1,0 +1,57 @@
+.o_integration_kanban .o_kanban_renderer {
+    /* Match Integration module wide cards (2-column feel) */
+    --KanbanRecord-width: 900px;
+    --KanbanRecord-width-small: 650px;
+}
+
+/* API Access Badge Buttons */
+.quickbooks-api-badge-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.5rem 1rem;
+
+    &:hover {
+        background-color: #218838 !important; // Darker shade of #28a745
+        text-decoration: none;
+        color: white !important;
+        border-color: transparent !important;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    &.api-access-not-granted {
+        background-color: #dc3545;
+
+        &:hover {
+            background-color: #c82333 !important; // Darker shade of #dc3545
+            text-decoration: none;
+            color: white !important;
+            border-color: transparent !important;
+        }
+
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+    }
+
+    /* Compact pill for kanban cards (same colors, less padding / type) */
+    &.quickbooks-api-badge-button--kanban {
+        font-size: 0.72rem;
+        padding: 0.15rem 0.5rem;
+        line-height: 1.2;
+        cursor: default;
+
+        .fa {
+            font-size: 0.75rem;
+            margin-right: 0.3rem !important;
+        }
+    }
+}
