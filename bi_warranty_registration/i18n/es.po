@@ -1,0 +1,2595 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* bi_warranty_registration
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-12 14:54+0000\n"
+"PO-Revision-Date: 2023-05-12 14:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.report,print_report_name:bi_warranty_registration.warranty_receipt_print
+msgid "(object.serial_no + '.pdf')"
+msgstr ""
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<b>\n"
+"                                                <span>Model No</span>\n"
+"                                            </b>"
+msgstr ""
+"<b>\n"
+"                                                <span>N º de Modelo</span>\n"
+"                                            </b>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<b>\n"
+"                                                <span>Product</span>\n"
+"                                            </b>"
+msgstr ""
+"<b>\n"
+"                                                <span>Producto</span>\n"
+"                                            </b>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<b>\n"
+"                                                <span>Serial No</span>\n"
+"                                            </b>"
+msgstr ""
+"<b>\n"
+"                                                <span>Número de serie</span>\n"
+"                                            </b>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<b>\n"
+"                                                <span>Warranty End Date</span>\n"
+"                                            </b>"
+msgstr ""
+"<b>\n"
+"                                                <span>Fecha de finalización de la garantía</span>\n"
+"                                            </b>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<b>\n"
+"                                                <span>Warranty Start Date</span>\n"
+"                                            </b>"
+msgstr ""
+"<b>\n"
+"                                                <span>Fecha de inicio de la garantía</span>\n"
+"                                            </b>"
+
+#. module: bi_warranty_registration
+#: model:mail.template,body_html:bi_warranty_registration.email_template_warranty_registration
+msgid ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"                    <p>Dear\n"
+"                        <t t-out=\"object.partner_id.name or ''\"></t>\n"
+"                    </p>\n"
+"                    <p>Warranty Registration is successfull...</p>\n"
+"                    <br>\n"
+"                    Best Regards,\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <t t-out=\"user.name or ''\"></t>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"                    <p>Dear\n"
+"                        <t t-out=\"object.partner_id.name or ''\"></t>\n"
+"                    </p>\n"
+"                    <p>El registro de la garantía se ha realizado correctamente...</p>\n"
+"                    <br>\n"
+"                    Atentamente,\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <t t-out=\"user.name or ''\"></t>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                </div>\n"
+"            "
+
+#. module: bi_warranty_registration
+#: model:mail.template,body_html:bi_warranty_registration.email_template_warranty_renew
+msgid ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"                    <p>Dear <t t-out=\"object.partner_id.name or ''\"></t>\n"
+"                    </p>\n"
+"                    <p>Please Renew the Warranty before it expires...</p>\n"
+"                    <br>\n"
+"                    Best Regards,\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <t t-out=\"user.name or ''\"></t>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: rgb(34, 34, 34); background-color: rgb(255, 255, 255); \">\n"
+"                    <p>Dear <t t-out=\"object.partner_id.name or ''\"></t>\n"
+"                    </p>\n"
+"                    <p>Renueve la garantía antes de que caduque...</p>\n"
+"                    <br>\n"
+"                    Atentamente,\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <t t-out=\"user.name or ''\"></t>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                    <br>\n"
+"                </div>\n"
+"            "
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid "<span style=\"border-top: 1px solid;\">Signature of Reception</span>"
+msgstr "<span style=\"border-top: 1px solid;\">Firma de Recepción</span>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid ""
+"<span style=\"border-top: 1px solid;float:right;\">Signature of "
+"Customer</span>"
+msgstr ""
+"<span style=\"border-top: 1px solid;float:right;\">Firma de "
+"Cliente</span>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid "<strong>Customer Address</strong>"
+msgstr "<strong>Dirección del cliente</strong>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid "<strong>Tags:</strong>"
+msgstr "<strong>Etiquetas:</strong>"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_receipt_template_view
+msgid "<strong>Warranty Team</strong>"
+msgstr "<strong>Equipo de garantía</strong>"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__unsplash_access_key
+msgid "Access Key"
+msgstr "Llave de acceso"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_taxcloud
+msgid "Account TaxCloud"
+msgstr "Cuenta TaxCloud"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_journal_early_pay_discount_loss_account_id
+msgid ""
+"Account for the difference amount after the expense discount has been "
+"granted"
+msgstr ""
+"Contabilizar el importe de la diferencia después de que se haya aplicado el descuento de gastos. "
+"otorgada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_journal_early_pay_discount_gain_account_id
+msgid ""
+"Account for the difference amount after the income discount has been granted"
+msgstr ""
+"Contabilice el monto de la diferencia después de que se haya otorgado el descuento de ingresos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_cash_basis_base_account_id
+msgid ""
+"Account that will be set on lines created in cash basis journal entry and "
+"used to keep track of the tax base amount."
+msgstr ""
+"Cuenta que se establecerá en las líneas creadas en el asiento de diario de caja y "
+"se utiliza para realizar un seguimiento del importe de la base imponible."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_accountant
+msgid "Accounting"
+msgstr "Contabilidad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__type_action
+msgid "Action Type"
+msgstr "tipo de acción"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__active
+msgid "Active"
+msgstr "Activa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__snailmail_cover
+msgid "Add a Cover Page"
+msgstr "Agregar una página de portada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_stock_adv_location
+msgid ""
+"Add and customize route operations to process product moves in your warehouse(s): e.g. unload > quality control > stock for incoming products, pick > pack > ship for outgoing products. \n"
+" You can also set putaway strategies on warehouse locations in order to send incoming products into specific child locations straight away (e.g. specific bins, racks)."
+msgstr ""
+"Agregue y personalice las operaciones de ruta para procesar los movimientos de productos en su (s) almacén (es): p. descargar > control de calidad > stock para productos entrantes, recoger > empacar > enviar para productos salientes. \n"
+" También puede establecer estrategias de almacenamiento en ubicaciones de almacén para enviar productos entrantes a ubicaciones secundarias específicas de inmediato (por ejemplo, contenedores específicos, estantes)."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_sale_pricelist
+msgid "Advanced Pricelists"
+msgstr "Listas de precios avanzadas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__module_stock_landed_costs
+msgid ""
+"Affect landed costs on reception operations and split them among products to"
+" update their cost price."
+msgstr ""
+"Influir en los costos de desembarque en las operaciones de recepción y dividirlos entre productos para"
+" actualizar su precio de costo."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__alias_domain
+msgid "Alias Domain"
+msgstr "Dominio de alias"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_product_margin
+msgid "Allow Product Margin"
+msgstr "Permitir margen de producto"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__allow_renewal
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__allow_renewal
+msgid "Allow Renewal"
+msgstr "Permitir renovación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__warranty_renewal_time
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__warranty_renewal_time
+msgid "Allow Warranty Renewal Times "
+msgstr "Permitir tiempos de renovación de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_check_printing
+msgid "Allow check printing and deposits"
+msgstr "Permitir la impresión de cheques y depósitos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_mail_plugin
+msgid "Allow integration with the mail plugins"
+msgstr "Permitir la integración con los complementos de correo."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_google_calendar
+msgid "Allow the users to synchronize their calendar  with Google Calendar"
+msgstr "Permitir a los usuarios sincronizar su calendario con Google Calendar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_microsoft_calendar
+msgid "Allow the users to synchronize their calendar with Outlook Calendar"
+msgstr "Permita que los usuarios sincronicen su calendario con Outlook Calendar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_base_import
+msgid "Allow users to import data from CSV/XLS/XLSX/ODS files"
+msgstr "Permitir a los usuarios importar datos de archivos CSV/XLS/XLSX/ODS"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_sale_pricelist
+msgid ""
+"Allows to manage different prices based on rules per category of customers.\n"
+"                Example: 10% for retailers, promotion of 5 EUR on this product, etc."
+msgstr ""
+"Permite gestionar diferentes precios en base a reglas por categoría de clientes.\n"
+"                Ejemplo: 10% para minoristas, promoción de 5 EUR en este producto, etc."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_multi_currency
+msgid "Allows to work in a multi currency environment"
+msgstr "Permite trabajar en un entorno multidivisa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_proforma_sales
+msgid "Allows you to send pro-forma invoice."
+msgstr "Le permite enviar factura pro-forma."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_sale_amazon
+msgid "Amazon Sync"
+msgstr "Sincronización de Amazon"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_analytic_accounting
+msgid "Analytic Accounting"
+msgstr "Contabilidad Analítica"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__annual_inventory_month
+msgid "Annual Inventory Month"
+msgstr "Mes de inventario anual"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__annual_inventory_month
+msgid ""
+"Annual inventory month for products not in a location with a cyclic "
+"inventory date. Set to no month if no automatic annual inventory."
+msgstr ""
+"Mes de inventario anual para productos que no están en una ubicación con un ciclo "
+"fecha de inventario. Establecer en ningún mes si no hay inventario anual automático."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__unsplash_app_id
+msgid "Application ID"
+msgstr "ID de aplicación"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_settings
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_voip
+msgid "Asterisk (VoIP)"
+msgstr "Asterisco (VoIP)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_action
+msgid "Auto Assignment Action"
+msgstr "Acción de asignación automática"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_interval_type
+msgid "Auto Assignment Interval Unit"
+msgstr "Unidad de intervalo de asignación automática"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_run_datetime
+msgid "Auto Assignment Next Execution Date"
+msgstr "Asignación automática Próxima fecha de ejecución"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_currency_rate_live
+msgid "Automatic Currency Rates"
+msgstr "Tipos de cambio automáticos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__automatic_invoice
+msgid "Automatic Invoice"
+msgstr "Factura automática"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_journal_suspense_account_id
+msgid "Bank Suspense Account"
+msgstr "Cuenta bancaria transitoria"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_journal_suspense_account_id
+msgid ""
+"Bank Transactions are posted immediately after import or synchronization. Their counterparty is the bank suspense account.\n"
+"Reconciliation replaces the latter by the definitive account(s)."
+msgstr ""
+"Las transacciones bancarias se registran inmediatamente después de la importación o sincronización. Su contrapartida es la cuenta corriente bancaria.\n"
+"La reconciliación sustituye la carta por las cuentas definitivas)."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_stock_barcode
+msgid "Barcode Scanner"
+msgstr "Escáner de código de barras"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_cash_basis_base_account_id
+msgid "Base Tax Received Account"
+msgstr "Cuenta base de impuestos recibidos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_stock_picking_batch
+msgid "Batch Transfers"
+msgstr "Transferencias por lotes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_budget
+msgid "Budget Management"
+msgstr "Administración de presupuesto"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__secondary_color
+msgid "Button Color"
+msgstr "Color del boton"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_renew
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_settings
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__tax_exigibility
+msgid "Cash Basis"
+msgstr "Base de efectivo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_journal_early_pay_discount_gain_account_id
+msgid "Cash Discount Gain account"
+msgstr "Cuenta de ganancias por descuento en efectivo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_journal_early_pay_discount_loss_account_id
+msgid "Cash Discount Loss account"
+msgstr "Cuenta de pérdidas por descuento en efectivo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_cash_rounding
+msgid "Cash Rounding"
+msgstr "Redondeo de efectivo"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_case_claim-act
+msgid "Categories"
+msgstr "Categorías"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__categ_id
+msgid "Category"
+msgstr "Categoría"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_claim_category
+msgid "Category of claim"
+msgstr "Categoría de reclamo"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_claim
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_config_claim
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Claim"
+msgstr "Afirmar"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.warranty_claim_categ_action
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_claim_category_form
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_claim_category_tree
+msgid "Claim Categories"
+msgstr "Categorías de reclamaciones"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__date
+msgid "Claim Date"
+msgstr "Fecha de reclamo"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Claim Description"
+msgstr "Descripción del reclamo"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Claim History"
+msgstr "Historial de reclamaciones"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Claim Reporter"
+msgstr "Reportera de reclamaciones"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_claim_stage_form
+msgid "Claim Stage"
+msgstr "Etapa de reclamación"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.warranty_claim_stage_act
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_claim_stage_tree
+msgid "Claim Stages"
+msgstr "Etapas de reclamación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__name
+msgid "Claim Subject"
+msgstr "Asunto de la reclamación"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_claim_stage
+msgid "Claim stages"
+msgstr "Etapas de reclamación"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Claim/Action Description"
+msgstr "Descripción de la reclamación/acción"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.warranty_claim_view_act1
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_claim_ids
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_case_claims
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_calendar_view1
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_tree_view1
+msgid "Claims"
+msgstr "Reclamos"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_team_config_action
+msgid "Click here to define a new sales team."
+msgstr "Haga clic aquí para definir un nuevo equipo de ventas."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_claim_categ_action
+msgid "Click to create a claim category."
+msgstr "Haga clic para crear una categoría de reclamación."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.product_normal_warranty
+msgid "Click to define a new product."
+msgstr "Haga clic para definir un nuevo producto."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_claim_stage_act
+msgid "Click to setup a new stage in the processing of the claims."
+msgstr "Haga clic para configurar una nueva etapa en el procesamiento de los reclamos."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__date_closed
+msgid "Closed"
+msgstr "Cerrada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__comment
+msgid "Comment"
+msgstr "Comentario"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__case_default
+msgid "Common to All Teams"
+msgstr "Común a todos los equipos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__company_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_stock_lot__company_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__company_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__company_informations
+msgid "Company Informations"
+msgstr "Información de la empresa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__company_name
+msgid "Company Name"
+msgstr "nombre de empresa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__has_chart_of_accounts
+msgid "Company has a chart of accounts"
+msgstr "La empresa tiene un plan de cuentas"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Completed"
+msgstr "Terminada"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_configuration
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_tracking_owner
+msgid "Consignment"
+msgstr "Envío"
+
+#. module: bi_warranty_registration
+#: model:utm.campaign,title:bi_warranty_registration.claim_source1
+msgid "Corrective"
+msgstr "Correctiva"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__type_action__correction
+msgid "Corrective Action"
+msgstr "Acción correctiva"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__country_code
+msgid "Country Code"
+msgstr "Código de país"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_sale_loyalty
+msgid "Coupons & Loyalty"
+msgstr "Cupones y Lealtad"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Create Invoice"
+msgstr "Crear factura"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_website_crm_iap_reveal
+msgid "Create Leads/Opportunities from your website's traffic"
+msgstr "Cree clientes potenciales/oportunidades a partir del tráfico de su sitio web"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__create_warranty_with_saleorder
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__create_warranty_with_saleorder
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__create_warranty_from_saleorder
+msgid "Create Warranty from Sale Order"
+msgstr "Crear garantía a partir de orden de venta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__lead_mining_in_pipeline
+msgid "Create a lead mining request directly from the opportunity pipeline."
+msgstr "Cree una solicitud de minería de prospectos directamente desde la canalización de oportunidades."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_claim_categ_action
+msgid ""
+"Create claim categories to better manage and classify your\n"
+"\t\t\t\tclaims. Some example of claims can be: preventive action,\n"
+"\t\t\t\tcorrective action."
+msgstr ""
+"Cree categorías de reclamos para administrar y clasificar mejor sus\n"
+"\t\t\t\treclamos. Algunos ejemplos de reclamaciones pueden ser: acción preventiva,\n"
+"\t\t\t\tacción correctiva."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__create_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__create_date
+msgid "Creation Date"
+msgstr "Fecha de creación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__currency_id
+msgid "Currency"
+msgstr "Divisa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__currency_exchange_journal_id
+msgid "Currency Exchange Journal"
+msgstr "Diario de cambio de moneda"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__external_email_server_default
+msgid "Custom Email Servers"
+msgstr "Servidores de correo electrónico personalizados"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__report_footer
+msgid "Custom Report Footer"
+msgstr "Pie de página de informe personalizado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__partner_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__partner_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__partner_id
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__portal_allow_api_keys
+msgid "Customer API Keys"
+msgstr "Claves API del cliente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__auth_signup_uninvited
+msgid "Customer Account"
+msgstr "Cuenta de cliente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_sale_delivery_address
+msgid "Customer Addresses"
+msgstr "Direcciones de clientes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_dhl
+msgid "DHL Express Connector"
+msgstr "Conector DHL Express"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__date_renewal
+msgid "Date"
+msgstr "Fecha"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__annual_inventory_day
+msgid "Day of the month"
+msgstr "Día del mes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__annual_inventory_day
+msgid ""
+"Day of the month when the annual inventory should occur. If zero or negative, then the first day of the month will be selected instead.\n"
+"        If greater than the last day of a month, then the last day of the month will be selected instead."
+msgstr ""
+"Día del mes en que debe realizarse el inventario anual. Si es cero o negativo, se seleccionará el primer día del mes.\n"
+"        Si es mayor que el último día de un mes, en su lugar se seleccionará el último día del mes."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_settings
+msgid "Days"
+msgstr "Días"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__date_deadline
+msgid "Deadline"
+msgstr "Fecha límite"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__user_default_rights
+msgid "Default Access Rights"
+msgstr "Derechos de acceso predeterminados"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_default_credit_limit
+msgid "Default Credit Limit"
+msgstr "Límite de crédito predeterminado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__purchase_tax_id
+msgid "Default Purchase Tax"
+msgstr "Impuesto de compra predeterminado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__use_quotation_validity_days
+msgid "Default Quotation Validity"
+msgstr "Validez de cotización predeterminada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__quotation_validity_days
+msgid "Default Quotation Validity (Days)"
+msgstr "Validez de cotización predeterminada (días)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__sale_tax_id
+msgid "Default Sale Tax"
+msgstr "Impuesto de venta predeterminado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__company_so_template_id
+msgid "Default Template"
+msgstr "Plantilla predeterminada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__use_invoice_terms
+msgid "Default Terms & Conditions"
+msgstr "Términos y condiciones predeterminados"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__incoterm_id
+msgid "Default incoterm"
+msgstr "incoterm por defecto"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__deposit_default_product_id
+msgid "Default product used for payment advances"
+msgstr "Producto predeterminado utilizado para anticipos de pago"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery
+msgid "Delivery Methods"
+msgstr "Métodos de entrega"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__deposit_default_product_id
+msgid "Deposit Product"
+msgstr "Producto de depósito"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__description
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__setting_desc
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__tag_desc
+msgid "Description"
+msgstr "Descripción"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim__email_from
+msgid "Destination email for email gateway."
+msgstr "Correo electrónico de destino para la puerta de enlace de correo electrónico."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__digest_id
+msgid "Digest Email"
+msgstr "Correo electrónico de resumen"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__digest_emails
+msgid "Digest Emails"
+msgstr "Resumen de correos electrónicos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_discount_per_so_line
+msgid "Discounts"
+msgstr "Descuentos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_lot_on_delivery_slip
+msgid "Display Lots & Serial Numbers on Delivery Slips"
+msgstr "Mostrar lotes y números de serie en comprobantes de entrega"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_lot_on_invoice
+msgid "Display Lots & Serial Numbers on Invoices"
+msgstr "Mostrar lotes y números de serie en las facturas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__display_name
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__qr_code
+msgid "Display SEPA QR-code"
+msgstr "Mostrar código QR SEPA"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__preview_ready
+msgid "Display preview button"
+msgstr "Mostrar botón de vista previa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_invoice_extract
+msgid "Document Digitization"
+msgstr "Digitalización de Documentos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__external_report_layout_id
+msgid "Document Template"
+msgstr "Documento ejemplar"
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.stage,name:bi_warranty_registration.stage_claim3
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Done"
+msgstr "Hecho"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_reports
+msgid "Dynamic Reports"
+msgstr "Informes dinámicos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_l10n_eu_oss
+msgid "EU Intra-community Distance Selling"
+msgstr "Venta a distancia intracomunitaria de la UE"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_easypost
+msgid "Easypost Connector"
+msgstr "Conector Easypost"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__email
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__email_from
+msgid "Email"
+msgstr "Correo electrónico"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__stock_move_email_validation
+msgid "Email Confirmation picking"
+msgstr "Selección de confirmación de correo electrónico"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__invoice_mail_template_id
+msgid "Email sent to the customer once the invoice is available."
+msgstr "Correo electrónico enviado al cliente una vez que la factura esté disponible."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__auth_signup_reset_password
+msgid "Enable password reset from Login page"
+msgstr "Habilitar el restablecimiento de contraseña desde la página de inicio de sesión"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_use_credit_limit
+msgid "Enable the use of credit limit on partners."
+msgstr "Habilite el uso del límite de crédito en los socios."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__lead_enrich_auto
+msgid "Enrich lead automatically"
+msgstr "Enriquecer prospecto automáticamente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_crm_iap_enrich
+msgid ""
+"Enrich your leads automatically with company data based on their email "
+"address."
+msgstr ""
+"Enriquece tus clientes potenciales automáticamente con datos de la empresa basados en su correo electrónico "
+"DIRECCIÓN."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_product_expiry
+msgid "Expiration Dates"
+msgstr "Fechas de caducidad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__expired
+msgid "Expired"
+msgstr "Caducada"
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.category,name:bi_warranty_registration.categ_claim1
+msgid "Factual Claims"
+msgstr "Reclamaciones fácticas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__fail_counter
+msgid "Fail Mail"
+msgstr "Correo fallido"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_fedex
+msgid "FedEx Connector"
+msgstr "Conector de FedEx"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_fiscal_country_id
+msgid "Fiscal Country Code"
+msgstr "Código de país fiscal"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__report_footer
+msgid "Footer text displayed at the bottom of all reports."
+msgstr "Texto de pie de página que se muestra en la parte inferior de todos los informes."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__free
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__warranty_type__free
+msgid "Free"
+msgstr "Gratis"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__income_currency_exchange_account_id
+msgid "Gain Account"
+msgstr "Cuenta de ganancia"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_crm_iap_mine
+msgid "Generate new leads based on their country, industries, size, etc."
+msgstr "Genere nuevos clientes potenciales en función de su país, industrias, tamaño, etc."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_base_geolocalize
+msgid "GeoLocalize"
+msgstr "Geolocalizar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_product_images
+msgid "Get product pictures using barcode"
+msgstr "Obtener imágenes de productos mediante código de barras"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__google_gmail_client_identifier
+msgid "Gmail Client Id"
+msgstr "ID de cliente de Gmail"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__google_gmail_client_secret
+msgid "Gmail Client Secret"
+msgstr "Secreto del cliente de Gmail"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_stock_picking_wave
+msgid "Group your move operations in wave transfer to process them together"
+msgstr "Agrupe sus operaciones de movimiento en la transferencia de onda para procesarlas juntas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__has_accounting_entries
+msgid "Has Accounting Entries"
+msgstr "Tiene Asientos Contables"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__primary_color
+msgid "Header Color"
+msgstr "Color del encabezado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__priority__2
+msgid "High"
+msgstr "Alta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__accept1
+msgid "I accept the Terms and Conditions"
+msgstr "Acepto los términos y condiciones"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__id
+msgid "ID"
+msgstr "IDENTIFICACIÓN"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim_stage__case_default
+msgid ""
+"If you check this field, this stage will be proposed by default on each "
+"sales team. It will not assign this stage to existing teams."
+msgstr ""
+"Si marca este campo, esta etapa se propondrá por defecto en cada "
+"equipo de ventas. No asignará esta etapa a los equipos existentes."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__alias_domain
+msgid ""
+"If you have setup a catch-all email domain redirected to the Odoo server, "
+"enter the domain name here."
+msgstr ""
+"Si ha configurado un dominio de correo electrónico general redirigido al servidor de Odoo, "
+"introduzca el nombre de dominio aquí."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__use_twilio_rtc_servers
+msgid "If you want to use twilio as TURN/STUN server provider"
+msgstr "Si desea utilizar twilio como proveedor de servidor TURN/STUN"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_bank_statement_import_qif
+msgid "Import .qif files"
+msgstr "Importar archivos .qif"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_bank_statement_import_csv
+msgid "Import in .csv format"
+msgstr "Importar en formato .csv"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_bank_statement_import_ofx
+msgid "Import in .ofx format"
+msgstr "Importar en formato .ofx"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_bank_statement_import_camt
+msgid "Import in CAMT.053 format"
+msgstr "Importar en formato CAMT.053"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_journal_payment_debit_account_id
+msgid ""
+"Incoming payments are posted on an Outstanding Receipts Account. In the bank reconciliation widget, they appear as blue lines.\n"
+"Bank transactions are then reconciled on the Outstanding Receipts Accounts rather than the Receivable Account."
+msgstr ""
+"Los pagos recibidos se registran en una cuenta de recibos pendientes. En el widget de conciliación bancaria, aparecen como líneas azules.\n"
+"Luego, las transacciones bancarias se concilian en las Cuentas de recibos pendientes en lugar de en la Cuenta por cobrar."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_display_incoterm
+msgid "Incoterms"
+msgstr "Incoterms"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__partner_autocomplete_insufficient_credit
+msgid "Insufficient credit"
+msgstr "Crédito insuficiente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__transfer_account_id
+msgid ""
+"Intermediary account used when moving from a liquidity account to another."
+msgstr ""
+"Cuenta intermediaria utilizada al pasar de una cuenta de liquidez a otra."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__transfer_account_id
+msgid "Internal Transfer Account"
+msgstr "Cuenta de transferencia interna"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__incoterm_id
+msgid ""
+"International Commercial Terms are a series of predefined commercial terms "
+"used in international transactions."
+msgstr ""
+"Los Términos Comerciales Internacionales son una serie de términos comerciales predefinidos "
+"utilizado en transacciones internacionales."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_interval_type
+msgid "Interval type between each cron run (e.g. each 2 days or each 2 hours)"
+msgstr "Tipo de intervalo entre cada ejecución de cron (por ejemplo, cada 2 días o cada 2 horas)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_intrastat
+msgid "Intrastat"
+msgstr "Intrastat"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_mail_template_id
+msgid "Invoice Email Template"
+msgstr "Plantilla de correo electrónico de factura"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_payment
+msgid "Invoice Online Payment"
+msgstr "Pago de facturas en línea"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__invoiced
+msgid "Invoiced"
+msgstr "Facturada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__default_invoice_policy
+msgid "Invoicing Policy"
+msgstr "Política de facturación"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_account_move
+msgid "Journal Entry"
+msgstr "Entrada de diario"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_auth_ldap
+msgid "LDAP Authentication"
+msgstr "Autenticación LDAP"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_stock_landed_costs
+msgid "Landed Costs"
+msgstr "Costos de descarga"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings____last_update
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag____last_update
+msgid "Last Modified on"
+msgstr "Última modificación el"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__write_uid
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__write_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__write_date
+msgid "Last Updated on"
+msgstr "Ultima actualización en"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__predictive_lead_scoring_fields
+msgid "Lead Scoring Frequency Fields"
+msgstr "Campos de frecuencia de puntuación de clientes potenciales"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__predictive_lead_scoring_fields_str
+msgid "Lead Scoring Frequency Fields in String"
+msgstr "Campos de frecuencia de puntuación de clientes potenciales en cadena"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__predictive_lead_scoring_start_date
+msgid "Lead Scoring Starting Date"
+msgstr "Fecha de inicio de la puntuación de clientes potenciales"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__predictive_lead_scoring_start_date_str
+msgid "Lead Scoring Starting Date in String"
+msgstr "Fecha de inicio de puntuación de clientes potenciales en cadena"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_use_lead
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_crm_team_warranty
+msgid "Leads"
+msgstr "Dirige"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__show_line_subtotals_tax_selection
+msgid "Line Subtotals Tax Display"
+msgstr "Visualización de impuestos de subtotales de línea"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim_stage__team_ids
+msgid ""
+"Link between stages and sales teams. When set, this limitate the current "
+"stage to the selected sales teams."
+msgstr ""
+"Enlace entre escenarios y equipos comerciales. Cuando se configura, esto limita la corriente "
+"etapa a los equipos de ventas seleccionados."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_auto_done_setting
+msgid "Lock Confirmed Sales"
+msgstr "Bloquear ventas confirmadas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__expense_currency_exchange_account_id
+msgid "Loss Account"
+msgstr "Cuenta extraviada"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_stock_lot
+msgid "Lot/Serial"
+msgstr "Lote/Serie"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_production_lot
+msgid "Lots & Serial Numbers"
+msgstr "Lotes y números de serie"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__priority__0
+msgid "Low"
+msgstr "Baja"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__currency_id
+msgid "Main currency of the company."
+msgstr "Moneda principal de la empresa."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_inter_company_rules
+msgid "Manage Inter Company"
+msgstr "Administrar entre empresas"
+
+#. module: bi_warranty_registration
+#: model:res.groups,name:bi_warranty_registration.group_warranty_user_manager
+msgid "Manager"
+msgstr "Gerente"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_action
+msgid ""
+"Manual assign allow to trigger assignment from team form view using an "
+"action button. Automatic configures a cron running repeatedly assignment in "
+"all teams."
+msgstr ""
+"Asignación manual permite activar la asignación desde la vista de formulario de equipo usando un "
+"botón de acción. Automático configura un cron que ejecuta repetidamente la asignación en "
+"todos los equipos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__use_security_lead
+msgid ""
+"Margin of error for dates promised to customers. Products will be scheduled "
+"for delivery that many days earlier than the actual promised date, to cope "
+"with unexpected delays in the supply chain."
+msgstr ""
+"Margen de error de las fechas prometidas a los clientes. Los productos serán programados "
+"para la entrega muchos días antes de la fecha real prometida, para hacer frente "
+"con retrasos inesperados en la cadena de suministro."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__security_lead
+msgid ""
+"Margin of error for dates promised to customers. Products will be scheduled "
+"for procurement and delivery that many days earlier than the actual promised"
+" date, to cope with unexpected delays in the supply chain."
+msgstr ""
+"Margen de error de las fechas prometidas a los clientes. Los productos serán programados "
+"para adquisiciones y entregas muchos días antes de lo prometido"
+" fecha, para hacer frente a retrasos inesperados en la cadena de suministro."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_sale_margin
+msgid "Margins"
+msgstr "Márgenes"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/product_warranty.py:0
+#: code:addons/bi_warranty_registration/wizard/warranty_renew.py:0
+#, python-format
+msgid "Maximun Renewal Times Exceeded"
+msgstr "Tiempo máximo de renovación excedido"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__merchant
+msgid "Merchant"
+msgstr "Comerciante"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__model_no
+msgid "Model #"
+msgstr "Modelo #"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_template_warranty_renewal
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_warranty_renewal
+msgid "Months"
+msgstr "Meses"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_invoice_warranty
+msgid "Move"
+msgstr "Mover"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__is_membership_multi
+msgid "Multi Teams"
+msgstr "Equipos Múltiples"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_multi_currency
+msgid "Multi-Currencies"
+msgstr "Multidivisas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_adv_location
+msgid "Multi-Step Routes"
+msgstr "Rutas de varios pasos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__product_pricelist_setting
+msgid ""
+"Multiple prices: Pricelists with fixed price rules by product,\n"
+"Advanced rules: enables advanced price rules for pricelists."
+msgstr ""
+"Precios múltiples: Listas de precios con reglas de precios fijos por producto,\n"
+"Reglas avanzadas: habilita reglas de precios avanzadas para listas de precios."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__new
+#: model:warranty.claim.stage,name:bi_warranty_registration.stage_claim1
+msgid "New"
+msgstr "Nueva"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__action_next
+msgid "Next Action"
+msgstr "Proxima accion"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__date_action_next
+msgid "Next Action Date"
+msgstr "Fecha de la próxima acción"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__renew_no
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_stock_lot__renewal_times
+msgid "No. of Renew"
+msgstr "No. de Renovar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__priority__1
+msgid "Normal"
+msgstr "Normal"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__active_user_count
+msgid "Number of Active Users"
+msgstr "Número de usuarias activas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__company_count
+msgid "Number of Companies"
+msgstr "Número de empresas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__language_count
+msgid "Number of Languages"
+msgstr "Número de idiomas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_interval_number
+msgid ""
+"Number of interval type between each cron run (e.g. each 2 days or each 4 "
+"days)"
+msgstr ""
+"Número de tipo de intervalo entre cada ejecución de cron (por ejemplo, cada 2 días o cada 4 "
+"días)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__portal_confirmation_pay
+msgid "Online Payment"
+msgstr "Pago en línea"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__portal_confirmation_sign
+msgid "Online Signature"
+msgstr "Firma en línea"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_journal_payment_credit_account_id
+msgid ""
+"Outgoing Payments are posted on an Outstanding Payments Account. In the bank reconciliation widget, they appear as blue lines.\n"
+"Bank transactions are then reconciled on the Outstanding Payments Account rather the Payable Account."
+msgstr ""
+"Los pagos salientes se contabilizan en una cuenta de pagos pendientes. En el widget de conciliación bancaria, aparecen como líneas azules.\n"
+"Luego, las transacciones bancarias se concilian en la Cuenta de pagos pendientes en lugar de la Cuenta por pagar."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_journal_payment_credit_account_id
+msgid "Outstanding Payments Account"
+msgstr "Cuenta de pagos pendientes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_journal_payment_debit_account_id
+msgid "Outstanding Receipts Account"
+msgstr "Cuenta de recibos pendientes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_tracking_lot
+msgid "Packages"
+msgstr "Paquetes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__paid
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__warranty_type__paid
+msgid "Paid"
+msgstr "Pagada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_partner_autocomplete
+msgid "Partner Autocomplete"
+msgstr "Autocompletar socio"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__pay_invoices_online
+msgid "Pay Invoices Online"
+msgstr "Pagar facturas en línea"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__phone
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__partner_phone
+msgid "Phone"
+msgstr "Teléfono"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__default_picking_policy
+msgid "Picking Policy"
+msgstr "Política de recolección"
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.category,name:bi_warranty_registration.categ_claim3
+msgid "Policy Claims"
+msgstr "Reclamaciones de pólizas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__predictive_lead_scoring_field_labels
+msgid "Predictive Lead Scoring Field Labels"
+msgstr "Etiquetas de campo de puntuación predictiva de clientes potenciales"
+
+#. module: bi_warranty_registration
+#: model:utm.campaign,title:bi_warranty_registration.claim_source2
+msgid "Preventive"
+msgstr "Preventiva"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__type_action__prevention
+msgid "Preventive Action"
+msgstr "Acción preventiva"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_product_pricelist
+msgid "Pricelists"
+msgstr "Lista de precios"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__product_pricelist_setting
+msgid "Pricelists Method"
+msgstr "Método de listas de precios"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_is_print
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__snailmail_duplex
+msgid "Print Both sides"
+msgstr "Imprimir ambos lados"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_lot_print_gs1
+msgid "Print GS1 Barcodes for Lots & Serial Numbers"
+msgstr "Imprima códigos de barras GS1 para lotes y números de serie"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__snailmail_color
+msgid "Print In Color"
+msgstr "Imprimir en color"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__priority
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_proforma_sales
+msgid "Pro-Forma Invoice"
+msgstr "Factura de proforma"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_product_template
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__product_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__product_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__product_id
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Product"
+msgstr "Producto"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_packaging
+msgid "Product Packagings"
+msgstr "Embalajes de productos"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_product_product
+msgid "Product Variant"
+msgstr "Variante del producto"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_product_warranty
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_main
+msgid "Product Warranty"
+msgstr "La garantía del producto"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_details
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_details_expired
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_details_to_be_renew
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_tree_view
+msgid "Product Warranty Details"
+msgstr "Detalles de la garantía del producto"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.product_normal_warranty
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__product_ids
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_product
+msgid "Products"
+msgstr "productos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__profiling_enabled_until
+msgid "Profiling enabled until"
+msgstr "Creación de perfiles habilitada hasta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_loyalty
+msgid "Promotions, Coupons, Gift Card & Loyalty Program"
+msgstr "Promociones, Cupones, Tarjeta de Regalo y Programa de Lealtad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_show_purchase_receipts
+msgid "Purchase Receipt"
+msgstr "Recibo de compra"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_quality_control
+msgid "Quality"
+msgstr "Calidad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_quality_control_worksheet
+msgid "Quality Worksheet"
+msgstr "Hoja de trabajo de calidad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__quick_edit_mode
+msgid "Quick encoding"
+msgstr "Codificación rápida"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_sale_quotation_builder
+msgid "Quotation Builder"
+msgstr "Generador de cotizaciones"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_sale_order_template
+msgid "Quotation Templates"
+msgstr "Plantillas de presupuesto"
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.stage,name:bi_warranty_registration.stage_claim2
+msgid "Ready to Deliver"
+msgstr "Lista para entregar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__serial_no
+msgid "Receipt No."
+msgstr "Recibo No."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_reception_report
+msgid "Reception Report"
+msgstr "Informe de recepción"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_claim_view_act1
+msgid ""
+"Record and track your customers' claims. Claims may be linked to a warranty "
+"or a lot.You can send emails with attachments and keep the full history for "
+"a claim (emails sent, intervention type and so on).Claims may automatically "
+"be linked to an email address using the mail gateway module."
+msgstr ""
+"Registre y rastree las reclamaciones de sus clientes. Las reclamaciones pueden estar vinculadas a una garantía. "
+"o mucho. Puede enviar correos electrónicos con archivos adjuntos y mantener el historial completo para "
+"un reclamo (correos electrónicos enviados, tipo de intervención, etc.). Los reclamos pueden automáticamente "
+"vincularse a una dirección de correo electrónico utilizando el módulo de puerta de enlace de correo."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_use_recurring_revenues
+msgid "Recurring Revenues"
+msgstr "Ingresos recurrentes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__warranty
+msgid "Related Warranty"
+msgstr "Garantía relacionada"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.server,name:bi_warranty_registration.ir_cron_scheduler_renew_ir_actions_server
+#: model:ir.cron,cron_name:bi_warranty_registration.ir_cron_scheduler_renew
+msgid "Renew Notification"
+msgstr "Notificación de renovación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__renew_notif
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_settings
+msgid "Renew Notification Submit Interval"
+msgstr "Intervalo de envío de notificación de renovación"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_renew
+msgid "Renew Warranty"
+msgstr "Renovar Garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_cost
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__renewal_cost
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__renew_amt
+msgid "Renewal Amount"
+msgstr "Cantidad de renovación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__crm_auto_assignment_interval_number
+msgid "Repeat every"
+msgstr "Repite cada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__resolution
+msgid "Resolution"
+msgstr "Resolución"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Responsibilities"
+msgstr "Responsabilidades"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__user_id
+msgid "Responsible"
+msgstr "Responsable"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim__team_id
+msgid ""
+"Responsible sales team. Define Responsible user and Email account for mail "
+"gateway."
+msgstr ""
+"Equipo comercial responsable. Definir usuario responsable y cuenta de correo electrónico para el correo "
+"puerta."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__restrict_template_rendering
+msgid "Restrict Template Rendering"
+msgstr "Restringir la representación de plantillas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__cause
+msgid "Root Cause"
+msgstr "Causa principal"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Root Causes"
+msgstr "Causas fundamentales"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__crm_use_auto_assignment
+msgid "Rule-Based Assignment"
+msgstr "Asignación basada en reglas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_sepa
+msgid "SEPA Credit Transfer (SCT)"
+msgstr "Transferencia de crédito SEPA (SCT)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_stock_sms
+msgid "SMS Confirmation"
+msgstr "SMS de confirmación"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__stock_sms_confirmation_template_id
+msgid "SMS Template"
+msgstr "Plantilla SMS"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__stock_move_sms_validation
+msgid "SMS Validation with stock move"
+msgstr "Validación SMS con movimiento de stock"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__stock_sms_confirmation_template_id
+msgid "SMS sent to the customer once the order is delivered."
+msgstr "SMS enviado al cliente una vez entregado el pedido."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__so_id
+msgid "Sale Order"
+msgstr "Orden de venta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_warning_sale
+msgid "Sale Order Warnings"
+msgstr "Advertencias de órdenes de venta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_show_sale_receipts
+msgid "Sale Receipt"
+msgstr "Recibo de venta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_use_credit_limit
+msgid "Sales Credit Limit"
+msgstr "Límite de crédito de ventas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_sale_product_matrix
+msgid "Sales Grid Entry"
+msgstr "Entrada de cuadrícula de ventas"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_sale_order
+msgid "Sales Order"
+msgstr "Órdenes de venta"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_crm_team
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__team_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_category__team_id
+msgid "Sales Team"
+msgstr "Equipo de ventas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_sales_person
+msgid "Salesperson"
+msgstr "Vendedora"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__security_lead
+msgid "Security Lead Time"
+msgstr "Plazo de entrega de seguridad"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__use_security_lead
+msgid "Security Lead Time for Sales"
+msgstr "Plazo de entrega de seguridad para ventas"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/wizard/warranty_renew.py:0
+#, python-format
+msgid "Select Correct Customer Of Warranty"
+msgstr "Seleccione el cliente correcto de la garantía"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/wizard/warranty_renew.py:0
+#, python-format
+msgid "Selected Serial number is not in under warranty"
+msgstr "El número de serie seleccionado no está en garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_is_email
+msgid "Send Email"
+msgstr "Enviar correo electrónico"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_is_snailmail
+msgid "Send by Post"
+msgstr "Mandar por correo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_sendcloud
+msgid "Sendcloud Connector"
+msgstr "Conector Sendcloud"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__product_serial_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__serial_no
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__serial_no
+msgid "Serial No"
+msgstr "Número de serie"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__serial_nos
+msgid "Serial Nos"
+msgstr "números de serie"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_settings
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__show_effect
+msgid "Show Effect"
+msgstr "Mostrar efecto"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_show_line_subtotals_tax_included
+msgid "Show line subtotals with taxes (B2C)"
+msgstr "Mostrar subtotales de línea con impuestos (B2C)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_show_line_subtotals_tax_excluded
+msgid "Show line subtotals without taxes (B2B)"
+msgstr "Mostrar subtotales de línea sin impuestos (B2B)"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_sign_delivery
+msgid "Signature"
+msgstr "Firma"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_snailmail_account
+msgid "Snailmail"
+msgstr "Correo postal"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_product_email_template
+msgid "Specific Email"
+msgstr "Correo electrónico específico"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__stage_id
+msgid "Stage"
+msgstr "Escenario"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__stage_match
+msgid "Stage Match"
+msgstr "Partido de escenario"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__name
+msgid "Stage Name"
+msgstr "Nombre artístico"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_claim_stage_view
+msgid "Stages"
+msgstr "Etapas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__state
+msgid "State"
+msgstr "Estado"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_storage_categories
+msgid "Storage Categories"
+msgstr "Categorías de almacenamiento"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_multi_locations
+msgid "Storage Locations"
+msgstr "Ubicaciones de almacenamiento"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__group_stock_multi_locations
+msgid ""
+"Store products in specific locations of your warehouse (e.g. bins, racks) "
+"and to track inventory accordingly."
+msgstr ""
+"Almacene productos en ubicaciones específicas de su almacén (por ejemplo, contenedores, estantes) "
+"y realizar un seguimiento del inventario en consecuencia."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__account_storno
+msgid "Storno accounting"
+msgstr "Contabilidad de Storno"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_form_view1
+msgid "Submit"
+msgstr "Entregar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_google_gmail
+msgid "Support Gmail Authentication"
+msgstr "Admite la autenticación de Gmail"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_microsoft_outlook
+msgid "Support Outlook Authentication"
+msgstr "Admite la autenticación de Outlook"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_tag__tag_name
+msgid "Tag Name"
+msgstr "Nombre de etiqueta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__tags_w
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_tag
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__tax_cash_basis_journal_id
+msgid "Tax Cash Basis Journal"
+msgstr "Diario de base de efectivo de impuestos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__tax_calculation_rounding_method
+msgid "Tax calculation rounding method"
+msgstr "Método de redondeo de cálculo de impuestos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__early_pay_discount_computation
+msgid "Tax setting"
+msgstr "Configuración de impuestos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim_stage__team_ids
+msgid "Teams"
+msgstr "Equipos"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__chart_template_id
+msgid "Template"
+msgstr "Plantilla"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__auth_signup_template_user_id
+msgid "Template user for new users created through signup"
+msgstr "Usuario de plantilla para nuevos usuarios creados a través del registro"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_terms
+msgid "Terms & Conditions"
+msgstr "Términos y condiciones"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__invoice_terms_html
+msgid "Terms & Conditions as a Web page"
+msgstr "Términos y condiciones como una página web"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__terms_type
+msgid "Terms & Conditions format"
+msgstr "Formato de términos y condiciones"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__country_code
+msgid ""
+"The ISO country code in two chars. \n"
+"You can use this field for quick search."
+msgstr ""
+"El código de país ISO en dos caracteres. \n"
+"Puede utilizar este campo para una búsqueda rápida."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__currency_exchange_journal_id
+msgid ""
+"The accounting journal where automatic exchange differences will be "
+"registered"
+msgstr ""
+"El diario de contabilidad donde las diferencias de cambio automáticas serán "
+"registrada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_fiscal_country_id
+msgid "The country to use the tax reports from for this company"
+msgstr "El país para usar los informes fiscales de esta empresa"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__automatic_invoice
+msgid ""
+"The invoice is generated automatically and available in the customer portal when the transaction is confirmed by the payment provider.\n"
+"The invoice is marked as paid and the payment is registered in the payment journal defined in the configuration of the payment provider.\n"
+"This mode is advised if you issue the final invoice at the order and not after the delivery."
+msgstr ""
+"La factura se genera automáticamente y está disponible en el portal del cliente cuando el proveedor de pago confirma la transacción.\n"
+"La factura se marca como pagada y el pago se registra en el diario de pago definido en la configuración del proveedor de pago.\n"
+"Se recomienda este modo si emite la factura final en el momento del pedido y no después de la entrega."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.product_normal_warranty
+msgid ""
+"The product form contains information to simplify the sale\n"
+"                    process: price, notes in the quotation, accounting data,\n"
+"                    procurement methods, etc."
+msgstr ""
+"El formulario del producto contiene información para simplificar la venta.\n"
+"                    proceso: precio, notas en la cotización, datos contables,\n"
+"                    métodos de adquisición, etc."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim__email_cc
+msgid ""
+"These email addresses will be added to the CC field of all inbound and "
+"outbound emails for this record before being sent. Separate multiple email "
+"addresses with a comma"
+msgstr ""
+"Estas direcciones de correo electrónico se agregarán al campo CC de todos los mensajes entrantes y "
+"correos electrónicos salientes para este registro antes de ser enviado. Separar varios correos electrónicos "
+"direcciones con coma"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__module_account_batch_payment
+msgid ""
+"This allows you grouping payments into a single batch and eases the reconciliation process.\n"
+"-This installs the account_batch_payment module."
+msgstr ""
+"Esto le permite agrupar los pagos en un solo lote y facilita el proceso de conciliación.\n"
+"-Esto instala el módulo account_batch_payment."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__account_default_credit_limit
+msgid ""
+"This is the default credit limit that will be used on partners that do not "
+"have a specific limit on them."
+msgstr ""
+"Este es el límite de crédito predeterminado que se utilizará en los socios que no "
+"tener un límite específico sobre ellos."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__to_be_invoice
+msgid "To Be Invoice"
+msgstr "Para ser factura"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__to_renew
+msgid "To Be Renew"
+msgstr "Ser renovada"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__module_product_expiry
+msgid ""
+"Track following dates on lots & serial numbers: best before, removal, end of life, alert. \n"
+" Such dates are set automatically at lot/serial number creation based on values set on the product (in days)."
+msgstr ""
+"Realice un seguimiento de las siguientes fechas en lotes y números de serie: consumo preferente, eliminación, fin de vida útil, alerta. \n"
+" Dichas fechas se establecen automáticamente en la creación del número de lote/serie en función de los valores establecidos en el producto (en días)."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_base_gengo
+msgid "Translate Your Website with Gengo"
+msgstr "Traduce tu sitio web con Gengo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__user_fault
+msgid "Trouble Responsible"
+msgstr "Responsable de problemas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__twilio_account_token
+msgid "Twilio Account Auth Token"
+msgstr "Token de autenticación de cuenta de Twilio"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__twilio_account_sid
+msgid "Twilio Account SID"
+msgstr "SID de la cuenta de Twilio"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_case_claims_tree_view1
+msgid "Type"
+msgstr "Tipo"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_ups
+msgid "UPS Connector"
+msgstr "Conector SAI"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_usps
+msgid "USPS Connector"
+msgstr "Conector USPS"
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.stage,name:bi_warranty_registration.stage_claim5
+msgid "Under Maintenance"
+msgstr "En mantenimiento"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__under_warranty
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__under_warranty
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__product_warranty__state__in_progress
+msgid "Under Warranty"
+msgstr "Bajo garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_uom
+msgid "Units of Measure"
+msgstr "Unidades de medida"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_web_unsplash
+msgid "Unsplash Image Library"
+msgstr "Biblioteca de imágenes Unsplash"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__write_date
+msgid "Update Date"
+msgstr "Fecha de actualización"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_sepa_direct_debit
+msgid "Use SEPA Direct Debit"
+msgstr "Utilizar Débito Directo SEPA"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__use_twilio_rtc_servers
+msgid "Use Twilio ICE servers"
+msgstr "Usar servidores Twilio ICE"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_account_batch_payment
+msgid "Use batch payments"
+msgstr "Usar pagos por lotes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_auth_oauth
+msgid "Use external authentication providers (OAuth)"
+msgstr "Usar proveedores de autenticación externos (OAuth)"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_team_config_action
+msgid ""
+"Use sales team to organize your different salespersons or\n"
+"                    departments into separate teams. Each team will work in\n"
+"                    its own list of opportunities."
+msgstr ""
+"Utilice el equipo de ventas para organizar sus diferentes vendedores o\n"
+"                    departamentos en equipos separados. Cada equipo trabajará en\n"
+"                    su propia lista de oportunidades."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_claim_stage__sequence
+msgid "Used to order stages. Lower is better."
+msgstr "Se utiliza para ordenar etapas. Más bajo es mejor."
+
+#. module: bi_warranty_registration
+#: model:res.groups,name:bi_warranty_registration.group_warranty_user
+msgid "User"
+msgstr "Usuaria"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,help:bi_warranty_registration.field_warranty_settings__restrict_template_rendering
+msgid ""
+"Users will still be able to render templates.\n"
+"However only Mail Template Editors will be able to create new dynamic templates or modify existing ones."
+msgstr ""
+"Users will still be able to render templates.\n"
+"However only Mail Template Editors will be able to create new dynamic templates or modify existing ones."
+
+#. module: bi_warranty_registration
+#: model:warranty.claim.category,name:bi_warranty_registration.categ_claim2
+msgid "Value Claims"
+msgstr "Reclamaciones de valor"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_product_variant
+msgid "Variants"
+msgstr "variantes"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__product_volume_volume_in_cubic_feet
+msgid "Volume unit of measure"
+msgstr "Unidad de medida de volumen"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_warning_stock
+msgid "Warnings for Stock"
+msgstr "Advertencias para Stock"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_warning_account
+msgid "Warnings in Invoices"
+msgstr "Advertencias en Facturas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_bank_statement_line__warranty_reg_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_move__warranty_reg_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_payment__warranty_reg_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_crm_team__use_warranty
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__warranty_id
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_renew__warranty
+#: model:ir.module.category,name:bi_warranty_registration.module_warranty
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_sub
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_crm_team_warranty_usewarranty
+msgid "Warranty"
+msgstr "Garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_services
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_claim
+msgid "Warranty Claims"
+msgstr "Reclamos de garantia"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_template_warranty_renewal
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_warranty_renewal
+msgid "Warranty Details"
+msgstr "Detalles de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_end_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_stock_lot__end_date_warranty
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__warranty_renew_end_date
+msgid "Warranty End Date"
+msgstr "Fecha de finalización de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.server,name:bi_warranty_registration.ir_cron_scheduler_warranty_expire_ir_actions_server
+#: model:ir.cron,cron_name:bi_warranty_registration.ir_cron_scheduler_warranty_expire
+msgid "Warranty Expire"
+msgstr "Caducidad de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_expire
+msgid "Warranty Expired"
+msgstr "Garantía vencida"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_history
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_history_ids
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_details_form_view
+msgid "Warranty History"
+msgstr "Historial de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_invoice_tree1
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_invoice_main
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_invoice_sub
+msgid "Warranty Invoices"
+msgstr "Facturas de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__warranty_period
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__warranty_period
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_template_warranty_renewal
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_warranty_renewal
+msgid "Warranty Period"
+msgstr "Período de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_product_main
+msgid "Warranty Products"
+msgstr "Productos de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.report,name:bi_warranty_registration.warranty_receipt_print
+#: model:mail.template,report_name:bi_warranty_registration.email_template_warranty_registration
+#: model:mail.template,report_name:bi_warranty_registration.email_template_warranty_renew
+msgid "Warranty Receipt"
+msgstr "Recibo de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_reg
+msgid "Warranty Registration"
+msgstr "registro de garantía"
+
+#. module: bi_warranty_registration
+#: model:mail.template,name:bi_warranty_registration.email_template_warranty_registration
+msgid "Warranty Registration Notification Email"
+msgstr "Correo electrónico de notificación de registro de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__warranty_tmpl
+msgid "Warranty Registration mail template"
+msgstr "Plantilla de correo de registro de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_renew
+msgid "Warranty Renew"
+msgstr "Garantía Renovar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_bank_statement_line__warranty_invoice
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_move__warranty_invoice
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_account_payment__warranty_invoice
+msgid "Warranty Renew Invoice"
+msgstr "Factura de renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model:mail.template,name:bi_warranty_registration.email_template_warranty_renew
+msgid "Warranty Renew Notification Email"
+msgstr "Correo electrónico de notificación de renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__renew_tmpl
+msgid "Warranty Renew mail template"
+msgstr "Plantilla de correo de renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_view_warranty_renew
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_renew
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_renew
+msgid "Warranty Renewal"
+msgstr "Renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.view_warranty_settings
+msgid "Warranty Renewal Configuration"
+msgstr "Configuración de renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__warranty_renewal_period
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__warranty_renewal_period
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_template_warranty_renewal
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.bi_inherit_product_warranty_renewal
+msgid "Warranty Renewal Period"
+msgstr "Período de renovación de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__warranty_sale_config
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__warranty_sale_config
+msgid "Warranty Sale Config"
+msgstr "Configuración de venta de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_config
+#: model:ir.model,name:bi_warranty_registration.model_warranty_settings
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_settings_tree_view
+msgid "Warranty Settings"
+msgstr "Configuración de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_create_date
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_stock_lot__start_date_warranty
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_history__warranty_renewal_date
+msgid "Warranty Start Date"
+msgstr "Fecha de inicio de la garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model,name:bi_warranty_registration.model_warranty_tag
+msgid "Warranty Tag"
+msgstr "Etiqueta de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.action_warranty_tags
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_tag_form_view
+#: model_terms:ir.ui.view,arch_db:bi_warranty_registration.warranty_tag_tree_view
+msgid "Warranty Tags"
+msgstr "Etiquetas de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_team
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_team
+msgid "Warranty Team"
+msgstr "Equipo de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.actions.act_window,name:bi_warranty_registration.warranty_team_config_action
+msgid "Warranty Teams"
+msgstr "Equipos de Garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.ui.menu,name:bi_warranty_registration.menu_warranty_to_be_renew
+msgid "Warranty To Be Renew"
+msgstr "Garantía a renovar"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_warranty__warranty_type
+msgid "Warranty Type"
+msgstr "Tipo de garantía"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/warranty_claim.py:0
+#, python-format
+msgid "Warranty is expired for this product"
+msgstr "La garantía ha expirado para este producto"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/warranty_claim.py:0
+#, python-format
+msgid "Warranty is not confirmed for this product"
+msgstr "La garantía no está confirmada para este producto."
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/wizard/warranty_renew.py:0
+#, python-format
+msgid "Warranty is not created for this Product/Serial No"
+msgstr "No se crea la garantía para este producto/número de serie"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/warranty_claim.py:0
+#, python-format
+msgid "Warranty is not created for this product"
+msgstr "No se crea la garantía para este producto."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_product__warranty_renewal_cost
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_product_template__warranty_renewal_cost
+msgid "Warranty renewal Cost"
+msgstr "Costo de renovación de garantía"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_claim__email_cc
+msgid "Watchers Emails"
+msgstr "Correos electrónicos de los observadores"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__group_stock_picking_wave
+msgid "Wave Transfers"
+msgstr "Transferencias de olas"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__product_weight_in_lbs
+msgid "Weight unit of measure"
+msgstr "Peso unidad de medida"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/product_warranty.py:0
+#: code:addons/bi_warranty_registration/models/product_warranty.py:0
+#, python-format
+msgid ""
+"You Cannot Create more than one Warranty with same serial No. Please Renew "
+"existing Warranty"
+msgstr ""
+"No puede crear más de una garantía con el mismo número de serie. Renueve "
+"Garantía existente"
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.warranty_claim_stage_act
+msgid ""
+"You can create claim stages to categorize the status of every\n"
+"\t\t\t\tclaim entered in the system. The stages define all the steps\n"
+"\t\t\t\trequired for the resolution of a claim."
+msgstr ""
+"Puede crear etapas de reclamación para categorizar el estado de cada\n"
+"\t\t\t\treclamo ingresado en el sistema. Las etapas definen todos los pasos.\n"
+"\t\t\t\tnecesarios para la resolución de un siniestro."
+
+#. module: bi_warranty_registration
+#: model_terms:ir.actions.act_window,help:bi_warranty_registration.product_normal_warranty
+msgid ""
+"You must define a product for everything you sell, whether it's\n"
+"                    a physical product, a consumable or a service you offer to\n"
+"                    customers."
+msgstr ""
+"Debes definir un producto para todo lo que vendes, ya sea\n"
+"                    un producto físico, un consumible o un servicio que ofreces a\n"
+"                    Clientas."
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_delivery_bpost
+msgid "bpost Connector"
+msgstr "Conector bpost"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__stage_match__first
+msgid "first"
+msgstr "primera"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__stage_match__fourth
+msgid "fourth"
+msgstr "Cuarta"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_warranty_settings__module_google_recaptcha
+msgid "reCAPTCHA"
+msgstr "reCAPTCHA"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__stage_match__second
+msgid "second"
+msgstr "segunda"
+
+#. module: bi_warranty_registration
+#: model:ir.model.fields.selection,name:bi_warranty_registration.selection__warranty_claim__stage_match__third
+msgid "third"
+msgstr "tercera"
+
+#. module: bi_warranty_registration
+#. odoo-python
+#: code:addons/bi_warranty_registration/models/warranty_sale.py:0
+#: model:ir.model.fields,field_description:bi_warranty_registration.field_sale_order__warranty_sale
+#, python-format
+msgid "warranty"
+msgstr "garantía"
+
+#. module: bi_warranty_registration
+#: model:mail.template,subject:bi_warranty_registration.email_template_warranty_registration
+msgid "{{ user.company_id.name }} Warranty Registration"
+msgstr "{{ user.company_id.name }} registro de garantía"
+
+#. module: bi_warranty_registration
+#: model:mail.template,subject:bi_warranty_registration.email_template_warranty_renew
+msgid "{{ user.company_id.name }} Warranty Renew"
+msgstr "{{ user.company_id.name }} Garantía Renovar"
