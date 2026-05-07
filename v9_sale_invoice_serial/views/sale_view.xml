@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_order_form_inherit_bi" model="ir.ui.view">
+            <field name="name">view.order.form.inherit.bi</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//page/field[@name='order_line']/list/field[@name='name']" position="after">
+                    <field name="serial_no" options="{'no_create': True}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="before">
+                    <button name="%(action_view_sale_barcode)d" string="Scan"
+                    type="action" invisible="state != 'draft'" class="oe_highlight" />
+                </xpath>
+            </field>
+        </record>
+
+    <template id="report_saleorder_document_inherit_added_serial_no" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//table[hasclass('o_main_table')]/thead/tr/th[2]" position="before">
+            <th>Serial No.</th>
+        </xpath>
+        <xpath expr="//table[hasclass('o_main_table')]/tbody[hasclass('sale_tbody')]/t[@t-foreach='lines_to_report']//t[@t-if='not line.collapse_composition']/tr[@name='tr_product']/td[2]" position="before">
+            <td><span t-field="line.serial_no"/></td>
+        </xpath>
+    </template>
+
+    </data>
+</odoo>

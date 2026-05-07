@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+	<record id="view_sale_order_scan_wizard" model="ir.ui.view">
+            <field name="name">Scan Lot</field>
+            <field name="model">sale.order.scan</field>
+            <field name="arch" type="xml">
+             <form string="Scan Lot">
+                <group>
+                    <field name="scan"/>
+                </group>
+                <footer>
+                <button string="Done" class="oe_link" type="object" name="add_product_via_scan_wizard" />
+                <button string="cancel" class="oe_link" special="cancel" />  
+                </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_view_sale_barcode" model="ir.actions.act_window">
+            <field name="name">Scan Lot</field>
+            <field name="res_model">sale.order.scan</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+        <record id="view_invoice_scan_wizard" model="ir.ui.view">
+            <field name="name">invoice Scan Lot</field>
+            <field name="model">invoice.scan.wizard</field>
+            <field name="arch" type="xml">
+             <form string="Scan Lot">
+                <group>
+                <field name="scan"/>
+                </group>
+                <footer>
+                <button string="Done" class="oe_link" type="object" name="add_product_via_scan" />
+                <button string="cancel" class="oe_link" special="cancel" />                 </footer>
+            </form>
+            </field>
+        </record>
+
+        <record id="action_view_invoice_barcode" model="ir.actions.act_window">
+            <field name="name">Scan Lot</field>
+            <field name="res_model">invoice.scan.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+     </data>
+</openerp>
