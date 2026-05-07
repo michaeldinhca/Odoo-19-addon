@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_extended_warranty_history,extended.warranty.history,model_extended_warranty_history,,1,1,1,1
+access_extended_warranty_claim,extended.warranty.claim,model_extended_warranty_claim,,1,1,1,1
+access_product_extended_warranty,product.extended.warranty,model_product_extended_warranty,,1,1,1,1

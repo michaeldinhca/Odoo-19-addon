@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+       
+        <record model="ir.ui.view" id="extended_warranty_case_claims_tree_view1">
+            <field name="name">Extended Warranty - Claims Tree</field>
+            <field name="model">extended.warranty.claim</field>
+            <field name="arch" type="xml">
+                <list string="Claims">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="date"/>
+                    <field name="stage_id"/>
+                    <field name="date_action_next"/>
+                    <field name="action_next"/>
+                    <field name="categ_id" string="Type"/>
+                    <field name="date_deadline" invisible="1"/>
+                    <field name="date_closed" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="extended_warranty_case_claims_form_view1">
+            <field name="name">Extended Warranty - Claims Form</field>
+            <field name="model">extended.warranty.claim</field>
+            <field name="arch" type="xml">
+                <form string="Claim">
+                <header>
+                    <button name='submit_claim' string='Submit' type='object' class="oe_highlight" invisible="stage_match in ('second','third','fourth') "/>
+                    <button name='completed_claim' string='Completed' type='object' class="oe_highlight"  invisible="stage_match in ('first','third','fourth') "/>
+                    <button name='claim_done' string='Done' type='object' class="oe_highlight"  invisible="stage_match in ('first','second','fourth') "/>
+                    <field name="stage_id" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet string="Claims">
+                    <group>
+                        <field name="name"/>
+                        <field name="date"/>
+                    </group>
+                    <group colspan="4" col="4" >
+                        <field name="user_id"/>
+                        <field name="priority" widget="priority"/>
+                        <field name="team_id"/>
+                        <field name="date_deadline"/>
+                    </group>
+                        <notebook>
+                            <page string="Claim Description" >
+                                <group colspan="2" col="2">
+                                    <separator colspan="2" string="Claim Reporter"/>
+                                    <field name="partner_id" string="Customer" required='1'/>
+                                    <field name="partner_phone"/>
+                                    <field name="email_from" widget="email"/>
+                                    <field name="product_ids" invisible='1'/>
+                                    <field name="product_id"/>
+                                    <field name="serial_no"/>
+                                    <field name="warranty" invisible='1'/>
+                                    <field name="stage_match" invisible='1'/>
+                                    
+                                </group>
+                                <group colspan="2" col="2">
+                                    <separator colspan="2" string="Responsibilities"/>
+                                    <field name="user_fault"/>
+                                    <field name="categ_id" options="{'no_create': True, 'no_open': True}"/>
+                                    
+                                </group>
+                                <group colspan="2" col="2">
+                                    <separator colspan="2" string="Root Causes"/>
+                                    <field name="cause" colspan="2" nolabel="1"/>
+                                </group>
+                                <separator colspan="4" string="Claim/Action Description" groups="base.group_user"/>
+                                <field name="description" colspan="4" nolabel="1"/>
+                            </page>
+                        </notebook>
+                </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Claim Calendar view -->
+
+        <record model="ir.ui.view" id="extended_warranty_case_claims_calendar_view1">
+            <field name="name">Extended Claims Actions</field>
+            <field name="model">extended.warranty.claim</field>
+            <field name="priority" eval="2"/>
+            <field name="arch" type="xml">
+                <calendar string="Claims" date_start="date_action_next" color="user_id">
+                    <field name="name"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="warranty_claim_view_act2">
+            <field name="name">Extended Claims</field>
+            <field name="res_model">extended.warranty.claim</field>
+            <field name="view_mode">list,form,calendar</field>
+            <field name="view_id" ref="extended_warranty_case_claims_tree_view1"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Record and track your customers' claims. Claims may be linked to a warranty or a lot.You can send emails with attachments and keep the full history for a claim (emails sent, intervention type and so on).Claims may automatically be linked to an email address using the mail gateway module.
+                </p>
+            </field>
+        </record>
+        <menuitem name="Extended Claims" id="menu_warranty_extend_case_claims"
+            parent="bi_warranty_registration.menu_services" action="warranty_claim_view_act2" sequence="5"/>
+    </data>
+</odoo>

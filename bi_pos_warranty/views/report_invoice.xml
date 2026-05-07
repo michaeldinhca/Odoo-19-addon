@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+    <template id="report_invoice_report_inherit_added_Serial_no" inherit_id="account.report_invoice_document">
+       
+        <xpath expr="//table[hasclass('o_has_total_table')]/tbody/t/t/tr/t/td[@name='account_invoice_line_name']" position="inside">
+            Warranty : <span t-esc="line.product_id.warranty_period"/> Months
+            <br></br>
+            <t t-if="line.warranty_period_extended != 0">
+                Extended Warranty : <span t-esc="line.warranty_period_extended"/> Year
+            </t>
+        </xpath>
+    </template>
+</odoo>
