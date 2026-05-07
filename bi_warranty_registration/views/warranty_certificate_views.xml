@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="certificate_details_list_view" model="ir.ui.view">
+            <field name="name">certificate.details.list.view</field>
+            <field name="model">warranty.certificate</field>
+            <field name="arch" type="xml">
+                <list string="Warranty Certificates">
+                    <field name="cer_serial_no"/>
+                    <field name="warrenty_lot_id"/>
+                    <field name="certificate_product_id"/>
+                    <field name="certificate_partner_id"/>
+                    <field name="certificate_mang_date"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record id="certificate_details_form_view" model="ir.ui.view">
+            <field name="name">certificate.details.form.view</field>
+            <field name="model">warranty.certificate</field>
+            <field name="arch" type="xml">
+                <form string="Product Warranty Details">
+                    <header>
+                            <button name='update_template' string='Update' type='object' class="oe_highlight" invisible="stage == 'update'"/>
+                            <field name="stage" widget="statusbar" readonly="1"/>
+                        </header>
+                    <sheet>
+                        <div>
+                            <h2>
+                                <field name="cer_serial_no" readonly="1"/>
+                            </h2>
+                            <group>
+                                <group>
+                                    <field name="warrenty_lot_id" options="{'no_edit':True 'no_create': True}" readonly="stage == 'update'"/>
+                                    <field name="certificate_product_id" options="{'no_edit':True 'no_create': True}"/>
+                                </group>
+                                <group>
+                                    <field name="certificate_partner_id"/>
+                                    <field name="certificate_mang_date"/>
+                                    <field name="images_ids" widget='many2many_binary' lable="False"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="warranty_template_id" options="{'no_edit':True 'no_create': True}" readonly="stage == 'update'"/>
+                                <field name="new_certificate_template" invisible="1"/>
+                            </group>
+                            <div>
+                                <field name="certificate_template" force_save="True"/>
+                            </div>
+                        </div>
+                    </sheet>
+                    <chatter />
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bi_inherit_product_category" model="ir.ui.view">
+            <field name="name">bi.inherit.product.category</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet" position="inside">
+                    <field name="is_warranty_visible" invisible="1"/>
+                    <notebook invisible="not is_warranty_visible">
+                        <page string="Warranty Details">
+                            <group>
+                                <group>
+                                    <field name="under_warranty"/>
+                                    <label for="warranty_period" string="Warranty Period"
+                                           invisible="not under_warranty"/>
+                                    <div invisible="not under_warranty">
+                                        <field name="warranty_period" required="under_warranty"
+                                               class="oe_inline"/>
+                                        Months
+                                    </div>
+                                </group>
+
+
+                                <group>
+                                    <field name="allow_renewal"/>
+                                    <field name="warranty_renewal_time"
+                                           invisible="not allow_renewal"/>
+                                    <label for="warranty_renewal_period" string="Warranty Renewal Period"
+                                           invisible="not allow_renewal"/>
+                                    <div invisible="not allow_renewal">
+                                        <field name="warranty_renewal_period"
+                                               required="allow_renewal" class="oe_inline"/>
+                                        Months
+                                    </div>
+                                    <field name="warranty_renewal_cost"
+                                           invisible="not allow_renewal"/>
+                                </group>
+                                <group>
+                                    <field name="warranty_sale_config" invisible="1"/>
+                                    <field name="warranty_purchase_config" invisible="1"/>
+                                    <field name="create_warranty_with_saleorder" invisible="not warranty_sale_config"/>
+                                    <field name="create_warranty_with_purchase" invisible="not warranty_purchase_config"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
