@@ -2,7 +2,7 @@
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 {
     "name": "Product Warranty Registration and Claim",
-    "version": "19.0.0.0",
+    "version": "19.0.0.1",
     "category": "Industry",
     "depends": ['base', 'sale_management','purchase', 'account', 'product', 'stock', 'mail', 'crm'],
     "author": "BROWSEINFO",

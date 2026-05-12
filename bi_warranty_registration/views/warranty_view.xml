@@ -151,8 +151,11 @@
             <field name="model">warranty.settings</field>
             <field name="arch" type="xml">
                 <list string="Warranty Settings">
-                    <field name="renew_notif"/>
-                    <field name="setting_desc"/>
+                    <field name="apply_on" string="Apply Warranty On" />
+                    <field name="warranty_from" string="Create Warranty From" />
+                    <field name="renew_notif" />
+                    <field name="renew_tmpl" />
+                    <field name="warranty_tmpl" />
                 </list>
             </field>
         </record>
@@ -197,7 +200,7 @@
             <field name="name">Warranty Settings</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">warranty.settings</field>
-            <field name="view_mode">form</field>
+            <field name="view_mode">list,form</field>
         </record>
 
         <record model="ir.actions.act_window" id="action_warranty_tags">
