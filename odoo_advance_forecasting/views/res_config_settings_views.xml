@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ASSUMPTION (unverified, no live Odoo 19 instance available): the xpath
+     target below (//block[@id='invoicing_settings']) is assumed to exist in
+     account.res_config_settings_view_form. Confirm this against a real
+     instance and adjust the xpath if the block id differs. -->
+<odoo>
+    <record id="res_config_settings_view_form_cash_flow_forecast" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.cash.flow.forecast</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='invoicing_settings']" position="inside">
+                <setting id="cash_flow_forecast_setting" string="Cash Flow Forecast"
+                         help="Fallback number of days used to estimate a due date for confirmed sale/purchase orders that have no payment term and no commitment/planned date">
+                    <field name="cash_forecast_default_payment_days"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

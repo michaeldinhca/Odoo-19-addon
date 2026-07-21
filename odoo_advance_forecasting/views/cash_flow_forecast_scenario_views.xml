@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cash_flow_forecast_scenario_form" model="ir.ui.view">
+        <field name="name">cash.flow.forecast.scenario.form</field>
+        <field name="model">cash.flow.forecast.scenario</field>
+        <field name="arch" type="xml">
+            <form string="Forecast Scenario">
+                <header>
+                    <button type="object" name="action_run" string="Run" class="oe_highlight"/>
+                    <button type="object" name="action_export_xlsx" string="Export to Excel" invisible="not computed_on"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g. Q3 90-Day Outlook"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="method"/>
+                            <field name="horizon"/>
+                            <field name="trend_lookback_weeks" invisible="method != 'historical_trend'"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="computed_on"/>
+                            <field name="opening_balance_override"/>
+                            <field name="biweekly_salary_amount"/>
+                            <field name="biweekly_salary_start_date"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Forecast Lines" name="forecast_lines"
+                              invisible="method == 'historical_trend'">
+                            <field name="line_ids">
+                                <list string="Forecast Lines" decoration-danger="running_balance &lt; 0"
+                                      create="false" edit="false" delete="false">
+                                    <field name="bucket_date"/>
+                                    <field name="source_type"/>
+                                    <field name="partner_id"/>
+                                    <field name="name"/>
+                                    <field name="amount_in" sum="Incoming"/>
+                                    <field name="amount_out" sum="Outgoing"/>
+                                    <field name="net_amount" sum="Net"/>
+                                    <field name="running_balance"/>
+                                    <field name="view_url" widget="url" text="View"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Predictive Forecast" name="predictive_forecast"
+                              invisible="method != 'historical_trend'">
+                            <field name="trend_line_ids">
+                                <list string="Predictive Forecast Lines"
+                                      decoration-muted="row_type == 'historical'"
+                                      decoration-bf="row_type == 'opening_balance'"
+                                      decoration-danger="running_balance_avg &lt; 0"
+                                      create="false" edit="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="week_start_date"/>
+                                    <field name="week_end_date"/>
+                                    <field name="amount_in_min"/>
+                                    <field name="amount_in_avg" sum="Incoming (Avg)"/>
+                                    <field name="amount_in_max"/>
+                                    <field name="amount_out_min"/>
+                                    <field name="amount_out_avg" sum="Outgoing (Avg)"/>
+                                    <field name="amount_out_max"/>
+                                    <field name="net_avg" sum="Net (Avg)"/>
+                                    <field name="running_balance_avg"/>
+                                    <field name="row_type" invisible="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_cash_flow_forecast_scenario_list" model="ir.ui.view">
+        <field name="name">cash.flow.forecast.scenario.list</field>
+        <field name="model">cash.flow.forecast.scenario</field>
+        <field name="arch" type="xml">
+            <list string="Forecast Scenarios">
+                <field name="name"/>
+                <field name="method"/>
+                <field name="horizon"/>
+                <field name="computed_on"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_cash_flow_forecast_scenario" model="ir.actions.act_window">
+        <field name="name">Forecast Scenarios</field>
+        <field name="res_model">cash.flow.forecast.scenario</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create your first forecast scenario
+          </p><p>
+            Pick a method and a horizon, then click Run to build a snapshot
+            of forecasted cash movements you can keep and compare over time.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_action_cash_flow_forecast_scenario"
+              name="Forecast Scenarios"
+              action="action_cash_flow_forecast_scenario"
+              parent="account.account_reports_management_menu"
+              sequence="26"/>
+
+</odoo>

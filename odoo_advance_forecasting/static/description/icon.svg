@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140">
+  <rect width="140" height="140" rx="20" fill="#2C3E50"/>
+  <polyline points="20,100 50,70 70,90 120,40" fill="none" stroke="#00A09D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="95,40 120,40 120,65" fill="none" stroke="#00A09D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="70" y="125" font-family="Arial, sans-serif" font-size="16" fill="#FFFFFF" text-anchor="middle">Cash Flow</text>
+</svg>
