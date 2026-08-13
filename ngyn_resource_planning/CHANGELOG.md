@@ -5,6 +5,31 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.1] - 2026-08-13
+
+Post-release fixes found during code review, before this version had been
+installed against a live database.
+
+### Fixed
+- `loadData()` called `this.orm.readGroup(...)`, which does not exist in this
+  Odoo 19 build (renamed to `webReadGroup`, with a different argument order
+  and result shape — `{ groups, length }` instead of a plain array, and
+  aggregate values keyed by the full spec string e.g. `"unit_amount:sum"`).
+  This crashed the dashboard on open for any database with at least one
+  active project.
+- `_sql_constraints` (the old list-of-tuples model attribute) is silently
+  no longer read by this Odoo 19 build's ORM — both uniqueness constraints on
+  `ngyn.task.assignment`/`ngyn.task.assignment.week` were not actually
+  enforced. Converted to the `models.Constraint(sql, message)` class-attribute
+  form.
+- Date-only strings from the server (`week_start_date`, timesheet `date`,
+  project `date_start`/`date`) were parsed with `new Date(str)`, which the JS
+  spec parses as UTC midnight; converting that back with local-time getters
+  (as `mondayOf()`/`toLocaleDateString()` do) landed on the wrong calendar day
+  outside a narrow range of timezones — shifting planned/actual hours into the
+  wrong week column and shifting displayed project dates by a day. Added
+  `parseDateOnly()`/reworked `toIso()` to stay in local time throughout.
+
 ## [1.0.0] - 2026-08-13
 
 Initial release. First installable version, built from an interactive HTML mockup

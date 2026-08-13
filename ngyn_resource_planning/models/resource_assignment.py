@@ -32,10 +32,10 @@ class NgynTaskAssignment(models.Model):
         compute='_compute_scheduled_hours', store=True,
         help='Allocated hours not yet placed into a specific week.')
 
-    _sql_constraints = [
-        ('task_employee_uniq', 'unique(task_id, employee_id)',
-         'This person is already assigned to this task.'),
-    ]
+    _task_employee_uniq = models.Constraint(
+        'unique(task_id, employee_id)',
+        'This person is already assigned to this task.',
+    )
 
     @api.depends('alloc_hours', 'week_line_ids.hours')
     def _compute_scheduled_hours(self):
@@ -59,7 +59,7 @@ class NgynTaskAssignmentWeek(models.Model):
     week_start_date = fields.Date(string='Week Of (Monday)', required=True, index=True)
     hours = fields.Float(string='Hours', default=0.0)
 
-    _sql_constraints = [
-        ('assignment_week_uniq', 'unique(assignment_id, week_start_date)',
-         'There is already an hour entry for this person on this task for that week.'),
-    ]
+    _assignment_week_uniq = models.Constraint(
+        'unique(assignment_id, week_start_date)',
+        'There is already an hour entry for this person on this task for that week.',
+    )

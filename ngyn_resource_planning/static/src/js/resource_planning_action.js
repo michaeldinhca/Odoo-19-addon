@@ -23,7 +23,16 @@ function mondayOf(d) {
     return m;
 }
 function toIso(d) {
-    return d.toISOString().slice(0, 10);
+    // Local Y/M/D, not d.toISOString() — that converts to UTC first and can shift the calendar day.
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+}
+function parseDateOnly(str) {
+    // new Date("YYYY-MM-DD") parses as UTC midnight, which reads back as the wrong local day.
+    const [y, m, d] = str.split("-").map(Number);
+    return new Date(y, m - 1, d);
 }
 function roundQuarter(v) {
     return Math.round(v * 4) / 4;
@@ -143,16 +152,16 @@ export class NgynResourcePlanning extends Component {
             : [];
 
         const loggedGroups = projectIds.length
-            ? await this.orm.readGroup(
+            ? (await this.orm.webReadGroup(
                   "account.analytic.line",
                   [["project_id", "in", projectIds]],
-                  ["unit_amount:sum"],
-                  ["project_id"]
-              )
+                  ["project_id"],
+                  ["unit_amount:sum"]
+              )).groups
             : [];
         const loggedByProject = {};
         loggedGroups.forEach((g) => {
-            if (g.project_id) loggedByProject[g.project_id[0]] = g.unit_amount;
+            if (g.project_id) loggedByProject[g.project_id[0]] = g["unit_amount:sum"];
         });
 
         this.state.employees = employees.map((e) => ({
@@ -174,7 +183,7 @@ export class NgynResourcePlanning extends Component {
                             weekLines
                                 .filter((w) => w.assignment_id && w.assignment_id[0] === a.id)
                                 .forEach((w) => {
-                                    weeks[dateToWeekIdx(new Date(w.week_start_date))] = { id: w.id, hours: w.hours };
+                                    weeks[dateToWeekIdx(parseDateOnly(w.week_start_date))] = { id: w.id, hours: w.hours };
                                 });
                             const actuals = {};
                             tsLines
@@ -184,7 +193,7 @@ export class NgynResourcePlanning extends Component {
                                         l.employee_id && a.employee_id && l.employee_id[0] === a.employee_id[0]
                                 )
                                 .forEach((l) => {
-                                    const idx = dateToWeekIdx(new Date(l.date));
+                                    const idx = dateToWeekIdx(parseDateOnly(l.date));
                                     actuals[idx] = roundQuarter((actuals[idx] || 0) + l.unit_amount);
                                 });
                             return {
@@ -273,8 +282,8 @@ export class NgynResourcePlanning extends Component {
         let elapsedPct = null;
         let daysLeft = null;
         if (p.dateStart && p.dateEnd) {
-            const start = new Date(p.dateStart);
-            const end = new Date(p.dateEnd);
+            const start = parseDateOnly(p.dateStart);
+            const end = parseDateOnly(p.dateEnd);
             const totalDays = (end - start) / 86400000;
             const elapsedDays = Math.min(Math.max((TODAY - start) / 86400000, 0), totalDays);
             elapsedPct = totalDays > 0 ? (elapsedDays / totalDays) * 100 : 100;
@@ -314,11 +323,11 @@ export class NgynResourcePlanning extends Component {
     }
     projectWeekRange(p) {
         if (!p.dateStart || !p.dateEnd) return [0, TOTAL_WEEKS - 1];
-        return [dateToWeekIdx(new Date(p.dateStart)), dateToWeekIdx(new Date(p.dateEnd))];
+        return [dateToWeekIdx(parseDateOnly(p.dateStart)), dateToWeekIdx(parseDateOnly(p.dateEnd))];
     }
     fmtDate(dstr) {
         if (!dstr) return "—";
-        return new Date(dstr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+        return parseDateOnly(dstr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
     }
     weekHours(assignment, weekIdx) {
         const w = assignment.weeks[weekIdx];

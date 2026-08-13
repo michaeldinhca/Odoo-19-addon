@@ -26,7 +26,7 @@ Odoo ORM (project.project, project.task, hr.employee,
 ## Data flow
 
 1. **`onWillStart` → `loadData()`** fires once when the action opens. It issues
-   a handful of `searchRead`/`readGroup` calls (not one per row — see
+   a handful of `searchRead`/`webReadGroup` calls (not one per row — see
    `docs/DEVELOPMENT.md` for the batching rationale) and assembles everything
    into `this.state.projects` — a nested JS structure:
    `project → tasks → assignments → { weeks: {idx: {id, hours}}, actuals: {idx: hours} }`.
