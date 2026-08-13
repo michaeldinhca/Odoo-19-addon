@@ -5,6 +5,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.2] - 2026-08-13
+
+Aligned the Odoo port with the original interactive HTML/JS mockup after a
+direct feature-parity audit found several explanatory-UI pieces that never
+made it into v1 (the mockup itself is not in this repo — see `CLAUDE.md`).
+Business-rule formulas (health status, buffer tiers, allocation math) were
+verified identical between mockup and port before this pass — this is UI
+parity only, no calculation changes.
+
+### Added
+- Hover tooltips on weekly-load-strip cells (current and past/actual),
+  matching the mockup's per-cell breakdown (`Xh allocated this week, of a
+  Yh/wk buffer target (Zh hard capacity)...`).
+- Hover tooltips on the project-card header stats (Charged / Allocated /
+  Left to assign / Unscheduled), explaining what each number means.
+- "Projects" pane header with a live, filter-aware count in the left pane.
+- An explanatory row in the weekly load table when a search/role/pin filter
+  matches no one, instead of silently rendering nothing.
+- `title` on the weekly-load-strip's pin button (its twin in the planning
+  grid already had one — was a real inconsistency, not intentional).
+- A `max-width: 980px` responsive breakpoint stacking the two-pane layout
+  into one column, matching the mockup.
+- Restored the footnote's "Hover a cell for exact numbers" line, now that
+  it's true again.
+
+### Known still-deferred (per `ROADMAP.md`, not part of this pass)
+- Styled tooltip popovers remain native `title`/`t-att-title` attributes,
+  not the mockup's custom-positioned popover.
+- No horizontal scroll-sync across the planning grids and the weekly load
+  strip.
+
 ## [1.0.1] - 2026-08-13
 
 Post-release fixes found during code review, before this version had been

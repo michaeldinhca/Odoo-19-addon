@@ -21,6 +21,10 @@
 
       <!-- ============ LEFT PANE ============ -->
       <div class="o_ngyn_rp_left">
+        <div class="o_ngyn_rp_paneheader">
+          <span>Projects</span>
+          <span t-esc="filteredProjects.length"/>
+        </div>
         <div class="o_ngyn_rp_search">
           <input type="text" placeholder="Search project or client…"
                  t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
@@ -104,12 +108,12 @@
                   <button t-on-click="(ev) => { ev.stopPropagation(); this.expandAllTasks(proj); }">▸ Expand all tasks</button>
                 </div>
                 <span class="o_hd_stat" t-esc="proj.tasks.length + (proj.tasks.length === 1 ? ' task' : ' tasks')"/>
-                <span class="o_hd_stat">Charged <b t-esc="projectAllocationStats(proj).charged + 'h'"/></span>
-                <span class="o_hd_stat">Allocated <b t-esc="projectAllocationStats(proj).allocated + 'h'"/></span>
-                <span class="o_hd_stat">Left to assign
+                <span class="o_hd_stat" t-att-title="statTip('charged')">Charged <b t-esc="projectAllocationStats(proj).charged + 'h'"/></span>
+                <span class="o_hd_stat" t-att-title="statTip('allocated')">Allocated <b t-esc="projectAllocationStats(proj).allocated + 'h'"/></span>
+                <span class="o_hd_stat" t-att-title="statTip('leftToAssign')">Left to assign
                   <b t-attf-class="{{ projectAllocationStats(proj).leftToAssign &lt; 0 ? 'warn' : '' }}"
                      t-esc="projectAllocationStats(proj).leftToAssign + 'h'"/></span>
-                <span class="o_hd_stat">Unscheduled
+                <span class="o_hd_stat" t-att-title="statTip('unscheduled')">Unscheduled
                   <b t-attf-class="{{ projectAllocationStats(proj).unscheduled > 0 ? 'warn' : '' }}"
                      t-esc="projectAllocationStats(proj).unscheduled + 'h'"/></span>
               </div>
@@ -253,26 +257,30 @@
                     <span class="r" t-esc="emp.role + ' · target ' + emp.target + 'h/wk'"/>
                   </div>
                   <button class="o_pin_btn" t-att-class="isEmployeePinned(emp.id) ? 'active' : ''"
-                          t-on-click="(ev) => this.toggleEmployeePin(emp.id, ev)">📌</button>
+                          t-on-click="(ev) => this.toggleEmployeePin(emp.id, ev)"
+                          title="Pin / unpin from weekly load filter">📌</button>
                 </div>
               </td>
               <td t-foreach="visibleWeeks()" t-as="w" t-key="w.idx">
                 <t t-set="isPast" t-value="isPastWeek(w.idx)"/>
                 <t t-set="total" t-value="weekTotalForEmployee(emp.id, w.idx, isPast)"/>
                 <div t-if="total === 0" class="o_load_empty">–</div>
-                <div t-elif="isPast" class="o_load_cell past">
+                <div t-elif="isPast" class="o_load_cell past" t-att-title="pastLoadTip()">
                   <span class="alloc" t-esc="total + 'h'"/><span class="sub">actual</span>
                 </div>
-                <div t-else="" t-attf-class="o_load_cell {{ capCellTier(total, emp) }}">
+                <div t-else="" t-attf-class="o_load_cell {{ capCellTier(total, emp) }}" t-att-title="capCellTip(total, emp)">
                   <span class="alloc" t-esc="total + 'h'"/>
                   <span class="sub" t-esc="(emp.target - total) >= 0 ? 'free ' + (emp.target - total) + 'h' : 'over ' + Math.abs(emp.target - total) + 'h'"/>
                 </div>
               </td>
             </tr>
+            <tr t-if="!filteredCapEmployees.length">
+              <td t-attf-colspan="{{ visibleWeeks().length + 1 }}" class="o_cap_empty_row" t-esc="capEmptyReason()"/>
+            </tr>
           </tbody>
         </table>
       </div>
-      <div class="o_footnote">Grey cells = past weeks, showing actual logged hours (not editable). Colored cells = planned.</div>
+      <div class="o_footnote">Grey cells = past weeks, showing actual logged hours (not editable). Colored cells = planned. Hover a cell for exact numbers.</div>
     </div>
 
   </div>

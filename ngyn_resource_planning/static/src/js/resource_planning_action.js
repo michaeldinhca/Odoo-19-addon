@@ -68,6 +68,13 @@ const HEALTH_DEF = {
     amber: "Stalled — time elapsed is well ahead of hours logged. Work may be blocked.",
     red: "Over burn — hours logged are running well ahead of time elapsed. This project may exceed its charged hours before the deadline.",
 };
+const STAT_DEF = {
+    charged: "Hours sold or charged to the client for this project.",
+    allocated: "Hours assigned to team members across all tasks so far.",
+    leftToAssign: "Charged hours not yet assigned to anyone.",
+    unscheduled: "Assigned hours that haven't been placed into a specific week yet.",
+};
+const PAST_LOAD_TIP = "Actual hours logged this week (past — not part of the live plan).";
 
 export class NgynResourcePlanning extends Component {
     static template = "ngyn_resource_planning.Dashboard";
@@ -321,6 +328,9 @@ export class NgynResourcePlanning extends Component {
         const unscheduled = p.tasks.reduce((s, t) => s + this.taskComputed(t).unscheduled, 0);
         return { charged: p.charged, allocated, leftToAssign: p.charged - allocated, unscheduled };
     }
+    statTip(key) {
+        return STAT_DEF[key];
+    }
     projectWeekRange(p) {
         if (!p.dateStart || !p.dateEnd) return [0, TOTAL_WEEKS - 1];
         return [dateToWeekIdx(parseDateOnly(p.dateStart)), dateToWeekIdx(parseDateOnly(p.dateEnd))];
@@ -569,6 +579,19 @@ export class NgynResourcePlanning extends Component {
         if (total > emp.hard) return "red";
         if (total > emp.target) return "amber";
         return "green";
+    }
+    capCellTip(total, emp) {
+        const free = roundQuarter(emp.target - total);
+        const freeTail = free >= 0 ? `${free}h free before the buffer is used up.` : `${Math.abs(free)}h over the buffer.`;
+        return `${total}h allocated this week, of a ${emp.target}h/wk buffer target (${emp.hard}h hard capacity). ${freeTail}`;
+    }
+    pastLoadTip() {
+        return PAST_LOAD_TIP;
+    }
+    capEmptyReason() {
+        return this.state.weeklyLoadFilter.size > 0
+            ? "No pinned team member matches the current search/role filter."
+            : `No team member matches "${this.state.capSearch}".`;
     }
 
     /* =====================================================
