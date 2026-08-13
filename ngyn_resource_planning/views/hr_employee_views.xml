@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_inherit_ngyn_resource_planning" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.ngyn.resource.planning</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="before">
+                <group>
+                    <group string="Resource Planning">
+                        <field name="x_ngyn_weekly_target_hours" widget="float_time"/>
+                        <field name="x_ngyn_weekly_hard_hours" widget="float_time"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

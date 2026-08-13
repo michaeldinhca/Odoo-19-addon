@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ngyn_task_assignment_user,ngyn.task.assignment.user,model_ngyn_task_assignment,base.group_user,1,1,1,1
+access_ngyn_task_assignment_week_user,ngyn.task.assignment.week.user,model_ngyn_task_assignment_week,base.group_user,1,1,1,1

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ngyn_resource_planning" model="ir.actions.client">
+        <field name="name">Resource Planning</field>
+        <field name="tag">ngyn_resource_planning.dashboard</field>
+    </record>
+
+    <menuitem id="menu_ngyn_resource_planning_root"
+              name="Resource Planning"
+              sequence="15"
+              web_icon="ngyn_resource_planning,static/description/icon.png"/>
+
+    <menuitem id="menu_ngyn_resource_planning_main"
+              name="Weekly Plan"
+              parent="menu_ngyn_resource_planning_root"
+              action="action_ngyn_resource_planning"
+              sequence="1"/>
+</odoo>

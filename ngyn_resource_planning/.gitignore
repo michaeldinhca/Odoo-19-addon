@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# Odoo
+*.pot
+.odoo_rc
+odoo.conf
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Env
+.env
+venv/
+.venv/
