@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.3] - 2026-08-13
+
+### Fixed
+- `resource_planning.scss`'s `.o_ngyn_rp_workspace` rule used
+  `grid-template-columns: min(360px, 26vw) 1fr;` — a real, reproduced bug in
+  this Odoo build's SCSS compiler (`libsass==0.22.0`, pinned by Odoo's own
+  `requirements.txt`): it tries to evaluate a literal CSS `min()`/`max()` as
+  Sass arithmetic instead of passing it through untouched, and errors on
+  mixing `px` and `vw` units (`Internal Error: Incompatible units: 'vw' and
+  'px'.`). This broke asset-bundle compilation for `web.assets_web` and
+  `web.assets_web_print` **database-wide**, not just this module's own page
+  — any database with this module installed would see a global
+  "Style error. The style compilation failed." banner. Present since 1.0.0;
+  only surfaced once a full asset rebuild was forced (earlier bundle caches
+  had been serving pre-existing compiled CSS). Fixed by wrapping the whole
+  expression in a string interpolation (`#{"min(360px, 26vw)"}`), the
+  documented libsass workaround to force literal passthrough — confirmed via
+  a direct `python3 -c "import sass; sass.compile(...)"` repro of the exact
+  error, then verified fixed by compiling `web.assets_backend`,
+  `web.assets_web`, and `web.assets_web_print` directly against the same
+  module combination as `staging_20Jul` (all `ova_*` modules +
+  `ngyn_resource_planning`, 127 modules total).
+
 ## [1.0.2] - 2026-08-13
 
 Aligned the Odoo port with the original interactive HTML/JS mockup after a

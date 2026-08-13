@@ -45,7 +45,9 @@
     }
     .o_ngyn_rp_loading { padding: 40px; text-align: center; color: var(--rp-ink-soft); }
 
-    .o_ngyn_rp_workspace { flex: 1; display: grid; grid-template-columns: min(360px, 26vw) 1fr; overflow: hidden; }
+    // #{"min(...)"} string-interpolated: libsass tries to evaluate a literal min()/max() as Sass math and
+    // errors on mixed px/vw units instead of passing it through as native CSS — wrap it to force passthrough.
+    .o_ngyn_rp_workspace { flex: 1; display: grid; grid-template-columns: #{"min(360px, 26vw)"} 1fr; overflow: hidden; }
 
     /* ---------- Left pane ---------- */
     .o_ngyn_rp_left { border-right: 1px solid var(--rp-line-strong); background: var(--rp-surface); display: flex; flex-direction: column; overflow: hidden; }
