@@ -44,6 +44,29 @@ class NgynTaskAssignment(models.Model):
             rec.scheduled_hours = scheduled
             rec.unscheduled_hours = rec.alloc_hours - scheduled
 
+    @api.model
+    def _ensure_assignments(self, pairs):
+        """pairs: iterable of (task_id, employee_id). Creates any missing rows
+        for these pairs at alloc_hours=0 -- so anyone connected to a task via
+        native Assignees or logged time shows up in Resource Planning even
+        before they're given hours there. Called from project.task (Assignees
+        changing) and account.analytic.line (a timesheet logged), plus once as
+        a backfill on install/upgrade -- see __init__.py.
+        """
+        pairs = {(t, e) for t, e in pairs if t and e}
+        if not pairs:
+            return
+        existing = {
+            (a.task_id.id, a.employee_id.id)
+            for a in self.search([('task_id', 'in', list({t for t, _e in pairs}))])
+        }
+        to_create = [
+            {'task_id': t, 'employee_id': e, 'alloc_hours': 0}
+            for t, e in pairs if (t, e) not in existing
+        ]
+        if to_create:
+            self.create(to_create)
+
 
 class NgynTaskAssignmentWeek(models.Model):
     """A single (assignment, week) cell — the hour value the Resource Planning

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Resource Planning',
-    'version': '19.0.1.0.7',
+    'version': '19.0.1.0.8',
     'category': 'Services/Project',
     'summary': 'Weekly resource planning workspace across projects, tasks and team capacity',
     'description': """
@@ -46,4 +46,5 @@ overview layer for staffing decisions across many projects at once.
     'installable': True,
     'application': True,
     'auto_install': False,
+    'post_init_hook': '_backfill_ngyn_assignments',
 }

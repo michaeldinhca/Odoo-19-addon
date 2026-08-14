@@ -20,6 +20,30 @@ SQL constraint: one row per `(task_id, employee_id)` — a person can't be
 assigned to the same task twice; adjust `alloc_hours` on the existing row
 instead.
 
+**Rows are no longer only created through the "+ Add team member" picker.**
+`_ensure_assignments(pairs)` (a `@api.model` helper on this model, idempotent
+— safe to call with pairs that already have a row) is also called from:
+- `project.task.create()` / `write()` (`models/project_task.py`), whenever
+  the native **Assignees** field (`user_ids`) gains someone — so assigning a
+  task the normal Odoo way also makes that person show up in Resource
+  Planning, at 0h, without a separate manual step.
+- `account.analytic.line.create()` (`models/account_analytic_line.py`),
+  whenever a timesheet is logged with both `task_id` and `employee_id` set —
+  so logging time against a task is enough to appear here too, even for
+  someone nobody explicitly assigned.
+- `_backfill_ngyn_assignments(env)` (`__init__.py`, `post_init_hook`) — a
+  one-time sweep over every existing task's assignees and every existing
+  timesheet line with a task+employee, run once on install/upgrade so this
+  isn't only forward-looking on a database that already had data.
+
+In all three cases only the `(task_id, employee_id)` pair matters — the
+`user_ids`→`employee_id` resolution (`res.users.employee_id`, current
+company) is skipped if a user has no linked employee. Deliberately
+**one-directional**: adding someone via Resource Planning does *not* add
+them to the task's native Assignees — only native-Assignees-or-logged-time
+→ Resource Planning, not the reverse, to avoid surprising side effects on
+task notifications/kanban cards from a 0h placeholder row.
+
 ### `ngyn.task.assignment.week`
 One row per **(assignment, week)** — a single editable cell in the planning
 grid.

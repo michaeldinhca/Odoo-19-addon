@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.8] - 2026-08-14
+
+### Added
+- **Anyone connected to a task now shows up in Resource Planning
+  automatically**, per request, to make sure nobody staffed on a task is
+  missing from the list:
+  - Adding someone via the task's native **Assignees** field creates a real
+    `ngyn.task.assignment` row for them (at 0h) — no separate manual step.
+  - Logging a timesheet against a task for someone not otherwise
+    assigned/added does the same.
+  - A one-time install/upgrade backfill (`post_init_hook`) does the same
+    sweep over every existing task and timesheet line, so this isn't only
+    forward-looking on a database that already has data.
+  - Deliberately one-directional: adding someone through Resource Planning
+    does *not* add them as a task Assignee — only the other direction, to
+    avoid surprising side effects (notifications, kanban cards) from a 0h
+    placeholder row.
+  - New file `models/account_analytic_line.py`; new shared entry point
+    `ngyn.task.assignment._ensure_assignments()`.
+
+Verified via a fresh install (backfill hook ran clean) plus five explicit
+`odoo shell` scenarios: task created with an assignee, assignee added via a
+later write, a timesheet logged for an unrelated employee, the existing
+manual-add path still working unchanged, and re-writing the same assignee
+twice (no duplicate row, no constraint error).
+
 ## [1.0.7] - 2026-08-14
 
 ### Added
