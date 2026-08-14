@@ -5,6 +5,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.7] - 2026-08-14
+
+### Added
+- **End-user Knowledge article** ("Resource Planning — User Guide"), shipped
+  as module data — a plain-language walkthrough of every screen element
+  (left-pane filters/sort/pin, the two-row pinned-card header, the weekly
+  grid and how edits save, the role-filtered add-member picker, the weekly
+  load strip's color tiers, where an employee's buffer/hard-capacity is
+  configured, and what the health badge means). Visible to all internal
+  users (`internal_permission: read`, `is_article_visible_by_everyone:
+  True`), but only the Administrator account can edit it
+  (`article_member_ids` grants `base.partner_admin` write access) — Knowledge
+  has no group-based sharing, only per-person, so this is the closest match
+  to "admin edits, everyone else reads" the module supports natively.
+- New dependency: `knowledge` (Enterprise), matching the pattern already
+  used by other modules in this workspace for shipping end-user docs.
+
+Verified via full local install plus a real login+render screenshot of the
+published article, and confirmed via `odoo shell` that permission actually
+resolves to `write` for the admin partner and the article appears in the
+shared Workspace section (not buried in Private).
+
 ## [1.0.6] - 2026-08-14
 
 User-requested changes after further review of the live pilot deployment.

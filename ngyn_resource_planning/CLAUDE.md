@@ -88,6 +88,7 @@ client feedback — check `docs/ARCHITECTURE.md` before "fixing" it.
 | Visual/layout changes | `static/src/scss/resource_planning.scss` (scoped under `.o_ngyn_rp`) |
 | New menu item / server action | `views/resource_planning_menus.xml` |
 | Employee form field placement | `views/hr_employee_views.xml` (xpath on `//notebook`, position `before`) — there's no equivalent task-form view file anymore, since "Charged" now reads the native `project.task.allocated_hours` field directly instead of a custom one |
+| End-user documentation | `data/knowledge_articles.xml` — one root `knowledge.article`, `internal_permission: read` + an explicit `write` member for `base.partner_admin` (Knowledge has no group-based sharing, only per-person). Keep this in sync with real UI behavior when the screen changes — it's meant to be the actual end-user reference, not a stub. |
 
 ## Conventions used in this codebase
 

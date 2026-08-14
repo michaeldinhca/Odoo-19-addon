@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Resource Planning',
-    'version': '19.0.1.0.6',
+    'version': '19.0.1.0.7',
     'category': 'Services/Project',
     'summary': 'Weekly resource planning workspace across projects, tasks and team capacity',
     'description': """
@@ -28,11 +28,12 @@ overview layer for staffing decisions across many projects at once.
     'author': 'NGYN Solutions',
     'website': 'https://www.ngynsolutions.com',
     'license': 'LGPL-3',
-    'depends': ['project', 'hr', 'hr_timesheet'],
+    'depends': ['project', 'hr', 'hr_timesheet', 'knowledge'],
     'data': [
         'security/ir.model.access.csv',
         'views/hr_employee_views.xml',
         'views/resource_planning_menus.xml',
+        'data/knowledge_articles.xml',
     ],
     'assets': {
         'web.assets_backend': [

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="knowledge_article_ngyn_rp_root" model="knowledge.article">
+        <field name="name">Resource Planning — User Guide</field>
+        <field name="icon">🗓️</field>
+        <field name="internal_permission">read</field>
+        <field name="is_article_visible_by_everyone" eval="True"/>
+        <field name="article_member_ids" eval="[
+            (0, 0, {
+                'partner_id': ref('base.partner_admin'),
+                'permission': 'write',
+            })]"/>
+        <field name="body" type="html">
+            <h1>Resource Planning — User Guide</h1>
+            <p>Resource Planning is a single screen for staffing decisions across
+            several projects at once: which projects are burning hours too fast,
+            who's overloaded this week, and what's still left to hand out on a
+            job you've already charged the client for.</p>
+            <p>Open it from the app switcher, or <strong>Resource Planning →
+            Weekly Plan</strong> in the menu.</p>
+
+            <h2>The left column — your project list</h2>
+            <p>Every active project shows up here (except internal/admin
+            projects and templates, which are hidden on purpose).</p>
+            <ul>
+                <li><strong>Search</strong> by project name or client at the top.</li>
+                <li><strong>Filter chips</strong> — <em>All</em>, or <em>Left to
+                assign</em> (only projects where you've charged more hours than
+                you've actually handed out to anyone yet — the ones that still
+                need staffing).</li>
+                <li><strong>Sort by</strong> — Health (worst first), Deadline
+                (soonest), or Project name.</li>
+                <li>Each row shows <strong>Due</strong> (deadline and days
+                left), <strong>Charged</strong> (the budget), <strong>Allocated</strong>
+                (hours actually given to someone), and <strong>Unscheduled</strong>
+                (given to someone but not yet placed on a specific week).</li>
+            </ul>
+            <p><strong>Click a project row to pin it</strong> to the workspace
+            on the right. Click it again (or the ✕ on its card) to unpin. You
+            can pin as many as you like at once.</p>
+
+            <h2>The right column — your planning workspace</h2>
+            <p>Each pinned project shows as a card with two header rows:</p>
+            <ul>
+                <li><strong>Row 1</strong> — the full project name. Click
+                anywhere on the header to collapse/expand the whole card.</li>
+                <li><strong>Row 2</strong> — client and dates, "Collapse all
+                tasks" / "Expand all tasks" buttons, the same four stats as the
+                left pane (Charged / Allocated / Left to assign / Unscheduled),
+                a health badge, and the unpin button.</li>
+            </ul>
+            <p>Below that is the weekly grid: one row per task, and under each
+            task, one row per person assigned to it.</p>
+            <ul>
+                <li>The small box next to a person's name is their
+                <strong>total hours</strong> on that task — how much they've
+                been given overall, regardless of which week.</li>
+                <li>Each week's column is where you place <strong>when</strong>
+                those hours actually happen. Type a number, press Tab or click
+                away, and it saves — hours round to the nearest quarter (0.25).</li>
+                <li>Clear a week's box back to blank to remove that week's plan
+                for that person entirely.</li>
+                <li>A grey ✕ means that week falls outside the project's own
+                start/deadline dates.</li>
+                <li>A grey, non-editable cell showing an hour value is a
+                <strong>past week</strong> — it's showing what was actually
+                logged in Timesheets, not the plan, and can't be edited here.
+                History stays history.</li>
+            </ul>
+            <p><strong>Adding someone to a task:</strong> click "+ Add team
+            member" under that task. Use the role chips on the left of the
+            picker to narrow the list (multi-select — pick several roles at
+            once, or click "All" to clear the selection), then click a person
+            to add them at 0 hours and start filling in their plan.</p>
+
+            <h2>The week navigator</h2>
+            <p>Top-right of the screen: step back/forward a batch of weeks
+            with the arrows, or jump straight back to the current week with
+            <strong>Today</strong>. This only changes what's visible — it
+            never moves anyone's actual planned hours.</p>
+
+            <h2>Weekly load strip (bottom of the screen)</h2>
+            <p>This shows, per person, their total hours across <em>every</em>
+            project they're on — not just the ones you've pinned — for each
+            visible week. It's how you catch someone being overbooked before
+            it happens.</p>
+            <ul>
+                <li><strong>Green</strong> — within their planning buffer.
+                <strong>Amber</strong> — past the buffer but still under full
+                capacity. <strong>Red</strong> — over full capacity.</li>
+                <li>Search by name, or filter by role (also multi-select —
+                click several roles, or "All" to reset).</li>
+                <li>The 📌 pin icon next to a name (here or in the planning
+                grid above) adds them to a short list and hides everyone else
+                in this strip — handy once you only care about two or three
+                people.</li>
+                <li>Hover any cell for the exact numbers behind the color.</li>
+            </ul>
+            <p>A person's buffer and hard-capacity targets are set on their
+            own record: <strong>Employees app → open the person → the
+            "Resource Planning" section</strong>, just above the tabs. Buffer
+            defaults to 28h/week, hard capacity to 40h/week, and both can be
+            changed per person.</p>
+
+            <h2>Project health (On track / Stalled / Over burn)</h2>
+            <p>Shown as a badge on each pinned project's header. It compares
+            how much of the project's timeline has passed against how many
+            hours have actually been logged in Timesheets so far:</p>
+            <ul>
+                <li><strong>Over burn</strong> — hours are being logged much
+                faster than time is passing. At this rate the charged budget
+                may run out before the deadline.</li>
+                <li><strong>Stalled</strong> — time is passing much faster
+                than hours are being logged. Work may be blocked.</li>
+                <li><strong>On track</strong> — everything else, including
+                any project that's missing a start date or deadline (there's
+                nothing to compare against yet, so it can't flag a problem).</li>
+            </ul>
+
+            <h2>Where roles come from</h2>
+            <p>The "role" used for filtering (CAD Drafter, Structural
+            Engineer, etc.) is each person's <strong>Job Position</strong>,
+            set on their employee record. Anyone without one assigned shows
+            up as "Team Member" until it's set.</p>
+        </field>
+    </record>
+</odoo>
