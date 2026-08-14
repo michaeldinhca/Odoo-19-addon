@@ -87,7 +87,7 @@ client feedback — check `docs/ARCHITECTURE.md` before "fixing" it.
 | Change what's editable vs. locked per week | `inSchedule()` / `isPastWeek()` in the JS, and the corresponding `t-if/t-elif/t-else` block in the template's week-cell `<td>` |
 | Visual/layout changes | `static/src/scss/resource_planning.scss` (scoped under `.o_ngyn_rp`) |
 | New menu item / server action | `views/resource_planning_menus.xml` |
-| Task/employee form field placement | `views/project_task_views.xml` / `views/hr_employee_views.xml` (both xpath on `//notebook`, position `before`) |
+| Employee form field placement | `views/hr_employee_views.xml` (xpath on `//notebook`, position `before`) — there's no equivalent task-form view file anymore, since "Charged" now reads the native `project.task.allocated_hours` field directly instead of a custom one |
 
 ## Conventions used in this codebase
 

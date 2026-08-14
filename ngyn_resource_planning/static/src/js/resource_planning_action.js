@@ -89,18 +89,18 @@ export class NgynResourcePlanning extends Component {
             projects: [],
             employees: [],
             pinned: [],
-            activeFilter: "all",
+            activeFilter: new Set(), // empty = "All"
             sortMode: "health",
             searchQuery: "",
             collapsedProjects: new Set(),
             collapsedTasks: new Set(),
             weeklyLoadFilter: new Set(),
             capSearch: "",
-            capRoleFilter: "all",
+            capRoleFilter: new Set(), // empty = "All roles"
             capCollapsed: false,
             windowStart: CURRENT_WEEK_IDX,
             openPicker: null, // {taskId}
-            pickerRoleFilter: "all",
+            pickerRoleFilter: new Set(), // empty = "All"
         });
 
         onWillStart(() => this.loadData());
@@ -125,7 +125,10 @@ export class NgynResourcePlanning extends Component {
             ? await this.orm.searchRead(
                   "project.task",
                   [["project_id", "in", projectIds], ["active", "=", true]],
-                  ["name", "project_id", "x_ngyn_charged_hours"]
+                  // allocated_hours is native project.task ("Allocated Time") -- Charged reads this
+                  // directly so it stays in sync with Sales Order quantities (sale_project writes
+                  // it on order confirmation/qty change) instead of needing separate manual entry.
+                  ["name", "project_id", "allocated_hours"]
               )
             : [];
         const taskIds = tasks.map((t) => t.id);
@@ -218,7 +221,7 @@ export class NgynResourcePlanning extends Component {
                     return {
                         id: t.id,
                         name: t.name,
-                        charged: t.x_ngyn_charged_hours || 0,
+                        charged: t.allocated_hours || 0,
                         assignments: tAssignments,
                     };
                 });
@@ -370,8 +373,8 @@ export class NgynResourcePlanning extends Component {
         const q = this.state.searchQuery.trim().toLowerCase();
         let list = this.state.projects.map((p) => ({ p, stats: this.projectStats(p) }));
         if (q) list = list.filter(({ p }) => (p.name + " " + p.client).toLowerCase().includes(q));
-        if (this.state.activeFilter !== "all") {
-            list = list.filter(({ stats }) => stats.status === this.state.activeFilter);
+        if (this.state.activeFilter.has("unallocated")) {
+            list = list.filter(({ p }) => this.projectAllocationStats(p).leftToAssign > 0);
         }
         if (this.state.sortMode === "health") {
             const rank = { red: 0, amber: 1, green: 2 };
@@ -384,10 +387,10 @@ export class NgynResourcePlanning extends Component {
         }
         return list.map((x) => x.p);
     }
-    get healthCounts() {
-        const c = { red: 0, amber: 0, green: 0 };
-        this.state.projects.forEach((p) => c[this.projectStats(p).status]++);
-        return c;
+    // Count of projects with hours still left to assign to anyone (charged > allocated) --
+    // the thing the "Left to assign" filter chip counts and filters on.
+    get unallocatedCount() {
+        return this.state.projects.filter((p) => this.projectAllocationStats(p).leftToAssign > 0).length;
     }
     get pinnedProjects() {
         return this.state.pinned.map((id) => this.state.projects.find((p) => p.id === id)).filter(Boolean);
@@ -396,7 +399,7 @@ export class NgynResourcePlanning extends Component {
         this.state.searchQuery = ev.target.value;
     }
     setFilter(f) {
-        this.state.activeFilter = f;
+        this._toggleFilterSet(this.state.activeFilter, f);
     }
     onSortChange(ev) {
         this.state.sortMode = ev.target.value;
@@ -487,6 +490,13 @@ export class NgynResourcePlanning extends Component {
     get roles() {
         return [...new Set(this.state.employees.map((e) => e.role))].sort();
     }
+    // Shared by every multi-select chip cloud (health filter, both role filters):
+    // "all" clears the whole selection; otherwise toggles that one value in/out of it.
+    _toggleFilterSet(set, value) {
+        if (value === "all") set.clear();
+        else if (set.has(value)) set.delete(value);
+        else set.add(value);
+    }
     isPickerOpen(taskId) {
         return this.state.openPicker && this.state.openPicker.taskId === taskId;
     }
@@ -494,15 +504,15 @@ export class NgynResourcePlanning extends Component {
         ev.stopPropagation();
         const opening = !this.isPickerOpen(task.id);
         this.state.openPicker = opening ? { taskId: task.id } : null;
-        if (opening) this.state.pickerRoleFilter = "all";
+        if (opening) this.state.pickerRoleFilter.clear();
     }
     setPickerRole(role, ev) {
         ev.stopPropagation();
-        this.state.pickerRoleFilter = role;
+        this._toggleFilterSet(this.state.pickerRoleFilter, role);
     }
     pickerMembers() {
         return this.state.employees.filter(
-            (e) => this.state.pickerRoleFilter === "all" || e.role === this.state.pickerRoleFilter
+            (e) => this.state.pickerRoleFilter.size === 0 || this.state.pickerRoleFilter.has(e.role)
         );
     }
     async addAssignment(task, employee, ev) {
@@ -551,12 +561,12 @@ export class NgynResourcePlanning extends Component {
         this.state.capSearch = ev.target.value;
     }
     setCapRoleFilter(role) {
-        this.state.capRoleFilter = role;
+        this._toggleFilterSet(this.state.capRoleFilter, role);
     }
     get filteredCapEmployees() {
         const q = this.state.capSearch.trim().toLowerCase();
         return this.state.employees.filter((e) => {
-            if (this.state.capRoleFilter !== "all" && e.role !== this.state.capRoleFilter) return false;
+            if (this.state.capRoleFilter.size > 0 && !this.state.capRoleFilter.has(e.role)) return false;
             if (q && !(e.name + " " + e.role).toLowerCase().includes(q)) return false;
             if (this.state.weeklyLoadFilter.size > 0 && !this.state.weeklyLoadFilter.has(e.id)) return false;
             return true;

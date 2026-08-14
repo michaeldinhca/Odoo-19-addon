@@ -40,11 +40,19 @@ existence check.
 
 ## Extended standard models
 
-### `project.task` (+2 fields)
+### `project.task` (+1 field)
 | Field | Type | Purpose |
 |---|---|---|
-| `x_ngyn_charged_hours` | Float | Hours sold/charged to the client for this task — the budget the workspace plans against. Shown on the task form under a new "Resource Planning" group, before the notebook tabs. |
 | `x_ngyn_assignment_ids` | One2many → `ngyn.task.assignment` | reverse relation, not currently shown on any view — available for future use (e.g. a smart button showing assignment count). |
+
+**"Charged" no longer has its own custom field.** It reads the native
+`project.task.allocated_hours` ("Allocated Time") directly, so it stays in
+sync with Sales Orders — `sale_project` writes this field from the SO
+line's quantity on confirmation/quantity change, with no separate manual
+entry needed. If a task wasn't created from a Sales Order, `allocated_hours`
+is just a plain field, settable directly on the task form like any other
+Odoo field. (`x_ngyn_charged_hours` existed in versions before 1.0.6 —
+removed once this was pointed out as unnecessary duplication.)
 
 ### `hr.employee` (+2 fields)
 | Field | Type | Default | Purpose |

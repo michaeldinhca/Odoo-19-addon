@@ -5,6 +5,40 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.6] - 2026-08-14
+
+User-requested changes after further review of the live pilot deployment.
+
+### Changed
+- **"Charged" now reads the native `project.task.allocated_hours`** ("Allocated
+  Time") instead of a separate custom field — stays in sync with Sales Orders
+  automatically (`sale_project` writes it from the SO line's quantity), no
+  more duplicate manual entry. `x_ngyn_charged_hours` and its task-form view
+  are removed entirely.
+- **Team-member role filter chips, add-member picker's role chips, and the
+  project health filter chips are all multi-select now** — click several to
+  combine them; clicking "All" clears the whole selection back to no filter.
+- **Left-pane project-list health badge removed** to give the project title
+  the full row width (it was forcing long names to truncate).
+- **Left-pane filter chips replaced.** Health-status filtering (Over
+  burn/Stalled/On track) is gone from the filter row; replaced with a single
+  "Left to assign" chip — filters to projects where charged hours exceed
+  allocated hours (there's still budget nobody's been assigned yet). The
+  underlying health status/formula is unchanged and still drives the sort
+  option and the pinned-card health pill.
+- **Pinned project-card header restructured into two rows**: the full
+  project name on its own row, everything else (client/dates, task toolbar,
+  Charged/Allocated/Left to assign/Unscheduled stats, health pill, unpin)
+  together on a second row below it — was previously a single wrapping flex
+  row that squeezed the title into a narrow column.
+- Project names in both the left-pane list and pinned-card header now wrap
+  fully instead of a 2-line clamp, since there's no longer a competing badge
+  eating into the available width.
+
+Verified via full local install plus rendered-screenshot checks against
+seeded data (charged/allocated math, role from Job Position, the new filter
+chip, and the two-row header all confirmed visually).
+
 ## [1.0.5] - 2026-08-13
 
 User-requested fixes after reviewing the live staging environment.

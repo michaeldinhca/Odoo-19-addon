@@ -67,28 +67,23 @@
         border: 1px solid var(--rp-line-strong); cursor: pointer; color: var(--rp-ink-soft); background: var(--rp-surface);
     }
     .o_chip.active { background: var(--rp-ink); color: #fff; border-color: var(--rp-ink); }
-    .o_chip_dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; }
-    .o_chip_dot.red { background: var(--rp-red); }
-    .o_chip_dot.amber { background: var(--rp-amber); }
-    .o_chip_dot.green { background: var(--rp-green); }
     .o_ngyn_rp_sortrow { display: flex; justify-content: space-between; padding: 8px 14px; background: var(--rp-surface-alt); border-top: 1px solid var(--rp-line); border-bottom: 1px solid var(--rp-line); font-size: 11px; }
     .o_ngyn_rp_projectlist { overflow-y: auto; flex: 1; }
     .o_proj_row { padding: 11px 14px; border-bottom: 1px solid var(--rp-line); cursor: pointer; }
     .o_proj_row:hover { background: var(--rp-blue-soft); }
     .o_proj_row.pinned { background: var(--rp-blue-soft); border-left: 3px solid var(--rp-blue); }
-    .o_proj_top { display: flex; justify-content: space-between; gap: 8px; }
     .o_proj_text { min-width: 0; }
     .o_proj_name {
         font-weight: 600; word-break: break-word;
         display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
     .o_proj_client { font-size: 11px; color: var(--rp-ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .o_health_tag, .o_health_pill {
+    .o_health_pill {
         flex-shrink: 0; font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 3px; text-transform: uppercase; white-space: nowrap;
     }
-    .o_health_tag.green, .o_health_pill.green { background: var(--rp-green-soft); color: var(--rp-green); }
-    .o_health_tag.amber, .o_health_pill.amber { background: var(--rp-amber-soft); color: var(--rp-amber); }
-    .o_health_tag.red, .o_health_pill.red { background: var(--rp-red-soft); color: var(--rp-red); }
+    .o_health_pill.green { background: var(--rp-green-soft); color: var(--rp-green); }
+    .o_health_pill.amber { background: var(--rp-amber-soft); color: var(--rp-amber); }
+    .o_health_pill.red { background: var(--rp-red-soft); color: var(--rp-red); }
     .o_proj_stats {
         display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-top: 8px;
         padding: 7px 9px; background: var(--rp-paper); border-radius: 3px; border: 1px solid var(--rp-line); font-size: 11px;
@@ -113,23 +108,20 @@
     .o_pcard { background: var(--rp-surface); border: 1px solid var(--rp-line-strong); border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
     .o_pcard_head {
         padding: 10px 14px; background: var(--rp-ink); color: #EDEFEA; cursor: pointer;
-        display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+        display: flex; flex-direction: column; gap: 6px;
     }
-    .o_pcard_head_left { display: flex; align-items: flex-start; gap: 9px; max-width: 340px; min-width: 0; }
-    .o_collapse_btn { background: none; border: none; color: #9AA6AE; cursor: pointer; transition: transform .12s; }
+    .o_pcard_title_row { display: flex; align-items: center; gap: 9px; }
+    .o_collapse_btn { background: none; border: none; color: #9AA6AE; cursor: pointer; transition: transform .12s; flex-shrink: 0; }
     .o_pcard.collapsed .o_pcard_head .o_collapse_btn { transform: rotate(-90deg); }
-    .o_pcard_title {
-        font-weight: 600; font-size: 14px; word-break: break-word;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .o_pcard_client { font-size: 11px; color: #9AA6AE; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .o_pcard_head_mid { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; flex: 1; }
-    .o_hd_task_toolbar { display: flex; gap: 6px; }
+    .o_pcard_title { font-weight: 600; font-size: 14px; word-break: break-word; flex: 1; min-width: 0; }
+    .o_pcard_meta_row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding-left: 27px; }
+    .o_pcard_client { font-size: 11px; color: #9AA6AE; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; flex-shrink: 0; }
+    .o_hd_task_toolbar { display: flex; gap: 6px; flex-shrink: 0; }
     .o_hd_task_toolbar button { background: #1F2C36; border-color: #3A4750; color: #B7C0C6; }
     .o_hd_stat { font-size: 11px; color: #9AA6AE; white-space: nowrap; }
     .o_hd_stat b { color: #EDEFEA; margin-left: 3px; }
     .o_hd_stat b.warn { color: #FF6E57; }
-    .o_pcard_head_right { display: flex; align-items: center; gap: 10px; }
+    .o_pcard_head_right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
     .o_unpin_btn { background: none; border: 1px solid #3A4750; color: #B7C0C6; border-radius: 3px; width: 22px; height: 22px; cursor: pointer; }
 
     .o_pcard.collapsed .o_pcard_body { display: none; }

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Resource Planning',
-    'version': '19.0.1.0.5',
+    'version': '19.0.1.0.6',
     'category': 'Services/Project',
     'summary': 'Weekly resource planning workspace across projects, tasks and team capacity',
     'description': """
@@ -31,7 +31,6 @@ overview layer for staffing decisions across many projects at once.
     'depends': ['project', 'hr', 'hr_timesheet'],
     'data': [
         'security/ir.model.access.csv',
-        'views/project_task_views.xml',
         'views/hr_employee_views.xml',
         'views/resource_planning_menus.xml',
     ],

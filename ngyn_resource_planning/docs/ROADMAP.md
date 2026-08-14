@@ -13,8 +13,9 @@ most for a wider rollout, not by effort.
   edit assignments where they're the assigned employee. Likely implemented via
   `ir.rule` record rules referencing `project.task.project_id` membership,
   once it's clear how the client wants this scoped.
-- [ ] Consider whether `x_ngyn_charged_hours` should be read-only for non-
-  managers (it's effectively the billing budget).
+- [ ] Consider whether `project.task.allocated_hours` should be read-only
+  for non-managers here (it's effectively the billing budget, and is
+  writable directly on the task form already via stock Odoo).
 
 ## Data & performance
 
