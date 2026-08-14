@@ -26,21 +26,24 @@
           <span t-esc="filteredProjects.length"/>
         </div>
         <div class="o_ngyn_rp_search">
-          <input type="text" placeholder="Search project or client…"
-                 t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
+          <div class="o_search_box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search project or client…"
+                   t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
+          </div>
         </div>
         <div class="o_ngyn_rp_filters">
           <span t-attf-class="o_chip {{ state.activeFilter === 'all' ? 'active' : '' }}"
                 t-on-click="() => this.setFilter('all')">All</span>
           <span t-attf-class="o_chip {{ state.activeFilter === 'red' ? 'active' : '' }}"
                 t-on-click="() => this.setFilter('red')">
-            Over burn (<t t-esc="healthCounts.red"/>)</span>
+            <i class="o_chip_dot red"/>Over burn (<t t-esc="healthCounts.red"/>)</span>
           <span t-attf-class="o_chip {{ state.activeFilter === 'amber' ? 'active' : '' }}"
                 t-on-click="() => this.setFilter('amber')">
-            Stalled (<t t-esc="healthCounts.amber"/>)</span>
+            <i class="o_chip_dot amber"/>Stalled (<t t-esc="healthCounts.amber"/>)</span>
           <span t-attf-class="o_chip {{ state.activeFilter === 'green' ? 'active' : '' }}"
                 t-on-click="() => this.setFilter('green')">
-            On track (<t t-esc="healthCounts.green"/>)</span>
+            <i class="o_chip_dot green"/>On track (<t t-esc="healthCounts.green"/>)</span>
         </div>
         <div class="o_ngyn_rp_sortrow">
           <span>Sort by</span>
@@ -72,14 +75,17 @@
                    <span t-attf-class="v {{ projectAllocationStats(proj).unscheduled > 0 ? 'warn' : '' }}"
                          t-esc="projectAllocationStats(proj).unscheduled + 'h'"/></div>
             </div>
+            <div t-if="isPinned(proj.id)" class="o_pin_hint">📌 Pinned to planning workspace →</div>
           </div>
         </div>
       </div>
 
       <!-- ============ RIGHT PANE ============ -->
       <div class="o_ngyn_rp_right">
+       <div class="o_ngyn_rp_right_scroll">
         <div t-if="!state.pinned.length" class="o_ngyn_rp_empty">
-          Click a project on the left to pin it here for planning. You can pin several at once.
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="4" x2="8" y2="9"/></svg>
+          <div>Click a project on the left to pin it here for planning. You can pin several at once.</div>
         </div>
 
         <t t-else="">
@@ -215,11 +221,10 @@
             </div>
           </div>
         </t>
-      </div>
-    </div>
+       </div>
 
-    <!-- ============ WEEKLY LOAD STRIP ============ -->
-    <div t-if="!state.loading" t-attf-class="o_capstrip {{ state.capCollapsed ? 'collapsed' : '' }}">
+        <!-- ============ WEEKLY LOAD STRIP ============ -->
+        <div t-attf-class="o_capstrip {{ state.capCollapsed ? 'collapsed' : '' }}">
       <div class="o_cap_header" t-on-click="toggleCapCollapsed">
         <div class="o_cap_header_left">
           <button class="o_collapse_btn">▾</button>
@@ -232,7 +237,10 @@
         </div>
       </div>
       <div class="o_cap_subheader">
-        <input type="text" placeholder="Search team member…" t-on-input="onCapSearchInput"/>
+        <div class="o_search_box small">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search team member…" t-on-input="onCapSearchInput"/>
+        </div>
         <div class="o_cap_role_chips">
           <span t-attf-class="o_role_chip small {{ state.capRoleFilter === 'all' ? 'active' : '' }}"
                 t-on-click="() => this.setCapRoleFilter('all')">All roles</span>
@@ -281,6 +289,8 @@
         </table>
       </div>
       <div class="o_footnote">Grey cells = past weeks, showing actual logged hours (not editable). Colored cells = planned. Hover a cell for exact numbers.</div>
+        </div>
+      </div>
     </div>
 
   </div>

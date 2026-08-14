@@ -5,6 +5,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.4] - 2026-08-13
+
+### Fixed
+- **Weekly load strip spanned the full app width**, including under the left
+  "Projects" pane, instead of being width-matched to the right (planning)
+  pane like the original mockup — a real DOM-structure gap, not styling: the
+  strip was a sibling of the whole two-pane workspace grid rather than
+  nested inside the right-pane column. This also meant its week columns
+  (Aug 10, Aug 17, ...) didn't line up with the pinned project grids above
+  it. Moved the strip inside `.o_ngyn_rp_right`, alongside a new
+  `.o_ngyn_rp_right_scroll` wrapper around the existing project-card content
+  (mirrors the mockup's `.right-pane` containing both `.planning-scroll` and
+  `.capacity-strip`) — the strip now stays width-matched and column-aligned
+  regardless of what's pinned.
+
+### Added
+(mockup-parity items found in the same pass)
+- "📌 Pinned to planning workspace →" hint under a project's stats once it's
+  pinned, in the left pane — present in the mockup, silently never built.
+- Magnifying-glass icon on both search boxes (project search, weekly-load
+  search).
+- Colored status dot in the left-pane filter chips (red/amber/green),
+  matching the health-tag colors already used elsewhere.
+- Icon in the "pin something to get started" empty state.
+
+Verified via a full local install plus an actual rendered screenshot
+(headless Chrome) against seeded data — confirmed the weekly load strip's
+width and week columns now match the pinned project grid above it.
+
 ## [1.0.3] - 2026-08-13
 
 ### Fixed
