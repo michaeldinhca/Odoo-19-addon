@@ -5,6 +5,41 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.5] - 2026-08-13
+
+User-requested fixes after reviewing the live staging environment.
+
+### Changed
+- **"Internal" project no longer appears in the dashboard.** `loadData()`'s
+  `project.project` query now excludes `is_internal_project` and
+  `is_template` projects — the same domain the stock Project app's own
+  actions apply. Previously the per-company auto-created "Internal" project
+  (`hr_timesheet`'s `res.company.internal_project_id`, with its default
+  "Meeting"/"Training" tasks) showed up here even though it's hidden in the
+  standard Projects app.
+- **Team-member "role" now reads the structured Job Position** (`hr.job` via
+  `hr.employee.job_id`) instead of the free-text `job_title` field, per
+  request — set it from an employee's Work tab. Falls back to "Team Member"
+  if unset.
+
+### Fixed
+- **Project-card header no longer changes layout on collapse.** The task
+  toolbar, Charged/Allocated/Left to assign/Unscheduled stats, and health
+  badge used to disappear when a project card was collapsed; now only the
+  task/week grid underneath hides — the header stays pixel-identical
+  collapsed or expanded.
+- **Project names no longer truncate.** Both the left-pane list and the
+  pinned project-card header now wrap the full name across up to 2 lines
+  instead of cutting it off with "...".
+
+### Changed (layout)
+- Widened the task/team-member name column (240px → 320px) and narrowed the
+  14 week columns proportionally, per request, to give names more room.
+
+Verified via a full local install plus rendered-screenshot checks (headless
+Chrome against seeded data) for every item above, including an explicit
+before/after comparison of the collapsed vs. expanded project-card header.
+
 ## [1.0.4] - 2026-08-13
 
 ### Fixed

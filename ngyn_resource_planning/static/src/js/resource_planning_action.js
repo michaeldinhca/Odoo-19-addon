@@ -112,7 +112,10 @@ export class NgynResourcePlanning extends Component {
     async loadData() {
         const projects = await this.orm.searchRead(
             "project.project",
-            [["active", "=", true]],
+            // Same exclusions the stock Project app's own actions apply (project/hr_timesheet's
+            // is_internal_project/is_template domain) — otherwise the per-company auto-created
+            // "Internal" project (and any templates) shows up here even though it's hidden there.
+            [["active", "=", true], ["is_internal_project", "=", false], ["is_template", "=", false]],
             ["name", "partner_id", "date_start", "date"],
             { limit: 300, order: "date asc" }
         );
@@ -147,7 +150,7 @@ export class NgynResourcePlanning extends Component {
         const employees = await this.orm.searchRead(
             "hr.employee",
             [["active", "=", true]],
-            ["name", "job_title", "x_ngyn_weekly_target_hours", "x_ngyn_weekly_hard_hours"]
+            ["name", "job_id", "x_ngyn_weekly_target_hours", "x_ngyn_weekly_hard_hours"]
         );
 
         const tsDomain = taskIds.length
@@ -174,7 +177,7 @@ export class NgynResourcePlanning extends Component {
         this.state.employees = employees.map((e) => ({
             id: e.id,
             name: e.name,
-            role: e.job_title || "Team Member",
+            role: e.job_id ? e.job_id[1] : "Team Member",
             target: e.x_ngyn_weekly_target_hours || 28,
             hard: e.x_ngyn_weekly_hard_hours || 40,
         }));

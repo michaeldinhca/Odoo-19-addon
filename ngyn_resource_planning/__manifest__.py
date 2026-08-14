@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Resource Planning',
-    'version': '19.0.1.0.4',
+    'version': '19.0.1.0.5',
     'category': 'Services/Project',
     'summary': 'Weekly resource planning workspace across projects, tasks and team capacity',
     'description': """

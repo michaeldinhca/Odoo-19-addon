@@ -56,9 +56,6 @@ were consciously cut for v1 to reduce risk on first install — not oversights:
 - [ ] Notifications/digest when a project crosses into "Over burn."
 - [ ] Exporting the weekly load strip (or a filtered slice of it) to a
   spreadsheet.
-- [ ] Structured `hr.job` support as an alternative to the free-text
-  `job_title` field for role display/filtering, if the client's HR data uses
-  structured job positions.
 
 ## Code health
 

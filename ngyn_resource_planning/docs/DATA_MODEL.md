@@ -57,18 +57,23 @@ existence check.
 - **`project.project`** — `name`, `partner_id`, `date_start`, `date` (the
   Enterprise "Expiration Date"/deadline field). If these dates are unset for a
   project, health status can't be computed (see `docs/ARCHITECTURE.md`).
+  Queried with `is_internal_project = False` and `is_template = False` —
+  the same exclusions the stock Project app's own actions apply — so the
+  per-company auto-created "Internal" project (`hr_timesheet`'s
+  `res.company.internal_project_id`, with its default "Meeting"/"Training"
+  tasks) and any project templates don't show up here either.
 - **`account.analytic.line`** (Timesheets) — `task_id`, `employee_id`, `date`,
   `unit_amount`. Used two ways:
   1. Bucketed into week-index buckets client-side to show "actual hours" on
      locked past-week cells (per task, per employee).
-  2. Summed per-project (regardless of task) via `readGroup` for the project-
-     level "% logged" health metric — this is intentionally broader than the
-     per-task actuals, since some logged time may not be tied to a specific
-     task.
-- **`hr.employee`** for the base fields (`name`, `job_title`) used to display
-  role — `job_title` is a free-text field on the standard employee form, not
-  the `hr.job` model. If your database uses structured job positions instead
-  of free text, `job_title` may be empty; see `docs/ROADMAP.md`.
+  2. Summed per-project (regardless of task) via `webReadGroup` for the
+     project-level "% logged" health metric — this is intentionally broader
+     than the per-task actuals, since some logged time may not be tied to a
+     specific task.
+- **`hr.employee`** for the base fields (`name`, `job_id`) used to display
+  role — `job_id` is the structured "Job Position" Many2one (`hr.job`), set
+  from the employee's Work tab (or via Recruitment > Job Positions). An
+  employee with no job position assigned falls back to "Team Member".
 
 ## Entity relationship (text diagram)
 
