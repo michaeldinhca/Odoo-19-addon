@@ -146,6 +146,7 @@
     }
     .o_task_charge { font-size: 11px; color: var(--rp-ink-soft); font-weight: 500; }
     .o_task_charge .warn { color: var(--rp-red); }
+    .o_task_charge .overcharged { color: var(--rp-red); font-weight: 700; }
 
     tr.o_emp_row td.emp_cell { padding: 6px 14px 6px 26px; font-size: 12px; }
     .o_emp_inner { display: flex; align-items: center; gap: 8px; }
@@ -159,6 +160,7 @@
     .o_pin_btn:hover { opacity: .8; }
     .o_pin_btn.active { filter: none; opacity: 1; }
     .o_alloc_input { width: 42px; font-size: 12px; text-align: center; border: 1px solid var(--rp-line-strong); border-radius: 3px; padding: 2px; margin-left: auto; background: var(--rp-paper); }
+    .o_alloc_input.over { border-color: var(--rp-red); background: var(--rp-red-soft); color: var(--rp-red); }
 
     .o_dim_box {
         width: 42px; height: 28px; margin: 0 auto; border: 1px solid var(--rp-line-strong); border-radius: 2px;
@@ -166,6 +168,8 @@
     }
     .o_dim_box input { width: 100%; height: 100%; border: none; background: transparent; text-align: center; font-size: 11px; outline: none; }
     .o_dim_box.locked { background: var(--rp-surface-alt); }
+    .o_dim_box.over { border-color: var(--rp-red); background: var(--rp-red-soft); }
+    .o_dim_box.over input { color: var(--rp-red); font-weight: 600; }
     .o_dim_box .out { color: var(--rp-line-strong); font-size: 10px; }
     .o_dim_box .actual { color: var(--rp-ink-soft); font-size: 11px; font-weight: 600; }
 

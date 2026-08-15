@@ -3,6 +3,7 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 
 /* =========================================================
    Week timeline helpers
@@ -83,6 +84,7 @@ export class NgynResourcePlanning extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.dialog = useService("dialog");
 
         this.state = useState({
             loading: true,
@@ -329,7 +331,16 @@ export class NgynResourcePlanning extends Component {
             (s, a) => s + Object.values(a.weeks).reduce((x, y) => x + y.hours, 0),
             0
         );
-        return { allocated, leftToAssign: task.charged - allocated, unscheduled: allocated - scheduled };
+        // Charged is the budget; allocated (per-person totals) and scheduled (hours placed
+        // into weeks) are two independently-editable numbers that can each exceed it.
+        const overCharged = allocated > task.charged || scheduled > task.charged;
+        return {
+            allocated,
+            scheduled,
+            leftToAssign: task.charged - allocated,
+            unscheduled: allocated - scheduled,
+            overCharged,
+        };
     }
     projectAllocationStats(p) {
         const allocated = p.tasks.reduce((s, t) => s + this.taskComputed(t).allocated, 0);
@@ -356,6 +367,16 @@ export class NgynResourcePlanning extends Component {
     }
     actualHours(assignment, weekIdx) {
         return assignment.actuals[weekIdx] || 0;
+    }
+    // Only flag week cells that actually contribute hours, not every empty cell on an
+    // over-charged task row — keeps the red highlight meaningful instead of noisy.
+    weekCellOverCharged(task, assignment, weekIdx) {
+        return this.taskComputed(task).overCharged && this.weekHours(assignment, weekIdx) > 0;
+    }
+    // Same idea for the per-person total box: only flag rows that actually have hours,
+    // not every 0h row on an over-charged task.
+    allocInputOverCharged(task, assignment) {
+        return this.taskComputed(task).overCharged && assignment.alloc > 0;
     }
     inSchedule(project, weekIdx) {
         const r = this.projectWeekRange(project);
@@ -453,37 +474,70 @@ export class NgynResourcePlanning extends Component {
     /* =====================================================
        PLANNING GRID — edits (write on change, quarter-hour rounding)
        ===================================================== */
-    async onAllocChange(assignment, ev) {
-        const v = roundQuarter(parseFloat(ev.target.value) || 0);
-        assignment.alloc = v;
-        try {
-            await this.orm.write("ngyn.task.assignment", [assignment.id], { alloc_hours: v });
-        } catch (e) {
-            this.notification.add("Could not save that hour value.", { type: "danger" });
+    // Shared by onAllocChange/onWeekChange: if `hypothetical` would newly push (or worsen)
+    // the task over its charged budget, ask for confirmation before calling `proceed`;
+    // otherwise just proceed. `revert` restores the input's displayed value on cancel.
+    _confirmIfOverCharged(task, oldValue, newValue, hypothetical, proceed, revert) {
+        if (newValue > oldValue && hypothetical > task.charged) {
+            this.dialog.add(ConfirmationDialog, {
+                title: "Over the charged budget",
+                body: `This would put ${hypothetical}h on this task, but it's only charged for ${task.charged}h. Save anyway?`,
+                confirm: proceed,
+                cancel: revert,
+                confirmLabel: "Save anyway",
+                confirmClass: "btn-danger",
+            });
+        } else {
+            proceed();
         }
     }
-    async onWeekChange(assignment, weekIdx, ev) {
+    onAllocChange(assignment, task, ev) {
+        const v = roundQuarter(parseFloat(ev.target.value) || 0);
+        const oldValue = assignment.alloc;
+        const otherAlloc = task.assignments.reduce((s, a) => s + (a === assignment ? 0 : a.alloc), 0);
+        const proceed = async () => {
+            assignment.alloc = v;
+            try {
+                await this.orm.write("ngyn.task.assignment", [assignment.id], { alloc_hours: v });
+            } catch (e) {
+                this.notification.add("Could not save that hour value.", { type: "danger" });
+            }
+        };
+        const revert = () => { ev.target.value = oldValue; };
+        this._confirmIfOverCharged(task, oldValue, v, otherAlloc + v, proceed, revert);
+    }
+    onWeekChange(assignment, task, weekIdx, ev) {
         const v = roundQuarter(parseFloat(ev.target.value) || 0);
         const existing = assignment.weeks[weekIdx];
+        const oldValue = existing ? existing.hours : 0;
         const weekDateStr = toIso(weekDate(weekIdx));
-        try {
-            if (existing && existing.id) {
-                if (v > 0) {
-                    await this.orm.write("ngyn.task.assignment.week", [existing.id], { hours: v });
-                    assignment.weeks[weekIdx] = { id: existing.id, hours: v };
-                } else {
-                    await this.orm.unlink("ngyn.task.assignment.week", [existing.id]);
-                    delete assignment.weeks[weekIdx];
+        const otherScheduled = task.assignments.reduce(
+            (s, a) => s + Object.entries(a.weeks).reduce(
+                (x, [idx, w]) => x + (a === assignment && Number(idx) === weekIdx ? 0 : w.hours), 0
+            ), 0
+        );
+        const proceed = async () => {
+            try {
+                if (existing && existing.id) {
+                    if (v > 0) {
+                        await this.orm.write("ngyn.task.assignment.week", [existing.id], { hours: v });
+                        assignment.weeks[weekIdx] = { id: existing.id, hours: v };
+                    } else {
+                        await this.orm.unlink("ngyn.task.assignment.week", [existing.id]);
+                        delete assignment.weeks[weekIdx];
+                    }
+                } else if (v > 0) {
+                    const newIds = await this.orm.create("ngyn.task.assignment.week", [
+                        { assignment_id: assignment.id, week_start_date: weekDateStr, hours: v },
+                    ]);
+                    assignment.weeks[weekIdx] = { id: newIds[0], hours: v };
                 }
-            } else if (v > 0) {
-                const newIds = await this.orm.create("ngyn.task.assignment.week", [
-                    { assignment_id: assignment.id, week_start_date: weekDateStr, hours: v },
-                ]);
-                assignment.weeks[weekIdx] = { id: newIds[0], hours: v };
+            } catch (e) {
+                this.notification.add("Could not save that hour value.", { type: "danger" });
             }
-        } catch (e) {
-            this.notification.add("Could not save that hour value.", { type: "danger" });
-        }
+        };
+        const revert = () => { ev.target.value = this.displayHours(oldValue); };
+        this._confirmIfOverCharged(task, oldValue, v, otherScheduled + v, proceed, revert);
     }
 
     /* =====================================================

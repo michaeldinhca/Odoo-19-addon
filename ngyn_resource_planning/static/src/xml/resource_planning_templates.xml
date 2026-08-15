@@ -138,9 +138,13 @@
                             <span class="o_task_title" t-esc="task.name"/>
                             <span t-if="task.stage" class="o_task_stage" t-esc="task.stage"/>
                             <span class="o_task_charge">
-                              Charged <t t-esc="task.charged"/>h · Allocated <t t-esc="taskComputed(task).allocated"/>h
+                              Charged <t t-esc="task.charged"/>h ·
+                              <span t-attf-class="{{ taskComputed(task).overCharged ? 'overcharged' : '' }}">Allocated <t t-esc="taskComputed(task).allocated"/>h</span>
                               <t t-if="taskComputed(task).unscheduled > 0">
                                 · <span class="warn"><t t-esc="taskComputed(task).unscheduled"/>h unscheduled</span>
+                              </t>
+                              <t t-if="taskComputed(task).overCharged">
+                                · <span class="overcharged">over charged budget</span>
                               </t>
                             </span>
                           </div>
@@ -159,8 +163,9 @@
                               <button class="o_pin_btn" t-att-class="isEmployeePinned(a.employeeId) ? 'active' : ''"
                                       t-on-click="(ev) => this.toggleEmployeePin(a.employeeId, ev)"
                                       title="Pin / unpin from weekly load filter">📌</button>
-                              <input type="number" step="0.25" min="0" class="o_alloc_input"
-                                     t-att-value="a.alloc" t-on-change="(ev) => this.onAllocChange(a, ev)"/>
+                              <input type="number" step="0.25" min="0"
+                                     t-attf-class="o_alloc_input {{ allocInputOverCharged(task, a) ? 'over' : '' }}"
+                                     t-att-value="a.alloc" t-on-change="(ev) => this.onAllocChange(a, task, ev)"/>
                             </div>
                           </td>
                           <td t-foreach="visibleWeeks()" t-as="w" t-key="w.idx" class="wk_cell">
@@ -171,10 +176,10 @@
                                  title="Actual hours logged this week — past weeks aren't editable here.">
                               <span class="actual" t-esc="actualHours(a, w.idx) > 0 ? actualHours(a, w.idx) + 'h' : '–'"/>
                             </div>
-                            <div t-else="" class="o_dim_box">
+                            <div t-else="" t-attf-class="o_dim_box {{ weekCellOverCharged(task, a, w.idx) ? 'over' : '' }}">
                               <input type="number" step="0.25" min="0"
                                      t-att-value="displayHours(weekHours(a, w.idx))"
-                                     t-on-change="(ev) => this.onWeekChange(a, w.idx, ev)"/>
+                                     t-on-change="(ev) => this.onWeekChange(a, task, w.idx, ev)"/>
                             </div>
                           </td>
                         </tr>

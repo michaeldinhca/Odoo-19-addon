@@ -5,6 +5,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.10] - 2026-08-15
+
+### Added
+- **Over-charged budget warning, with confirm-to-override.** A task whose
+  allocated hours (per-person totals) or scheduled hours (hours placed into
+  weeks) exceed its charged hours is now visibly flagged instead of silently
+  producing a confusing negative "unscheduled" number:
+  - The task header's "Allocated" text turns red and gains an explicit
+    "over charged budget" label.
+  - The specific total-hours box or week cell that's actually contributing
+    to the overage gets a red border (not every box on the row — a 0h box
+    on an over-charged task stays neutral).
+  - Typing a value that would *newly* push a task over its charged hours
+    (or make an existing overage worse) pops a confirm dialog ("Save
+    anyway?") before the write goes through; cancelling reverts the input
+    to its prior value and nothing is saved. Reducing a value, even on an
+    already-over task, never prompts — only edits that make things worse do.
+  - Applies independently to both edit paths: the per-person total box
+    (`alloc_hours`) and individual week cells.
+
+Verified via a fresh install plus scripted browser interaction against
+seeded over-budget data: the warn-only visual state, the confirm-and-save
+path, and the cancel-and-revert path were each exercised and screenshotted.
+
 ## [1.0.9] - 2026-08-15
 
 ### Changed

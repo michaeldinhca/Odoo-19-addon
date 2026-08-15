@@ -106,8 +106,37 @@ allocated       = Σ ngyn.task.assignment.alloc_hours for the task
 leftToAssign    = task.charged - allocated          (can go negative — over-allocated)
 scheduled       = Σ ngyn.task.assignment.week.hours for the task
 unscheduled     = allocated - scheduled              (given to someone, not yet placed on a week)
+overCharged     = allocated > task.charged OR scheduled > task.charged
 ```
 Project-level numbers are the sum of these across all the project's tasks.
+
+`overCharged` is what drives the red "over charged budget" styling on a task's
+header and on the specific input(s) contributing to it (see "Over-charge
+warning" below) — it's deliberately an OR of both independently-editable
+numbers, since a task can go over budget via the total box, via week cells, or
+both, and either should be flagged the same way.
+
+### Over-charge warning (warn first, confirm to override)
+
+`onAllocChange()`/`onWeekChange()` don't write straight through. Before
+calling `orm.write`/`orm.create`/`orm.unlink`, they compute the *hypothetical*
+allocated/scheduled total the edit would produce (summed across every
+assignment on the task, not just the one being edited) and compare it to
+`task.charged`:
+
+- If the edit doesn't newly push the task over budget (or make an existing
+  overage worse — reducing a number never prompts, even if the task stays
+  over budget afterward), it saves immediately, same as before.
+- If it does, a `ConfirmationDialog` (`@web/core/confirmation_dialog`, via the
+  `dialog` service) asks "Save anyway?" before the write happens. Confirming
+  proceeds with the save; cancelling resets the `<input>`'s displayed value
+  directly (`ev.target.value = ...`) without touching state, since nothing was
+  written and Owl has no reason to re-render an unchanged reactive value.
+
+This is deliberately *not* a hard block — the client explicitly chose "warn
+and let people override" over "prevent entirely," since a real project
+sometimes does need to run over its originally charged hours and the person
+entering the number usually knows why.
 
 ### Weekly capacity / buffer tiers
 
