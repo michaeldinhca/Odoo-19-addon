@@ -8,11 +8,13 @@
     <menuitem id="menu_ngyn_resource_planning_root"
               name="Resource Planning"
               sequence="15"
+              groups="project.group_project_user"
               web_icon="ngyn_resource_planning,static/description/icon.png"/>
 
     <menuitem id="menu_ngyn_resource_planning_main"
               name="Weekly Plan"
               parent="menu_ngyn_resource_planning_root"
               action="action_ngyn_resource_planning"
+              groups="project.group_project_user"
               sequence="1"/>
 </odoo>

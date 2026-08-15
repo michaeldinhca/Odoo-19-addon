@@ -6,13 +6,20 @@ most for a wider rollout, not by effort.
 
 ## Security
 
-- [ ] **Differentiate access rights.** Currently `base.group_user` (any
-  internal/logged-in user) has full CRUD on both `ngyn.task.assignment` and
-  `ngyn.task.assignment.week`. Needs at minimum: project managers can edit
-  anything on their projects; other users can view but not edit, or can only
-  edit assignments where they're the assigned employee. Likely implemented via
-  `ir.rule` record rules referencing `project.task.project_id` membership,
-  once it's clear how the client wants this scoped.
+- [ ] **Differentiate access rights further.** As of `1.0.12`, the module and
+  its two models are gated to `project.group_project_user` (was
+  `base.group_user`, any logged-in user) — but within that group it's still
+  full CRUD for everyone: no distinction yet between project managers,
+  regular project users, or the specific employee an assignment is for.
+  Needs at minimum: project managers can edit anything on their projects;
+  other users can view but not edit, or can only edit assignments where
+  they're the assigned employee. Likely implemented via `ir.rule` record
+  rules referencing `project.task.project_id` membership, once it's clear how
+  the client wants this scoped. Native project visibility (`privacy_visibility`
+  on `project.project`) is already respected without any extra work here —
+  this module never bypasses it (no `sudo()` in the read paths), so a user who
+  can't see a project in the Project app can't see it in Resource Planning
+  either.
 - [ ] Consider whether `project.task.allocated_hours` should be read-only
   for non-managers here (it's effectively the billing budget, and is
   writable directly on the task form already via stock Odoo).

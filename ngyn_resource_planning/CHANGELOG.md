@@ -5,6 +5,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.12] - 2026-08-15
+
+### Changed
+- **Resource Planning now requires the "Project / User" access group**
+  (`project.group_project_user`), both the menu and the two custom models —
+  was `base.group_user` (any logged-in internal user), per direct request.
+  The automatic assignment sync (`_ensure_assignments`, triggered from a
+  task's native Assignees field or a logged timesheet) now runs `sudo()`
+  internally so it keeps working for anyone who touches a task or logs
+  time, even a user without `project.group_project_user` themselves — that
+  sync's whole point is to catch *everyone* connected to a task, not just
+  Resource Planning users, so it must not depend on the acting user's own
+  group.
+- Confirmed (not a code change): project/task visibility inside Resource
+  Planning already follows native Odoo access rights — nothing in this
+  module bypasses `project.project`'s own `privacy_visibility` record
+  rules (no `sudo()` anywhere in the read/`loadData()` path), so a user
+  who isn't a follower of a "Invited internal users" project won't see it
+  here either, same as in the stock Project app.
+
 ## [1.0.11] - 2026-08-15
 
 ### Fixed

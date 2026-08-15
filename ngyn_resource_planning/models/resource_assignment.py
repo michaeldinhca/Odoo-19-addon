@@ -56,6 +56,11 @@ class NgynTaskAssignment(models.Model):
         pairs = {(t, e) for t, e in pairs if t and e}
         if not pairs:
             return
+        # sudo: this runs from project.task/account.analytic.line writes made by
+        # whoever touched the task/timesheet, not necessarily someone with
+        # Resource Planning access themselves -- the sync must not depend on the
+        # acting user's own group membership.
+        self = self.sudo()
         existing = {
             (a.task_id.id, a.employee_id.id)
             for a in self.search([('task_id', 'in', list({t for t, _e in pairs}))])

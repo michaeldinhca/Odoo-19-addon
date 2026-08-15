@@ -67,10 +67,15 @@ client feedback — check `docs/ARCHITECTURE.md` before "fixing" it.
   deliberately asymmetric (burning too fast is flagged more sensitively than
   stalling).
 
-- **Access rights are currently wide open** (`base.group_user`, full CRUD on
-  both new models). This was a conscious v1 simplification, not an oversight —
-  see `docs/ROADMAP.md` for the intended follow-up (PM vs. assignee vs.
-  read-only).
+- **Access is gated to `project.group_project_user`** (the menu and both new
+  models — `1.0.12`, was `base.group_user`), but within that group it's still
+  full CRUD for everyone, no PM/assignee/read-only distinction yet. Conscious
+  v1-and-a-half simplification, not an oversight — see `docs/ROADMAP.md` for
+  the intended follow-up. The automatic assignment sync
+  (`_ensure_assignments`, see below) deliberately runs `sudo()` so it keeps
+  working for anyone who touches a task or logs time, even a user without
+  `project.group_project_user` themselves (e.g. a Timesheets-only user) —
+  don't remove that `sudo()` without re-checking this.
 
 - **No automated tests exist yet.** If you add features, please also add the
   first tests (there currently isn't even a `tests/` folder) — see
