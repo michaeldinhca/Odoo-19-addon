@@ -135,9 +135,10 @@
                       <tr class="o_task_row" t-on-click="() => this.toggleTaskCollapse(proj.id, task.id)">
                         <td t-attf-colspan="{{ visibleWeeks().length + 1 }}">
                           <div class="o_task_name">
-                            <span t-esc="task.name"/>
+                            <span class="o_task_title" t-esc="task.name"/>
+                            <span t-if="task.stage" class="o_task_stage" t-esc="task.stage"/>
                             <span class="o_task_charge">
-                              charged <t t-esc="task.charged"/>h · allocated <t t-esc="taskComputed(task).allocated"/>h
+                              Charged <t t-esc="task.charged"/>h · Allocated <t t-esc="taskComputed(task).allocated"/>h
                               <t t-if="taskComputed(task).unscheduled > 0">
                                 · <span class="warn"><t t-esc="taskComputed(task).unscheduled"/>h unscheduled</span>
                               </t>
@@ -190,12 +191,21 @@
                                      t-on-click="(ev) => this.setPickerRole(r, ev)" t-esc="r"/>
                               </div>
                               <div class="o_picker_member_col">
-                                <div t-if="!pickerMembers().length" class="o_picker_empty">No one with this role.</div>
-                                <div t-foreach="pickerMembers()" t-as="e" t-key="e.id" class="o_member_chip"
-                                     t-on-click="(ev) => this.addAssignment(task, e, ev)">
-                                  <div class="o_avatar xs" t-attf-style="background:{{ avatarColor(e.id) }}" t-esc="initials(e.name)"/>
-                                  <span class="n" t-esc="e.name"/>
-                                  <span class="r" t-esc="e.role"/>
+                                <div class="o_search_box small o_picker_search">
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                  <input type="text" placeholder="Search team member…"
+                                         t-on-click="(ev) => ev.stopPropagation()" t-on-input="onPickerSearchInput"/>
+                                </div>
+                                <div class="o_picker_member_cloud">
+                                  <div t-if="!pickerMembers().length" class="o_picker_empty">No one matches.</div>
+                                  <div t-foreach="pickerMembers()" t-as="e" t-key="e.id" class="o_member_chip"
+                                       t-on-click="(ev) => this.addAssignment(task, e, ev)">
+                                    <div class="o_avatar xs" t-attf-style="background:{{ avatarColor(e.id) }}" t-esc="initials(e.name)"/>
+                                    <div class="o_member_chip_text">
+                                      <span class="n" t-esc="e.name"/>
+                                      <span class="r" t-esc="e.role"/>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>

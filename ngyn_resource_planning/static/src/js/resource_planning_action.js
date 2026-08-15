@@ -101,6 +101,7 @@ export class NgynResourcePlanning extends Component {
             windowStart: CURRENT_WEEK_IDX,
             openPicker: null, // {taskId}
             pickerRoleFilter: new Set(), // empty = "All"
+            pickerSearch: "",
         });
 
         onWillStart(() => this.loadData());
@@ -128,7 +129,7 @@ export class NgynResourcePlanning extends Component {
                   // allocated_hours is native project.task ("Allocated Time") -- Charged reads this
                   // directly so it stays in sync with Sales Order quantities (sale_project writes
                   // it on order confirmation/qty change) instead of needing separate manual entry.
-                  ["name", "project_id", "allocated_hours"]
+                  ["name", "project_id", "allocated_hours", "stage_id"]
               )
             : [];
         const taskIds = tasks.map((t) => t.id);
@@ -221,6 +222,7 @@ export class NgynResourcePlanning extends Component {
                     return {
                         id: t.id,
                         name: t.name,
+                        stage: t.stage_id ? t.stage_id[1] : "",
                         charged: t.allocated_hours || 0,
                         assignments: tAssignments,
                     };
@@ -504,16 +506,26 @@ export class NgynResourcePlanning extends Component {
         ev.stopPropagation();
         const opening = !this.isPickerOpen(task.id);
         this.state.openPicker = opening ? { taskId: task.id } : null;
-        if (opening) this.state.pickerRoleFilter.clear();
+        if (opening) {
+            this.state.pickerRoleFilter.clear();
+            this.state.pickerSearch = "";
+        }
     }
     setPickerRole(role, ev) {
         ev.stopPropagation();
         this._toggleFilterSet(this.state.pickerRoleFilter, role);
     }
+    onPickerSearchInput(ev) {
+        ev.stopPropagation();
+        this.state.pickerSearch = ev.target.value;
+    }
     pickerMembers() {
-        return this.state.employees.filter(
-            (e) => this.state.pickerRoleFilter.size === 0 || this.state.pickerRoleFilter.has(e.role)
-        );
+        const q = this.state.pickerSearch.trim().toLowerCase();
+        return this.state.employees.filter((e) => {
+            if (this.state.pickerRoleFilter.size > 0 && !this.state.pickerRoleFilter.has(e.role)) return false;
+            if (q && !(e.name + " " + e.role).toLowerCase().includes(q)) return false;
+            return true;
+        });
     }
     async addAssignment(task, employee, ev) {
         ev.stopPropagation();

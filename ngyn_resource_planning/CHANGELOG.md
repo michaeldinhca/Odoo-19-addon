@@ -5,6 +5,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.9] - 2026-08-15
+
+### Changed
+- **Task row now shows the stage** (native `project.task.stage_id`) right
+  after the task name, followed immediately by Charged/Allocated — all
+  flowing left to right in one line instead of the name and stats being
+  pushed to opposite ends of the row.
+- **"+ Add team member" picker widened and restyled as a searchable chip
+  cloud.** Role column doubled (240px → 480px); the member list gained a
+  search box and switched from one-per-row entries (name + role side by
+  side) to compact stacked chips (role under name) that wrap several per
+  row, making better use of the extra width. Role chips already only ever
+  showed positions with at least one employee (derived from the loaded
+  employee list, not a separate `hr.job` query) — unchanged, just confirmed.
+
+Verified via a fresh install plus rendered-screenshot checks of both the
+task-row layout and the open picker against seeded data (a task with a
+stage and an charged/allocated mismatch, and six employees across four
+job positions).
+
 ## [1.0.8] - 2026-08-14
 
 ### Added
