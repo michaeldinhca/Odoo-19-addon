@@ -123,6 +123,16 @@
     .o_hd_stat b.warn { color: #FF6E57; }
     .o_pcard_head_right { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-shrink: 0; }
     .o_unpin_btn { background: none; border: 1px solid #3A4750; color: #B7C0C6; border-radius: 3px; width: 22px; height: 22px; cursor: pointer; }
+    .o_lock_btn {
+        font-size: 11px; font-weight: 600; white-space: nowrap; background: #1F2C36; border: 1px solid #3A4750;
+        color: #B7C0C6; border-radius: 3px; padding: 3px 9px; cursor: pointer;
+    }
+    .o_lock_btn.locked { background: var(--rp-amber-soft); border-color: var(--rp-amber); color: var(--rp-amber); }
+    .o_lock_badge {
+        font-size: 11px; font-weight: 600; white-space: nowrap; color: var(--rp-amber);
+        background: var(--rp-amber-soft); border-radius: 3px; padding: 3px 9px;
+    }
+    .o_pcard.plan-locked .o_pcard_head { border-top: 3px solid var(--rp-amber); }
 
     .o_pcard.collapsed .o_pcard_body { display: none; }
     .o_schedule_warning { padding: 8px 14px; background: var(--rp-amber-soft); color: var(--rp-amber); font-size: 12px; border-bottom: 1px solid var(--rp-line); }
@@ -161,6 +171,7 @@
     .o_pin_btn.active { filter: none; opacity: 1; }
     .o_alloc_input { width: 42px; font-size: 12px; text-align: center; border: 1px solid var(--rp-line-strong); border-radius: 3px; padding: 2px; margin-left: auto; background: var(--rp-paper); }
     .o_alloc_input.over { border-color: var(--rp-red); background: var(--rp-red-soft); color: var(--rp-red); }
+    .o_alloc_input:disabled, .o_dim_box input:disabled { background: var(--rp-surface-alt); color: var(--rp-line-strong); cursor: not-allowed; }
 
     .o_dim_box {
         width: 42px; height: 28px; margin: 0 auto; border: 1px solid var(--rp-line-strong); border-radius: 2px;
@@ -178,6 +189,7 @@
         font-size: 11px; text-transform: uppercase; background: none; border: 1px dashed var(--rp-line-strong);
         border-radius: 3px; padding: 5px 10px; color: var(--rp-ink-soft); cursor: pointer;
     }
+    .o_add_emp_locked_hint { font-size: 11px; color: var(--rp-amber); }
     .o_emp_picker {
         display: flex; margin-top: 8px; border: 1px solid var(--rp-line-strong); border-radius: 3px;
         background: var(--rp-surface); max-width: 1200px; box-shadow: 0 4px 14px rgba(20,25,30,.12);

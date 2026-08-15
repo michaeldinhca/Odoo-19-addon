@@ -151,6 +151,44 @@ total > hard              → red    ("over capacity")
 free = employee.target - total    (shown as "free Xh", or "over Xh" if negative)
 ```
 
+### Project lock
+
+`project.project.x_ngyn_locked` blocks hour-changing edits everywhere in the
+grid for every task under that project. It's deliberately project-level
+only, with no separate task-level lock — matches the direct request this was
+built from ("if project lock, all task plan lock, same for unlock").
+
+**Who can lock/unlock:** only that specific project's own `user_id` (Project
+Manager field), not Project Managers in general. Enforced twice, on purpose:
+- `project.project.write()` rejects any change to `x_ngyn_locked` where
+  `self.env.user != project.user_id` — this is the real boundary, and it's on
+  `write()` itself (not just the action below) so it can't be bypassed by a
+  direct write from anyone else with ordinary project edit rights.
+- `action_ngyn_toggle_lock()` is the only normal way to flip it (posts a
+  chatter audit message too, see `docs/DATA_MODEL.md`), and the JS only
+  renders the toggle button for the matching user (`canToggleLock()`,
+  comparing `project.managerId` to `user.userId`) — pure UX, not a security
+  boundary on its own.
+
+**What "locked" actually blocks:** writes to `ngyn.task.assignment.alloc_hours`
+and any create/write/unlink on `ngyn.task.assignment.week` — checked via
+`project.project._ngyn_check_plan_unlocked()`, called from both models'
+`create()`/`write()`/`unlink()` overrides. It deliberately does **not** block:
+- `_ensure_assignments()` (the passive Assignees/timesheet sync, see
+  `docs/DATA_MODEL.md`) — runs with the `ngyn_skip_lock_check` context key,
+  since assigning someone to a task or logging a timesheet elsewhere in Odoo
+  isn't "changing the plan," and a locked plan shouldn't block ordinary task/
+  timesheet work happening outside Resource Planning.
+- Adding a new team member via the picker (`addAssignment` → a plain
+  `ngyn.task.assignment` create with no `ngyn_skip_lock_check`) **is**
+  blocked, though — that one *is* a deliberate planning action, not passive
+  sync, even though it goes through the same model's `create()`.
+
+The JS mirrors this for UX (disabling inputs, hiding "+ Add team member",
+short-circuiting before the RPC in `onAllocChange`/`onWeekChange`/
+`addAssignment` with a clear notification) but the model-layer checks above
+are what actually matters — nothing here trusts the client.
+
 ## Component structure (current vs. suggested next step)
 
 Everything currently lives in **one component, one template file**. This was a

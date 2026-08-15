@@ -44,6 +44,18 @@ class NgynTaskAssignment(models.Model):
             rec.scheduled_hours = scheduled
             rec.unscheduled_hours = rec.alloc_hours - scheduled
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self.env.context.get('ngyn_skip_lock_check'):
+            task_ids = {v['task_id'] for v in vals_list if v.get('task_id')}
+            self.env['project.task'].browse(task_ids).project_id._ngyn_check_plan_unlocked()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if 'alloc_hours' in vals and not self.env.context.get('ngyn_skip_lock_check'):
+            self.project_id._ngyn_check_plan_unlocked()
+        return super().write(vals)
+
     @api.model
     def _ensure_assignments(self, pairs):
         """pairs: iterable of (task_id, employee_id). Creates any missing rows
@@ -52,6 +64,11 @@ class NgynTaskAssignment(models.Model):
         before they're given hours there. Called from project.task (Assignees
         changing) and account.analytic.line (a timesheet logged), plus once as
         a backfill on install/upgrade -- see __init__.py.
+
+        Runs with ngyn_skip_lock_check: this is passive membership tracking
+        (0h placeholder rows), not a planning edit, so a locked plan must not
+        block someone from being assigned a task or logging a timesheet
+        elsewhere in Odoo -- only actual hour edits are what "locked" means.
         """
         pairs = {(t, e) for t, e in pairs if t and e}
         if not pairs:
@@ -60,7 +77,7 @@ class NgynTaskAssignment(models.Model):
         # whoever touched the task/timesheet, not necessarily someone with
         # Resource Planning access themselves -- the sync must not depend on the
         # acting user's own group membership.
-        self = self.sudo()
+        self = self.sudo().with_context(ngyn_skip_lock_check=True)
         existing = {
             (a.task_id.id, a.employee_id.id)
             for a in self.search([('task_id', 'in', list({t for t, _e in pairs}))])
@@ -91,3 +108,17 @@ class NgynTaskAssignmentWeek(models.Model):
         'unique(assignment_id, week_start_date)',
         'There is already an hour entry for this person on this task for that week.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        assignment_ids = {v['assignment_id'] for v in vals_list if v.get('assignment_id')}
+        self.env['ngyn.task.assignment'].browse(assignment_ids).project_id._ngyn_check_plan_unlocked()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        self.assignment_id.project_id._ngyn_check_plan_unlocked()
+        return super().write(vals)
+
+    def unlink(self):
+        self.assignment_id.project_id._ngyn_check_plan_unlocked()
+        return super().unlink()

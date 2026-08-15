@@ -84,16 +84,27 @@ removed once this was pointed out as unnecessary duplication.)
 | `x_ngyn_weekly_target_hours` | Float | 28.0 | The "70% buffer" planning target per week. Configurable per person/role since some roles (PM, principal) sustain a lower percentage due to admin/meeting load. |
 | `x_ngyn_weekly_hard_hours` | Float | 40.0 | Full weekly capacity. Scheduling past this is flagged red in the weekly load strip. |
 
+### `project.project` (+1 field)
+| Field | Type | Default | Purpose |
+|---|---|---|---|
+| `x_ngyn_locked` | Boolean | `False` | When set, blocks hour edits (`alloc_hours` writes and any `ngyn.task.assignment.week` create/write/unlink) across every task in the project. Only writable via `action_ngyn_toggle_lock()`, and only by that specific project's own `user_id` (Project Manager) — enforced in `project.project.write()` itself, not just the action method, so it can't be bypassed by a direct write from anyone else with ordinary project edit rights. See `docs/ARCHITECTURE.md` §"Project lock" for the full enforcement path and why the passive assignee/timesheet sync is deliberately exempt. |
+
+Toggling the lock posts a chatter message on the project (`message_post`, via
+native `mail.thread`) recording who locked/unlocked it and when — that's the
+audit trail, no separate log model was added for it.
+
 ## Models read but never written by this module
 
-- **`project.project`** — `name`, `partner_id`, `date_start`, `date` (the
-  Enterprise "Expiration Date"/deadline field). If these dates are unset for a
-  project, health status can't be computed (see `docs/ARCHITECTURE.md`).
-  Queried with `is_internal_project = False` and `is_template = False` —
-  the same exclusions the stock Project app's own actions apply — so the
-  per-company auto-created "Internal" project (`hr_timesheet`'s
-  `res.company.internal_project_id`, with its default "Meeting"/"Training"
-  tasks) and any project templates don't show up here either.
+- **`project.project`**, additionally — `name`, `partner_id`, `date_start`,
+  `date` (the Enterprise "Expiration Date"/deadline field), `user_id`
+  (Project Manager, used for the lock permission check above). If the dates
+  are unset for a project, health status can't be computed (see
+  `docs/ARCHITECTURE.md`). Queried with `is_internal_project = False` and
+  `is_template = False` — the same exclusions the stock Project app's own
+  actions apply — so the per-company auto-created "Internal" project
+  (`hr_timesheet`'s `res.company.internal_project_id`, with its default
+  "Meeting"/"Training" tasks) and any project templates don't show up here
+  either.
 - **`account.analytic.line`** (Timesheets) — `task_id`, `employee_id`, `date`,
   `unit_amount`. Used two ways:
   1. Bucketed into week-index buckets client-side to show "actual hours" on

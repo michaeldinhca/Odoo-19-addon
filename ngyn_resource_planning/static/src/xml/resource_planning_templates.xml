@@ -88,7 +88,7 @@
           </div>
 
           <div t-foreach="pinnedProjects" t-as="proj" t-key="proj.id"
-               t-attf-class="o_pcard {{ isProjectCollapsed(proj.id) ? 'collapsed' : '' }}">
+               t-attf-class="o_pcard {{ isProjectCollapsed(proj.id) ? 'collapsed' : '' }} {{ proj.locked ? 'plan-locked' : '' }}">
 
             <div class="o_pcard_head" t-on-click="() => this.toggleProjectCollapse(proj.id)">
               <div class="o_pcard_title_row">
@@ -113,6 +113,12 @@
                 <div class="o_pcard_head_right">
                   <span t-attf-class="o_health_pill {{ projectStats(proj).status }}"
                         t-att-title="healthTip(proj)" t-esc="healthLabel(projectStats(proj).status)"/>
+                  <button t-if="canToggleLock(proj)" t-attf-class="o_lock_btn {{ proj.locked ? 'locked' : '' }}"
+                          t-on-click="(ev) => this.toggleProjectLock(proj, ev)"
+                          t-att-title="proj.locked ? 'Unlock this project\'s resource plan' : 'Lock this project\'s resource plan'"
+                          t-esc="proj.locked ? '🔒 Locked' : '🔓 Lock'"/>
+                  <span t-elif="proj.locked" class="o_lock_badge"
+                        t-attf-title="Locked by {{ proj.managerName }}">🔒 Locked</span>
                   <button class="o_unpin_btn" t-on-click="(ev) => this.unpinProject(proj.id, ev)">✕</button>
                 </div>
               </div>
@@ -165,7 +171,8 @@
                                       title="Pin / unpin from weekly load filter">📌</button>
                               <input type="number" step="0.25" min="0"
                                      t-attf-class="o_alloc_input {{ allocInputOverCharged(task, a) ? 'over' : '' }}"
-                                     t-att-value="a.alloc" t-on-change="(ev) => this.onAllocChange(a, task, ev)"/>
+                                     t-att-value="a.alloc" t-att-disabled="proj.locked"
+                                     t-on-change="(ev) => this.onAllocChange(proj, a, task, ev)"/>
                             </div>
                           </td>
                           <td t-foreach="visibleWeeks()" t-as="w" t-key="w.idx" class="wk_cell">
@@ -178,15 +185,17 @@
                             </div>
                             <div t-else="" t-attf-class="o_dim_box {{ weekCellOverCharged(task, a, w.idx) ? 'over' : '' }}">
                               <input type="number" step="0.25" min="0"
-                                     t-att-value="displayHours(weekHours(a, w.idx))"
-                                     t-on-change="(ev) => this.onWeekChange(a, task, w.idx, ev)"/>
+                                     t-att-value="displayHours(weekHours(a, w.idx))" t-att-disabled="proj.locked"
+                                     t-on-change="(ev) => this.onWeekChange(proj, a, task, w.idx, ev)"/>
                             </div>
                           </td>
                         </tr>
 
                         <tr class="o_add_row">
                           <td t-attf-colspan="{{ visibleWeeks().length + 1 }}">
-                            <button class="o_add_emp_btn" t-on-click="(ev) => this.toggleAddMember(task, ev)">+ Add team member</button>
+                            <button t-if="!proj.locked" class="o_add_emp_btn"
+                                    t-on-click="(ev) => this.toggleAddMember(task, ev)">+ Add team member</button>
+                            <span t-else="" class="o_add_emp_locked_hint">🔒 Locked — team members can't be added right now.</span>
                             <div t-if="isPickerOpen(task.id)" class="o_emp_picker">
                               <div class="o_picker_role_col">
                                 <div t-attf-class="o_role_chip {{ state.pickerRoleFilter.size === 0 ? 'active' : '' }}"
@@ -204,7 +213,7 @@
                                 <div class="o_picker_member_cloud">
                                   <div t-if="!pickerMembers().length" class="o_picker_empty">No one matches.</div>
                                   <div t-foreach="pickerMembers()" t-as="e" t-key="e.id" class="o_member_chip"
-                                       t-on-click="(ev) => this.addAssignment(task, e, ev)">
+                                       t-on-click="(ev) => this.addAssignment(proj, task, e, ev)">
                                     <div class="o_avatar xs" t-attf-style="background:{{ avatarColor(e.id) }}" t-esc="initials(e.name)"/>
                                     <div class="o_member_chip_text">
                                       <span class="n" t-esc="e.name"/>

@@ -4,6 +4,7 @@ import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+import { user } from "@web/core/user";
 
 /* =========================================================
    Week timeline helpers
@@ -85,6 +86,7 @@ export class NgynResourcePlanning extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.dialog = useService("dialog");
+        this.user = user;
 
         this.state = useState({
             loading: true,
@@ -119,7 +121,7 @@ export class NgynResourcePlanning extends Component {
             // is_internal_project/is_template domain) — otherwise the per-company auto-created
             // "Internal" project (and any templates) shows up here even though it's hidden there.
             [["active", "=", true], ["is_internal_project", "=", false], ["is_template", "=", false]],
-            ["name", "partner_id", "date_start", "date"],
+            ["name", "partner_id", "date_start", "date", "user_id", "x_ngyn_locked"],
             { limit: 300, order: "date asc" }
         );
         const projectIds = projects.map((p) => p.id);
@@ -239,6 +241,9 @@ export class NgynResourcePlanning extends Component {
                 charged,
                 loggedHours: loggedByProject[p.id] || 0,
                 tasks: pTasks,
+                locked: p.x_ngyn_locked,
+                managerId: p.user_id ? p.user_id[0] : false,
+                managerName: p.user_id ? p.user_id[1] : "",
             };
         });
 
@@ -472,6 +477,25 @@ export class NgynResourcePlanning extends Component {
     }
 
     /* =====================================================
+       PROJECT LOCK — only the project's own Project Manager (project.user_id)
+       can lock/unlock; enforced server-side too (this is just for showing/
+       hiding the toggle control, not the actual security boundary).
+       ===================================================== */
+    canToggleLock(project) {
+        return !!project.managerId && project.managerId === this.user.userId;
+    }
+    async toggleProjectLock(project, ev) {
+        ev.stopPropagation();
+        try {
+            await this.orm.call("project.project", "action_ngyn_toggle_lock", [[project.id]]);
+            project.locked = !project.locked;
+        } catch (e) {
+            const msg = e?.data?.message || "Could not change the lock on this project.";
+            this.notification.add(msg, { type: "danger" });
+        }
+    }
+
+    /* =====================================================
        PLANNING GRID — edits (write on change, quarter-hour rounding)
        ===================================================== */
     // Shared by onAllocChange/onWeekChange: if `hypothetical` would newly push (or worsen)
@@ -491,25 +515,35 @@ export class NgynResourcePlanning extends Component {
             proceed();
         }
     }
-    onAllocChange(assignment, task, ev) {
-        const v = roundQuarter(parseFloat(ev.target.value) || 0);
+    onAllocChange(proj, assignment, task, ev) {
         const oldValue = assignment.alloc;
+        if (proj.locked) {
+            this._notifyLocked(proj);
+            ev.target.value = oldValue;
+            return;
+        }
+        const v = roundQuarter(parseFloat(ev.target.value) || 0);
         const otherAlloc = task.assignments.reduce((s, a) => s + (a === assignment ? 0 : a.alloc), 0);
         const proceed = async () => {
             assignment.alloc = v;
             try {
                 await this.orm.write("ngyn.task.assignment", [assignment.id], { alloc_hours: v });
             } catch (e) {
-                this.notification.add("Could not save that hour value.", { type: "danger" });
+                this.notification.add(e?.data?.message || "Could not save that hour value.", { type: "danger" });
             }
         };
         const revert = () => { ev.target.value = oldValue; };
         this._confirmIfOverCharged(task, oldValue, v, otherAlloc + v, proceed, revert);
     }
-    onWeekChange(assignment, task, weekIdx, ev) {
-        const v = roundQuarter(parseFloat(ev.target.value) || 0);
+    onWeekChange(proj, assignment, task, weekIdx, ev) {
         const existing = assignment.weeks[weekIdx];
         const oldValue = existing ? existing.hours : 0;
+        if (proj.locked) {
+            this._notifyLocked(proj);
+            ev.target.value = this.displayHours(oldValue);
+            return;
+        }
+        const v = roundQuarter(parseFloat(ev.target.value) || 0);
         const weekDateStr = toIso(weekDate(weekIdx));
         const otherScheduled = task.assignments.reduce(
             (s, a) => s + Object.entries(a.weeks).reduce(
@@ -533,11 +567,17 @@ export class NgynResourcePlanning extends Component {
                     assignment.weeks[weekIdx] = { id: newIds[0], hours: v };
                 }
             } catch (e) {
-                this.notification.add("Could not save that hour value.", { type: "danger" });
+                this.notification.add(e?.data?.message || "Could not save that hour value.", { type: "danger" });
             }
         };
         const revert = () => { ev.target.value = this.displayHours(oldValue); };
         this._confirmIfOverCharged(task, oldValue, v, otherScheduled + v, proceed, revert);
+    }
+    _notifyLocked(proj) {
+        this.notification.add(
+            `This project's resource plan is locked${proj.managerName ? ` by ${proj.managerName}` : ""}.`,
+            { type: "warning" }
+        );
     }
 
     /* =====================================================
@@ -581,8 +621,13 @@ export class NgynResourcePlanning extends Component {
             return true;
         });
     }
-    async addAssignment(task, employee, ev) {
+    async addAssignment(proj, task, employee, ev) {
         ev.stopPropagation();
+        if (proj.locked) {
+            this._notifyLocked(proj);
+            this.state.openPicker = null;
+            return;
+        }
         if (task.assignments.some((a) => a.employeeId === employee.id)) {
             this.state.openPicker = null;
             return;
@@ -600,7 +645,7 @@ export class NgynResourcePlanning extends Component {
                 actuals: {},
             });
         } catch (e) {
-            this.notification.add("Could not add that team member.", { type: "danger" });
+            this.notification.add(e?.data?.message || "Could not add that team member.", { type: "danger" });
         }
         this.state.openPicker = null;
     }

@@ -5,6 +5,33 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.13] - 2026-08-15
+
+### Added
+- **Project-level lock, per direct request, to stop other people from
+  changing a plan.** Locking a project blocks weekly-hour edits across
+  *every* task in it — there's no separate per-task lock, locking/unlocking
+  only happens at the project level and cascades to all its tasks.
+  - Only that specific project's own Project Manager (`project.user_id`) can
+    lock or unlock it — not Project Managers in general. Enforced in
+    `project.project.write()` itself, not just the toggle action, so it
+    can't be bypassed by a direct write from anyone else with ordinary
+    project edit rights.
+  - Every lock/unlock is posted to the project's chatter (`message_post`,
+    who + when) as the audit trail — no separate log model needed.
+  - Blocks: `alloc_hours` writes and any `ngyn.task.assignment.week`
+    create/write/unlink, plus adding a new team member via the picker.
+    Deliberately does **not** block the passive Assignees/timesheet sync
+    (`_ensure_assignments`) — assigning someone to a task or logging time
+    elsewhere in Odoo isn't "changing the plan," so a lock shouldn't stop
+    ordinary task/timesheet work happening outside this screen.
+  - UI: a lock/unlock button in the pinned project card header (only shown
+    to that project's PM; everyone else sees a plain "Locked" badge when
+    it's on), disabled inputs and a hidden "+ Add team member" button while
+    locked, and a clear notification instead of a silent failed save if an
+    edit is attempted anyway. All of this is UX only — the model-layer
+    checks above are the real boundary; nothing trusts the client.
+
 ## [1.0.12] - 2026-08-15
 
 ### Changed
