@@ -5,6 +5,43 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.11] - 2026-08-15
+
+### Fixed
+- **Upgrading the module crashed with `UniqueViolation: duplicate key value
+  violates unique constraint "knowledge_article_member_unique_article_partner"`**,
+  reported directly from a live odoo.sh upgrade (`ineng_pilot_15Aug`).
+  `data/knowledge_articles.xml` granted the admin's write-access membership
+  via an inline `article_member_ids` eval using a `(0, 0, {...})` create
+  command — that re-issues a real `create()` every time the data file is
+  re-applied, i.e. on every module upgrade, not just the first install,
+  which collided with the member row already created on the prior install.
+  Fixed by tracking that member as its own top-level `<record>` with a
+  stable external ID, so future upgrades match-and-write instead of
+  create, plus a one-time `migrations/19.0.1.0.11/pre-migrate.py` that
+  adopts the existing untracked member row under that new ID before the
+  data file loads, so already-affected databases upgrade cleanly instead
+  of needing a manual DB fix.
+  - Splitting the member out into its own record isn't quite enough on its
+    own, though: `knowledge.article`'s own constraint requires an article to
+    always have *some* writer, and creating the article alone (before its
+    member record) with `internal_permission='read'` and zero members
+    briefly violates that — caught by testing a genuinely fresh install
+    against the split-record version, not just the upgrade path. Fixed by
+    a three-step sequence within the same file: create the article with
+    `internal_permission='write'` (trivially satisfies the constraint on
+    its own), create the member record, then a third block (same external
+    ID as the first) flips `internal_permission` down to `'read'` now that
+    the member provides the required write path.
+
+Verified end-to-end in Docker for all three paths this bug and its fix
+touch: a genuinely fresh install; the original crash, reproduced exactly
+(installed at a pre-fix version, then a second `-u` reproduces the same
+`UniqueViolation`); and the real-world one-hop case (installed at the
+pre-fix version, then upgraded directly to this version) — all three
+confirmed clean afterward, with the article's permission and its one
+write-member intact.
+
 ## [1.0.10] - 2026-08-15
 
 ### Added

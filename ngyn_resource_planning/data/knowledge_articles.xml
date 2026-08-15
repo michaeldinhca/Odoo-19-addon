@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- internal_permission is set to 'write' here, then flipped to 'read' in a second
+         block further below, after the write-access member is created in between. An
+         article with internal_permission='read' and zero members violates knowledge's own
+         "an article must always have a writer" constraint (knowledge.article's
+         _check_is_writable): starting from 'write' (which trivially satisfies that
+         constraint on its own) avoids ever hitting that invalid intermediate state, on
+         both a fresh install and every subsequent upgrade (this block re-applies on
+         every upgrade too, same xmlid). -->
     <record id="knowledge_article_ngyn_rp_root" model="knowledge.article">
         <field name="name">Resource Planning — User Guide</field>
         <field name="icon">🗓️</field>
-        <field name="internal_permission">read</field>
+        <field name="internal_permission">write</field>
         <field name="is_article_visible_by_everyone" eval="True"/>
-        <field name="article_member_ids" eval="[
-            (0, 0, {
-                'partner_id': ref('base.partner_admin'),
-                'permission': 'write',
-            })]"/>
         <field name="body" type="html">
             <h1>Resource Planning — User Guide</h1>
             <p>Resource Planning is a single screen for staffing decisions across
@@ -123,5 +126,24 @@
             set on their employee record. Anyone without one assigned shows
             up as "Team Member" until it's set.</p>
         </field>
+    </record>
+
+    <!-- A separate record with its own external ID, not an inline (0,0,{...}) eval on
+         article_member_ids above: that form re-issues a create() on every module
+         upgrade (data records get re-applied, not just installed once), which hits
+         knowledge_article_member_unique_article_partner the second time this file loads
+         since the member row already exists from the first install. -->
+    <record id="knowledge_article_member_ngyn_rp_admin" model="knowledge.article.member">
+        <field name="article_id" ref="knowledge_article_ngyn_rp_root"/>
+        <field name="partner_id" ref="base.partner_admin"/>
+        <field name="permission">write</field>
+    </record>
+
+    <!-- Now that the write-access member above exists, drop the article's own base
+         permission down to 'read': everyone gets read, only the member(s) above get
+         write. Safe at this point: the constraint mentioned above only requires ONE
+         write path (base permission OR a member), and the member now satisfies it. -->
+    <record id="knowledge_article_ngyn_rp_root" model="knowledge.article">
+        <field name="internal_permission">read</field>
     </record>
 </odoo>
