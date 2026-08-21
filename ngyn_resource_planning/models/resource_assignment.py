@@ -86,8 +86,26 @@ class NgynTaskAssignment(models.Model):
             {'task_id': t, 'employee_id': e, 'alloc_hours': 0}
             for t, e in pairs if (t, e) not in existing
         ]
-        if to_create:
-            self.create(to_create)
+        if not to_create:
+            return
+        try:
+            with self.env.cr.savepoint():
+                self.create(to_create)
+        except Exception:
+            # Two concurrent requests can both pass the existence check above before
+            # either commits (e.g. a task saved with a new Assignee at the same
+            # moment someone logs a timesheet for that same person), so the batch
+            # create can still hit _task_employee_uniq. These are idempotent 0h
+            # placeholder rows -- losing the race is harmless, so retry one at a
+            # time and swallow whichever ones a concurrent request already created,
+            # rather than letting the whole batch (and the real task/timesheet save
+            # that triggered it) fail on an unrelated internal sync collision.
+            for vals in to_create:
+                try:
+                    with self.env.cr.savepoint():
+                        self.create([vals])
+                except Exception:
+                    pass
 
 
 class NgynTaskAssignmentWeek(models.Model):

@@ -36,6 +36,16 @@ instead.
   timesheet line with a task+employee, run once on install/upgrade so this
   isn't only forward-looking on a database that already had data.
 
+`_ensure_assignments`'s idempotency is also concurrency-safe, not just
+safe-to-call-twice-in-sequence: the existence check and the create aren't
+atomic, so two near-simultaneous triggers for the same pair (a task saved
+with a new Assignee at the same moment someone logs a timesheet for that
+same person) can both pass the check before either commits. The batch
+create is wrapped in `cr.savepoint()`, retrying one row at a time on
+conflict, so a real collision there doesn't raise all the way up and fail
+the actual task/timesheet save that triggered it — fixed in `1.0.14` after
+it showed up as a real, uncaught `UniqueViolation` in production.
+
 In all three cases only the `(task_id, employee_id)` pair matters — the
 `user_ids`→`employee_id` resolution (`res.users.employee_id`, current
 company) is skipped if a user has no linked employee. Deliberately

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Resource Planning',
-    'version': '19.0.1.0.13',
+    'version': '19.0.1.0.14',
     'category': 'Services/Project',
     'summary': 'Weekly resource planning workspace across projects, tasks and team capacity',
     'description': """
@@ -26,7 +26,7 @@ This module does not replace the Planning app — it is a lightweight, purpose-b
 overview layer for staffing decisions across many projects at once.
 """,
     'author': 'NGYN Solutions',
-    'website': 'https://www.ngynsolutions.com',
+    'website': 'https://ngynsolutions.com',
     'license': 'LGPL-3',
     'depends': ['project', 'hr', 'hr_timesheet', 'knowledge'],
     'data': [

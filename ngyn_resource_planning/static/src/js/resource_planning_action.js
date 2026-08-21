@@ -133,7 +133,11 @@ export class NgynResourcePlanning extends Component {
                   // allocated_hours is native project.task ("Allocated Time") -- Charged reads this
                   // directly so it stays in sync with Sales Order quantities (sale_project writes
                   // it on order confirmation/qty change) instead of needing separate manual entry.
-                  ["name", "project_id", "allocated_hours", "stage_id"]
+                  ["name", "project_id", "allocated_hours", "stage_id"],
+                  // Most-charged-first within each project, per request -- filtering this single
+                  // combined list down to one project's tasks later (pTasks below) preserves this
+                  // relative order, so one order clause here sorts every project's grid at once.
+                  { order: "allocated_hours desc, id asc" }
               )
             : [];
         const taskIds = tasks.map((t) => t.id);
@@ -410,6 +414,9 @@ export class NgynResourcePlanning extends Component {
                 (a.stats.daysLeft ?? 9999) - (b.stats.daysLeft ?? 9999));
         } else if (this.state.sortMode === "deadline") {
             list.sort((a, b) => (a.stats.daysLeft ?? 9999) - (b.stats.daysLeft ?? 9999));
+        } else if (this.state.sortMode === "leftToAssign") {
+            list.sort((a, b) =>
+                this.projectAllocationStats(b.p).leftToAssign - this.projectAllocationStats(a.p).leftToAssign);
         } else {
             list.sort((a, b) => a.p.name.localeCompare(b.p.name));
         }

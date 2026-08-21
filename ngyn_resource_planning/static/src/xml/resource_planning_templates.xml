@@ -44,7 +44,8 @@
           <span>Sort by</span>
           <select t-on-change="onSortChange">
             <option value="health">Health (worst first)</option>
-            <option value="deadline">Deadline (soonest)</option>
+            <option value="leftToAssign">Left to assign (most hours first)</option>
+            <option value="deadline">Due Date (soonest)</option>
             <option value="name">Project name</option>
           </select>
         </div>

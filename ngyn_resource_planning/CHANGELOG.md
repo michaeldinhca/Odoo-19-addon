@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}.{build}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.0.14] - 2026-08-21
+
+### Fixed
+- **Uncaught `UniqueViolation: ... "This person is already assigned to this task"` from `ngyn.task.assignment`'s own constraint**, seen repeatedly in the odoo.sh WARNING log right after install/use. Root cause: `_ensure_assignments()` checks for an existing row, then creates the missing ones — if two requests do this at nearly the same moment for the same (task, employee) pair (e.g. a task saved with a new Assignee at the same instant someone logs a timesheet for that same person), both can pass the check before either commits, and the second `create()` collides. Worse, an uncaught collision like this poisons the whole enclosing Postgres transaction, so the *real* action that triggered it (saving the task, logging the timesheet) would fail too, not just the internal sync — confirmed by direct reproduction. Fixed by wrapping the batch create in `cr.savepoint()` and, on conflict, retrying one row at a time so a single real collision doesn't also drop the rest of an unrelated batch; these are idempotent 0h placeholder rows, so losing the race for one of them is harmless.
+- **Everything else visible in that same log screenshot was confirmed unrelated to this module** (Odoo Studio customization errors on `hr.leave.allocation` and `x_bulk_timesheet`, a schema warning on `hr.work.location`) — pre-existing on the database, nothing in `ngyn_resource_planning` references any of those models.
+
+### Changed
+- **Task order is now most-charged-first** within each project (`allocated_hours desc`, `id` as a stable tiebreaker for ties), per request — was previously whatever order `project.task`'s own native ordering happened to produce.
+- **New "Left to assign (most hours first)" sort option** in the left-pane project list, alongside the existing Health/Deadline/Name sorts. The "Deadline" option is relabeled "Due Date" to match the wording used elsewhere in the UI (no behavior change).
+- **The Apps page "Learn More" link now points to `https://ngynsolutions.com`** (was `https://www.ngynsolutions.com`) — this is the module's `website` manifest key, which Odoo's own Apps page links directly.
+
+Verified in Docker: task order and the `website` field confirmed directly via the ORM; the savepoint/retry fix confirmed by deliberately forcing the exact collision scenario in an `odoo shell` session and checking the transaction survives and continues working afterward.
+
 ## [1.0.13] - 2026-08-15
 
 ### Added
