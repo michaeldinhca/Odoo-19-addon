@@ -13,12 +13,12 @@ Built from a mobile-first mockup reviewed and approved by the user before
 any real code was written — see [`CLAUDE.md`](CLAUDE.md) for the design
 rationale and the long-text-option bug it specifically fixes.
 
-## Features (v2.0.0)
+## Features (v2.1.0)
 
-- **Per-survey "Use Survey Theme" toggle** (Options tab) — each survey
-  independently chooses this restyled look or the stock Odoo appearance.
-  Defaults on; a survey with it off renders genuinely stock styling, not
-  an approximation.
+- **Per-survey Theme picker** (Options tab) — each survey independently
+  chooses "Stock Odoo" or a themed style. Ships with one style so far
+  ("Indigo"); built as a selection field specifically so more styles can be
+  added later without redoing the architecture — see `CLAUDE.md`.
 - **Company logo** on the survey taking page header.
 - **Accent color / shape language** — indigo accent, rounded shapes,
   applied to buttons (including the final "Submit" CTA), the progress bar,
@@ -26,8 +26,9 @@ rationale and the long-text-option bug it specifically fixes.
 - **Fixes long answer-option text wrapping badly** against the selection
   icon on simple/multiple-choice questions — pure CSS fix (`display: flex`
   on the option label), no template or JS changes. Reproduced against a
-  theme-off survey to confirm this is a real stock-Odoo issue this module
-  fixes, not something it introduced.
+  "Stock Odoo" survey to confirm this is a real stock-Odoo issue this
+  module fixes, not something it introduced. This fix applies to any
+  style, not just "Indigo".
 - Wider option spacing, a card treatment per question, pill-shaped nav
   buttons, horizontal-scroll matrix fallback with matching header color.
 
@@ -48,9 +49,9 @@ rationale and the long-text-option bug it specifically fixes.
 3. Search for **Survey Theme** and click **Install**.
 4. Set your company logo under **Settings → General Settings → Companies**
    if it isn't already set — that's what renders on the survey header.
-5. Every survey defaults to using the theme. To opt a specific survey out
-   (stock Odoo look), open it → **Options** tab → uncheck **Use Survey
-   Theme**.
+5. Every survey defaults to the "Indigo" theme. To use the stock Odoo look
+   for a specific survey instead, open it → **Options** tab → **Theme** →
+   **Stock Odoo**.
 
 ## License
 

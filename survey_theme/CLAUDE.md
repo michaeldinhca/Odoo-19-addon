@@ -8,9 +8,11 @@ re-deriving context from the code alone.
 
 An Odoo 19 Community addon (`survey_theme`) that restyles the Survey app's
 respondent-facing taking flow — start screen, every question type, progress
-bar/navigation, completion screen. **Per-survey opt-in/out**
-(`survey.use_custom_theme`, default on) — a survey with the toggle off
-renders genuinely stock Odoo styling, not an approximation of it.
+bar/navigation, completion screen. **Per-survey theme picker**
+(`survey.theme_style`, a Selection field — `'none'` or `'indigo'` for now,
+default `'indigo'`) — a survey set to `'none'` renders genuinely stock Odoo
+styling, not an approximation of it. Built as a selection (not a boolean)
+because more styles are coming — see the two-scope architecture below.
 
 ## How it got here
 
@@ -22,28 +24,58 @@ there's an updated mockup to work from rather than guessing.
 
 ## Non-obvious things worth knowing before you touch the code
 
-- **Everything is scoped under `.o_survey_theme_custom` — this is not
-  optional/cosmetic, it's the whole point of the per-survey toggle.** An
-  earlier version of this module set `$primary`/`$border-radius` via a
-  prepended Sass variable file (the same technique Odoo's own website theme
-  picker uses). That works great for a global reskin, but **cannot** support
-  a per-survey runtime toggle: Sass variables are compile-time, baked
-  identically into every survey's CSS output — there's no way to make that
-  override apply to only *some* surveys. When the toggle requirement showed
-  up, the whole approach was reworked: `survey_theme.scss` now defines its
-  own `$survey-theme-accent`/radius variables (never touching Bootstrap's
-  globals) and wraps every rule in `.o_survey_theme_custom`, which
-  `views/survey_templates.xml` adds to `.o_survey_wrap` conditionally on
-  `survey.use_custom_theme`. **If you're asked to add a new visual rule,
-  it must go inside that `.o_survey_theme_custom { ... }` block** — a rule
-  added outside it applies to every survey regardless of the toggle, which
-  defeats the entire feature.
+- **Two scopes on the same element, on purpose: `.o_survey_theme_custom` +
+  `.o_survey_theme_<style>`.** An earlier version set `$primary`/
+  `$border-radius` via a prepended Sass variable file (the same technique
+  Odoo's own website theme picker uses) — great for a global reskin, but
+  **cannot** support a per-survey runtime toggle: Sass variables are
+  compile-time, baked identically into every survey's CSS output. That got
+  reworked into one scoped class the moment a toggle was needed. Then the
+  user said more theme *styles* were coming — a straight rename
+  (`use_custom_theme` bool → `theme_style` selection) would have meant every
+  future style redeclaring the same structural CSS (card shape, the
+  long-text flex fix, spacing, button radius) just to change a color. So
+  `survey_theme.scss` is split instead:
+  - `.o_survey_theme_custom` — shape/spacing/layout only, **no color** —
+    anything a *future* style should also get for free.
+  - `.o_survey_theme_<theme_style>` (currently just `.o_survey_theme_indigo`)
+    — that style's own colors, declared with a **locally-scoped** `$accent`
+    Sass variable (`$accent: #4F46E5;` inside the block) so two style blocks
+    in the same file don't fight over one global variable name.
+  `views/survey_templates.xml` applies **both** classes together (e.g.
+  `o_survey_theme_custom o_survey_theme_indigo`) whenever `theme_style !=
+  'none'`; a `'none'` survey gets neither. **Adding a new style is: a new
+  selection value on `theme_style`** (this module's own `selection_add`, or
+  a future `survey_theme_<style>` module depending on this one) **+ its own
+  `.o_survey_theme_<value> { ... }` block** — no template change needed, and
+  don't redeclare shape/spacing rules that already live under
+  `.o_survey_theme_custom`. If you're asked to add a visual rule, decide
+  first whether it's structural (goes in `.o_survey_theme_custom`, no color
+  properties) or color (goes in the specific style's block) — mixing them
+  up is exactly the mistake this split exists to prevent.
+
+- **Migrating `use_custom_theme` → `theme_style` needed a real migration
+  script, not just a model change.** Existing surveys' on/off state would
+  otherwise have silently reverted to `theme_style`'s default on upgrade —
+  the ORM only auto-fills a *new* field's default into NULL rows, and
+  without intervention every existing row's boolean value would simply be
+  discarded rather than translated. Fixed with
+  `migrations/19.0.2.1.0/pre-migrate.py`: runs *before* the ORM's own
+  default-fill, reads the old `use_custom_theme` column via raw SQL,
+  populates `theme_style` from it (`True` → `'indigo'`, `False` → `'none'`),
+  then drops the old column. Verified end-to-end against a real upgraded
+  database (not just a fresh install) — a survey that had the toggle off
+  came out the other side as `theme_style='none'`, not silently reset to
+  the new default. **If `theme_style` ever changes shape again (new
+  values don't need this — only a field rename/type change does), write
+  another migration rather than letting existing surveys' choice silently
+  reset.**
 
 - **`t-attf-class` REPLACES a static `class` attribute on the same element
   — it does not merge with it.** The per-survey class is added via:
   ```xml
   <xpath expr="//div[hasclass('o_survey_wrap')]" position="attributes">
-      <attribute name="t-attf-class"> #{'o_survey_theme_custom' if survey and survey.use_custom_theme else ''}</attribute>
+      <attribute name="t-attf-class"> #{('o_survey_theme_custom o_survey_theme_' + survey.theme_style) if survey and survey.theme_style and survey.theme_style != 'none' else ''}</attribute>
   </xpath>
   ```
   targeting `survey.survey_page_fill`'s `<div class="wrap o_survey_wrap
@@ -95,9 +127,11 @@ there's an updated mockup to work from rather than guessing.
   (`survey/views/survey_templates.xml`, `question_simple_choice` /
   `question_multiple_choice`). Floats work fine for short one-line labels,
   but text wraps *around* a float rather than flowing beside it once a
-  label runs 2-3 lines — reproduced directly against a **theme-off** survey
-  during QA (stock styling, same broken wrap) to confirm this is a real
-  stock-Odoo issue, not something this module could have introduced.
+  label runs 2-3 lines — reproduced directly against a **`theme_style =
+  'none'`** survey during QA (stock styling, same broken wrap) to confirm
+  this is a real stock-Odoo issue, not something this module could have
+  introduced. This is a structural fix (shape/layout, no color), so it
+  lives in the `.o_survey_theme_custom` block, not a per-style one.
   **The fix**: `.o_survey_theme_custom .o_survey_choice_btn { display: flex;
   align-items: flex-start; }`. Per the CSS spec, **float does not apply to
   flex items** — so this single declaration neutralizes every
@@ -120,7 +154,9 @@ there's an updated mockup to work from rather than guessing.
   button in stock Bootstrap tan next to an otherwise fully-themed page —
   caught by actually looking at screenshots of every screen, not by
   reasoning about the SCSS alone. Same story for the matrix table's
-  `thead`/row-label background color.
+  `thead`/row-label background color. The *radius* on `.btn-secondary` is
+  structural (`.o_survey_theme_custom`); the *color* is per-style
+  (`.o_survey_theme_indigo`) — same split as everything else.
 
 - **Why the company logo goes in `survey.survey_fill_header`, not
   `survey.layout`.** That template is called exactly once per page load
@@ -128,10 +164,10 @@ there's an updated mockup to work from rather than guessing.
   page_per_section / page_per_question) and regardless of state (start /
   in_progress / done) — so it's the one place that reaches the whole taking
   flow without needing three separate overrides. Gated on both
-  `survey.use_custom_theme` and `env.company.logo` — nothing renders (not
-  even a broken-image box) for a theme-off survey or a company without a
-  logo configured. Uses `/web/image/res.company/<id>/logo` (the standard
-  Odoo company-logo image route).
+  `survey.theme_style != 'none'` and `env.company.logo` — nothing renders
+  (not even a broken-image box) for a stock-styled survey or a company
+  without a logo configured. Uses `/web/image/res.company/<id>/logo` (the
+  standard Odoo company-logo image route).
 
 - **Why `.js_question-wrapper` (not a new wrapper div) gets the card
   treatment.** That class already wraps every question — and the start/
@@ -151,12 +187,13 @@ there's an updated mockup to work from rather than guessing.
 
 | Change | File |
 |---|---|
-| The per-survey toggle field | `models/survey_survey.py` |
-| Where the toggle shows in the backend | `views/survey_survey_views.xml` |
-| Accent color, corner radius (local SCSS variables, not Bootstrap's) | `static/src/scss/survey_theme.scss`, top of file |
-| Question card look, choice-option layout/spacing, progress bar, buttons, matrix colors/scroll | `static/src/scss/survey_theme.scss` |
-| Company logo placement/sizing, the `.o_survey_theme_custom` class injection | `views/survey_templates.xml` |
-| `survey_file_upload` widget theming (dropzone/button/chip/progress bar) | `static/src/scss/survey_theme.scss`, "File upload widget" section — these selectors just don't match if that module isn't installed |
+| The theme-picker field, add a new selection value | `models/survey_survey.py` |
+| Where the picker shows in the backend | `views/survey_survey_views.xml` |
+| Migrating an existing field's data on a future schema change | `migrations/<version>/pre-migrate.py` (see the `use_custom_theme` → `theme_style` one for the pattern) |
+| Structural rules any style should get (shape/spacing/layout, no color) | `static/src/scss/survey_theme.scss`, `.o_survey_theme_custom` block |
+| A specific style's colors (currently just "indigo") | `static/src/scss/survey_theme.scss`, its own `.o_survey_theme_<style>` block |
+| Company logo placement/sizing, the class injection onto `.o_survey_wrap` | `views/survey_templates.xml` |
+| `survey_file_upload` widget theming (dropzone/button/chip/progress bar) | `static/src/scss/survey_theme.scss` — shape in `.o_survey_theme_custom`, color in the style block; these selectors just don't match if that module isn't installed |
 
 ## Known v1 limitations (see CHANGELOG.md)
 

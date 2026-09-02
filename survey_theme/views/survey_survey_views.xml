@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="survey.survey_survey_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='questions_layout']" position="after">
-                <field name="use_custom_theme"/>
+                <field name="theme_style" widget="radio"/>
             </xpath>
         </field>
     </record>

@@ -5,20 +5,24 @@
          done), so this is the single place that reaches the whole taking flow. -->
     <template id="survey_fill_header_inherit_logo" inherit_id="survey.survey_fill_header">
         <xpath expr="//h1[hasclass('o_survey_main_title')]" position="before">
-            <img t-if="survey.use_custom_theme and env.company.logo"
+            <img t-if="survey.theme_style != 'none' and env.company.logo"
                  t-attf-src="/web/image/res.company/#{env.company.id}/logo"
                  t-att-alt="env.company.name" class="o_survey_theme_logo mb-2"/>
         </xpath>
     </template>
 
-    <!-- Everything in survey_theme.scss is scoped under .o_survey_theme_custom, so the
-         restyle is a genuine per-survey opt-in/out (survey.use_custom_theme), not a global
-         change - a survey with the toggle off renders 100% stock Odoo Survey styling.
+    <!-- survey_theme.scss is split into two scopes on the same element: .o_survey_theme_custom
+         (structural fixes - long-text-safe choice layout, card treatment, spacing - that any
+         non-stock style should get) and .o_survey_theme_<theme_style> (that style's own colors/
+         shapes). A survey with theme_style='none' gets neither class, so genuinely stock Odoo
+         styling. Adding a new style is: a new selection value on survey.theme_style (this
+         module's own or a depending module's selection_add) + its own
+         .o_survey_theme_<value> SCSS block - no template change needed here.
          o_survey_wrap wraps the whole taking flow (start/in_progress/done, every layout),
-         same reach as the logo injection above, so this single class covers it all. -->
+         same reach as the logo injection above, so this single class pair covers it all. -->
     <template id="survey_page_fill_inherit_theme_class" inherit_id="survey.survey_page_fill">
         <xpath expr="//div[hasclass('o_survey_wrap')]" position="attributes">
-            <attribute name="t-attf-class"> #{'o_survey_theme_custom' if survey and survey.use_custom_theme else ''}</attribute>
+            <attribute name="t-attf-class"> #{('o_survey_theme_custom o_survey_theme_' + survey.theme_style) if survey and survey.theme_style and survey.theme_style != 'none' else ''}</attribute>
         </xpath>
     </template>
 </odoo>

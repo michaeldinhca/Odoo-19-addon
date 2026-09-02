@@ -1,17 +1,22 @@
-// Restyle of the survey taking flow, scoped entirely under .o_survey_theme_custom (added to
-// .o_survey_wrap by views/survey_templates.xml, conditional on survey.use_custom_theme) so a
-// per-survey toggle actually works at runtime - a survey with the toggle off gets 100% stock
-// Odoo styling. This is why this file does NOT touch Bootstrap's $primary/$border-radius
-// (those are compile-time Sass variables, baked into every survey's CSS output identically -
-// there is no way to make a Sass-variable override apply to only some surveys at runtime).
-// See CLAUDE.md for why an earlier version of this file did that, and why it was reverted.
+// Restyle of the survey taking flow, split into two scopes on the same element (added to
+// .o_survey_wrap by views/survey_templates.xml, keyed off survey.theme_style):
+//   .o_survey_theme_custom       - structural fixes any non-stock style should get
+//                                   (shape/spacing/layout only, no color)
+//   .o_survey_theme_<style>      - that style's own colors (currently just "indigo")
+// A survey with theme_style='none' gets neither class, so genuinely 100% stock Odoo styling -
+// this split is what lets a future style (a new selection value + its own
+// .o_survey_theme_<value> block) reuse the structural fixes without redeclaring them. See
+// CLAUDE.md for why this doesn't touch Bootstrap's $primary/$border-radius globally (those are
+// compile-time Sass variables baked identically into every survey's CSS - there is no way to
+// make a variable override apply to only some surveys/styles at runtime).
 
-$survey-theme-accent: #4F46E5;
-$survey-theme-accent-tint: rgba(79, 70, 229, .08);
 $survey-theme-radius-lg: 1.25rem;
 $survey-theme-radius: .875rem;
 $survey-theme-radius-pill: 999px;
 
+// ============================================================================
+// Structural (any style) - shape, spacing, layout. No color here.
+// ============================================================================
 .o_survey_theme_custom {
 
     .o_survey_theme_logo {
@@ -48,19 +53,8 @@ $survey-theme-radius-pill: 999px;
         gap: .625rem;
         padding: 1rem 1.125rem;
         line-height: 1.45;
-        color: $survey-theme-accent;
         background-color: $white;
-        box-shadow: rgba($body-color, .12) 0 0 0 1.5px;
         border-radius: $survey-theme-radius;
-
-        &:hover {
-            background-color: $survey-theme-accent-tint;
-        }
-
-        &.o_survey_selected {
-            background-color: $survey-theme-accent-tint;
-            box-shadow: $survey-theme-accent 0 0 0 2px;
-        }
 
         .o_survey_radio_btn {
             margin-top: .0625rem;
@@ -84,36 +78,24 @@ $survey-theme-radius-pill: 999px;
     // -- Matrix table ---------------------------------------------------------
     // A full stacked-card mobile rebuild needs template changes (out of scope for
     // a pure restyle pass - see CLAUDE.md); this is the safe baseline so a wide
-    // matrix never overflows the viewport on a phone, plus a color touch-up so
-    // the header doesn't stay stock-purple next to an otherwise-themed page.
+    // matrix never overflows the viewport on a phone.
     .o_survey_question_matrix {
         display: block;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-
-        thead th {
-            background-color: $survey-theme-accent;
-        }
-        tbody th {
-            background-color: darken($survey-theme-accent, 6%);
-        }
     }
 
     // -- Progress bar -----------------------------------------------------
     .o_survey_progress_wrapper .o_survey_progress {
         height: .375rem;
         border-radius: $survey-theme-radius-pill;
-
-        .progress-bar {
-            background-color: $survey-theme-accent;
-        }
     }
 
     // -- Buttons ------------------------------------------------------------
     // .btn-secondary is what the stock template uses for the *last* question's
     // submit button (button[value=finish], see survey_page_fill's t-attf-class)
-    // - a real, deliberate button, not a minor one, so it gets themed too rather
-    // than being left in stock Bootstrap tan/beige next to an otherwise-themed page.
+    // - a real, deliberate button, not a minor one, so it gets shaped/themed too
+    // rather than being left in stock Bootstrap shape next to an otherwise-themed page.
     button[type="submit"],
     .o_survey_navigation_wrapper .o_survey_navigation_submit,
     .btn-primary,
@@ -121,47 +103,89 @@ $survey-theme-radius-pill: 999px;
         border-radius: $survey-theme-radius-pill;
     }
 
-    .btn-primary, .btn-secondary {
-        background-color: $survey-theme-accent;
-        border-color: $survey-theme-accent;
-        color: $white;
-
-        &:hover, &:focus, &:active {
-            background-color: darken($survey-theme-accent, 8%);
-            border-color: darken($survey-theme-accent, 8%);
-            color: $white;
-        }
-    }
-
     // -- File upload widget (survey_file_upload, if installed) --------------
     // Optional: these selectors simply don't match anything when survey_file_upload
     // isn't installed. Kept here (rather than in that module) so the whole taking
     // flow - including a third-party question type's widget - reads as one
-    // consistent theme when this toggle is on, without survey_file_upload needing
-    // to know this module exists.
-    .o_survey_file_upload_dropzone {
+    // consistent theme, without survey_file_upload needing to know this module exists.
+    .o_survey_file_upload_dropzone,
+    .o_survey_file_upload_item {
         border-radius: $survey-theme-radius;
     }
 
     .o_survey_file_upload_trigger {
-        background-color: $survey-theme-accent;
-        border-color: $survey-theme-accent;
         border-radius: $survey-theme-radius-pill;
+    }
+
+    .o_survey_file_upload_item {
+        padding: .5rem .75rem;
+    }
+}
+
+// ============================================================================
+// "indigo" style - colors only. A future style is a sibling block like this one,
+// scoped under its own .o_survey_theme_<value> class - see survey_survey.py /
+// views/survey_templates.xml for how theme_style drives which class is applied.
+// ============================================================================
+.o_survey_theme_indigo {
+    $accent: #4F46E5;
+    $accent-tint: rgba(79, 70, 229, .08);
+
+    .o_survey_choice_btn {
+        color: $accent;
+        box-shadow: rgba($body-color, .12) 0 0 0 1.5px;
+
+        &:hover {
+            background-color: $accent-tint;
+        }
+
+        &.o_survey_selected {
+            background-color: $accent-tint;
+            box-shadow: $accent 0 0 0 2px;
+        }
+    }
+
+    .o_survey_question_matrix {
+        thead th {
+            background-color: $accent;
+        }
+        tbody th {
+            background-color: darken($accent, 6%);
+        }
+    }
+
+    .o_survey_progress_wrapper .o_survey_progress .progress-bar {
+        background-color: $accent;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: $accent;
+        border-color: $accent;
+        color: $white;
 
         &:hover, &:focus, &:active {
-            background-color: darken($survey-theme-accent, 8%);
-            border-color: darken($survey-theme-accent, 8%);
+            background-color: darken($accent, 8%);
+            border-color: darken($accent, 8%);
+            color: $white;
+        }
+    }
+
+    .o_survey_file_upload_trigger {
+        background-color: $accent;
+        border-color: $accent;
+
+        &:hover, &:focus, &:active {
+            background-color: darken($accent, 8%);
+            border-color: darken($accent, 8%);
         }
     }
 
     .o_survey_file_upload_item {
-        border: 1.5px solid $survey-theme-accent;
-        background-color: $survey-theme-accent-tint;
-        border-radius: $survey-theme-radius;
-        padding: .5rem .75rem;
+        border: 1.5px solid $accent;
+        background-color: $accent-tint;
     }
 
     .o_survey_file_upload_progress_bar {
-        background-color: $survey-theme-accent;
+        background-color: $accent;
     }
 }

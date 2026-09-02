@@ -5,6 +5,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [2.1.0] - 2026-09-02
+
+### Changed
+- **`survey.use_custom_theme` (Boolean) replaced with `survey.theme_style`
+  (Selection: `'none'` / `'indigo'`, default `'indigo'`)**, per request —
+  more theme styles are planned, and a boolean can't grow into a picker.
+  Existing surveys' on/off state is preserved via
+  `migrations/19.0.2.1.0/pre-migrate.py` (verified against a real upgraded
+  database, not just a fresh install: a survey that had the toggle off came
+  out as `theme_style='none'`, not silently reset to the new default).
+- **`survey_theme.scss` split into two scopes**: `.o_survey_theme_custom`
+  (shape/spacing/layout - the long-text choice-option fix, card treatment,
+  button radius, matrix scroll - anything a *future* style should also get)
+  and `.o_survey_theme_<style>` (that style's own colors, e.g.
+  `.o_survey_theme_indigo`'s `$accent: #4F46E5`). Both classes are applied
+  together whenever `theme_style != 'none'`. Adding a new style going
+  forward is a new selection value + its own `.o_survey_theme_<value>`
+  color block - no template change, no restructuring. See `CLAUDE.md`.
+- Backend field now uses `widget="radio"` (matching `questions_layout` in
+  the same view) instead of a checkbox, since it's a picker now, not a
+  toggle.
+
 ## [2.0.1] - 2026-09-02
 
 ### Changed

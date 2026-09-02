@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey Theme',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.1.0',
     'category': 'Marketing/Surveys',
     'summary': 'Restyles the Survey taking flow: mobile-first, company logo, long-text-safe choices',
     'description': """
@@ -14,10 +14,11 @@ screen) - no behavior changes, works with any `questions_layout` setting
 
 Features (v1):
 --------------
-* Per-survey **"Use Survey Theme"** toggle (Options tab, next to the
-  questions-layout settings) - each survey independently chooses this
-  restyled look or the stock Odoo appearance. Everything below only
-  applies when the toggle is on.
+* Per-survey **Theme** selection (Options tab, next to the questions-layout
+  settings) - each survey independently chooses "Stock Odoo" or a themed
+  style. Ships with one style ("Indigo") for now; built to grow into a
+  real picker as more styles are added (new selection value + its own
+  scoped SCSS block - see CLAUDE.md).
 * Company logo shown on the survey taking page header.
 * Modern accent color / rounded shape language.
 * Fixes long answer-option text (simple/multiple choice) wrapping badly
