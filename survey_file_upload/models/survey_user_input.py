@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from markupsafe import Markup, escape
+
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
@@ -57,6 +59,28 @@ class SurveyUserInputLine(models.Model):
     value_file_upload = fields.Many2many(
         'ir.attachment', 'survey_user_input_line_file_upload_rel', 'line_id', 'attachment_id',
         string='Uploaded Files')
+    file_upload_links = fields.Html(
+        'Uploaded Files (Download)', compute='_compute_file_upload_links', sanitize=False)
+
+    @api.depends('answer_type', 'value_file_upload.name', 'value_file_upload.access_token')
+    def _compute_display_name(self):
+        super()._compute_display_name()
+        for line in self:
+            if line.answer_type == 'file_upload':
+                line.display_name = ', '.join(line.value_file_upload.mapped('name')) or _('No File')
+
+    @api.depends('value_file_upload.name', 'value_file_upload.access_token')
+    def _compute_file_upload_links(self):
+        for line in self:
+            if not line.value_file_upload:
+                line.file_upload_links = False
+                continue
+            links = [
+                Markup('<a href="/web/content/%s?access_token=%s&amp;download=true" target="_blank">%s</a>') % (
+                    attachment.id, attachment.access_token, escape(attachment.name))
+                for attachment in line.value_file_upload
+            ]
+            line.file_upload_links = Markup('<br/>').join(links)
 
     def unlink(self):
         attachments = self.filtered(lambda line: line.answer_type == 'file_upload').value_file_upload

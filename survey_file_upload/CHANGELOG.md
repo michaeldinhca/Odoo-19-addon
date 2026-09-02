@@ -5,6 +5,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.1.0] - 2026-09-02
+
+### Fixed
+- **Backend "Answers" tab always showed "Skipped" for file-upload answers, even
+  when the upload succeeded and the attachment was correctly linked.** Root
+  cause: that tab's "Answer" column displays `survey.user_input.line.display_name`,
+  and `_compute_display_name()` was never extended for the new `file_upload`
+  answer type — it fell through to the base method's generic "not otherwise
+  recognized" fallback, which is literally the string "Skipped". The save path
+  itself was never affected (`skipped=False`, `value_file_upload` populated
+  correctly all along) — confirmed via automated browser reproduction
+  (page-per-question, one-page, and the exact multi-question layout this was
+  first reported against) run both locally and directly against a live
+  deployment, all of which saved correctly; only the *label* was wrong.
+  `_compute_display_name()` now lists the uploaded filename(s) instead.
+
+### Added
+- `survey.user_input.line.file_upload_links` (Html, computed): direct
+  `/web/content/<id>?access_token=...&download=true` download links per
+  attachment. Shown both on the response's own "Answers" tab (as an
+  otherwise-hidden column, only visible for file-upload rows) and on the
+  individual line's technical form view — not just the aggregate results page,
+  which already had download links via `question_result_file_upload`.
+
 ## [1.0.0] - 2026-09-02
 
 Initial release, built from scratch against Odoo 19 Community's actual `survey`

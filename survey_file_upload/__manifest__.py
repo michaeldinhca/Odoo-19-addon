@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey File Upload',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'category': 'Marketing/Surveys',
     'summary': 'Adds a "File Upload" question type to Survey, with AJAX (non-blocking) upload',
     'description': """
@@ -18,7 +18,7 @@ Features (v1):
   response as soon as they're picked, independent of the page-submit flow.
 * Respects the existing "Mandatory Answer" constraint like every other question type.
 * Uploaded files are listed (with download links) on the results page for each
-  respondent's answer.
+  respondent's answer, and on the response's own Answers tab in the backend.
 * Uploaded attachments are cleaned up automatically when an answer or a whole
   response is deleted, so removed responses don't leave orphaned files behind.
 
@@ -33,6 +33,7 @@ a port of any third-party module.
         'views/survey_question_views.xml',
         'views/survey_templates.xml',
         'views/survey_templates_statistics.xml',
+        'views/survey_user_views.xml',
     ],
     'assets': {
         'survey.survey_assets': [

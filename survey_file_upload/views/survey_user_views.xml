@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="survey_user_input_view_form_inherit_file_upload" model="ir.ui.view">
+        <field name="name">survey.user_input.form.inherit.file.upload</field>
+        <field name="model">survey.user_input</field>
+        <field name="inherit_id" ref="survey.survey_user_input_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_input_line_ids']//field[@name='display_name']" position="after">
+                <field name="file_upload_links" widget="html" optional="show"
+                       invisible="answer_type != 'file_upload'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="survey_user_input_line_view_form_inherit_file_upload" model="ir.ui.view">
+        <field name="name">survey.user_input.line.form.inherit.file.upload</field>
+        <field name="model">survey.user_input.line</field>
+        <field name="inherit_id" ref="survey.survey_user_input_line_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='suggested_answer_id']" position="after">
+                <field name="file_upload_links" widget="html" colspan="2"
+                       invisible="answer_type != 'file_upload'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

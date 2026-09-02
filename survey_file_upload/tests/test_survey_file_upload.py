@@ -80,3 +80,33 @@ class TestSurveyFileUpload(TransactionCase):
         attachment_id = self.attachment_2.id
         self.answer.unlink()
         self.assertFalse(self.env['ir.attachment'].search([('id', '=', attachment_id)]))
+
+    def test_display_name_shows_filenames_not_skipped(self):
+        answer = f'{self.attachment_1.id},{self.attachment_2.id}'
+        self.answer._save_lines(self.question, answer)
+        line = self.env['survey.user_input.line'].search([
+            ('user_input_id', '=', self.answer.id),
+            ('question_id', '=', self.question.id),
+        ])
+        self.assertNotEqual(line.display_name, 'Skipped')
+        self.assertIn('doc1.pdf', line.display_name)
+        self.assertIn('doc2.pdf', line.display_name)
+
+    def test_display_name_no_file_when_skipped(self):
+        self.answer._save_lines(self.question, '')
+        line = self.env['survey.user_input.line'].search([
+            ('user_input_id', '=', self.answer.id),
+            ('question_id', '=', self.question.id),
+        ])
+        self.assertEqual(line.display_name, 'Skipped')
+
+    def test_file_upload_links_contains_download_url(self):
+        self.attachment_1.generate_access_token()
+        self.answer._save_lines(self.question, str(self.attachment_1.id))
+        line = self.env['survey.user_input.line'].search([
+            ('user_input_id', '=', self.answer.id),
+            ('question_id', '=', self.question.id),
+        ])
+        self.assertIn('/web/content/%s' % self.attachment_1.id, line.file_upload_links)
+        self.assertIn(self.attachment_1.access_token, line.file_upload_links)
+        self.assertIn('doc1.pdf', line.file_upload_links)
