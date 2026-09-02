@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey File Upload',
-    'version': '19.0.1.2.0',
+    'version': '19.0.1.2.1',
     'category': 'Marketing/Surveys',
     'summary': 'Adds a "File Upload" question type to Survey, with AJAX (non-blocking) upload',
     'description': """
@@ -29,7 +29,8 @@ This module was built from scratch against Odoo 19's survey app (jsonrpc routes,
 the Interaction frontend framework, string-expression view attributes) — it is not
 a port of any third-party module.
 """,
-    'author': 'Michael Dinh',
+    'author': 'NGYN Solutions Inc.',
+    'website': 'https://ngynsolutions.com',
     'license': 'LGPL-3',
     'depends': ['survey'],
     'data': [

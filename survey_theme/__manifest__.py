@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey Theme',
-    'version': '19.0.2.0.0',
+    'version': '19.0.2.0.1',
     'category': 'Marketing/Surveys',
     'summary': 'Restyles the Survey taking flow: mobile-first, company logo, long-text-safe choices',
     'description': """
@@ -33,7 +33,8 @@ Features (v1):
 This does not touch the backend survey builder or the results/statistics
 pages - taking-flow only.
 """,
-    'author': 'Michael Dinh',
+    'author': 'NGYN Solutions Inc.',
+    'website': 'https://ngynsolutions.com',
     'license': 'LGPL-3',
     'depends': ['survey'],
     'data': [

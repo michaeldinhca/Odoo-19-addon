@@ -78,4 +78,4 @@ LGPL-3.0 — see [`LICENSE`](LICENSE).
 
 ## Author
 
-Michael Dinh
+NGYN Solutions Inc. — https://ngynsolutions.com

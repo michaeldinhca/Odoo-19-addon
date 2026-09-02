@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.2.1] - 2026-09-02
+
+### Changed
+- Module author/copyright attribution changed to NGYN Solutions Inc.
+  (`https://ngynsolutions.com`), matching this repo's other original
+  modules (e.g. `ngyn_resource_planning`) rather than an individual name.
+
 ## [1.2.0] - 2026-09-02
 
 ### Added
