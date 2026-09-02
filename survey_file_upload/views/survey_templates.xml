@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="question_container_inherit_file_upload" inherit_id="survey.question_container">
+        <xpath expr="//t[@t-if=&quot;question.question_type == 'matrix'&quot;]" position="after">
+            <t t-if="question.question_type == 'file_upload'" t-call="survey_file_upload.question_file_upload"/>
+        </xpath>
+    </template>
+
+    <template id="question_file_upload" name="Question: file upload">
+        <div class="o_survey_file_upload_widget"
+             t-att-data-question-id="question.id"
+             t-att-data-max-size-mb="question.file_upload_max_size_mb"
+             t-att-data-multiple="'true' if question.file_upload_multiple else 'false'">
+            <input type="hidden" t-att-name="question.id" data-question-type="file_upload"
+                   class="o_survey_file_upload_value"
+                   t-att-value="','.join(str(i) for i in answer_lines[0].value_file_upload.ids) if answer_lines and answer_lines[0].value_file_upload else ''"/>
+            <div class="o_survey_file_upload_list mb-2">
+                <t t-if="answer_lines and answer_lines[0].value_file_upload">
+                    <t t-foreach="answer_lines[0].value_file_upload" t-as="attach">
+                        <div class="o_survey_file_upload_item d-flex align-items-center gap-2 mb-1" t-att-data-attachment-id="attach.id">
+                            <i class="fa fa-file-o" role="img" aria-label="File"/>
+                            <span t-esc="attach.name"/>
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 o_survey_file_upload_remove" aria-label="Remove file">
+                                <i class="fa fa-times"/>
+                            </button>
+                        </div>
+                    </t>
+                </t>
+            </div>
+            <div class="o_survey_file_upload_dropzone border rounded p-3 text-center">
+                <input type="file" class="o_survey_file_upload_input d-none" t-att-multiple="'multiple' if question.file_upload_multiple else None"/>
+                <button type="button" class="btn btn-secondary o_survey_file_upload_trigger">
+                    <i class="fa fa-upload me-1"/>
+                    <t t-if="question.file_upload_multiple">Upload files</t>
+                    <t t-else="">Upload file</t>
+                </button>
+                <div class="text-muted small mt-1">
+                    Max <t t-esc="question.file_upload_max_size_mb"/> MB per file
+                </div>
+            </div>
+            <div class="o_survey_file_upload_progress d-none text-muted small mt-1">Uploading...</div>
+            <div class="o_survey_file_upload_error text-danger small mt-1"></div>
+        </div>
+    </template>
+</odoo>

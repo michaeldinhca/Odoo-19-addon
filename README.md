@@ -52,6 +52,21 @@ Modules related to accounting integrations.
 
 ---
 
+## Survey Addons
+Modules extending the standard Survey app.
+
+### Modules
+- `survey_file_upload`
+
+### Purpose
+- Adds a "File Upload" question type to Survey, with per-question size/multi-file
+  limits and AJAX (non-blocking) upload
+- Clean-room build (see `survey_file_upload/CLAUDE.md`) — not a port of any
+  third-party module
+
+
+---
+
 ## Notes
 - Repository target version: Odoo 19
 - Some modules may originate from older Odoo versions and require compatibility testing

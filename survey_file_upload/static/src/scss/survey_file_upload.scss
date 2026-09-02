@@ -1,0 +1,15 @@
+.o_survey_file_upload_widget {
+    .o_survey_file_upload_dropzone {
+        border-style: dashed !important;
+    }
+
+    .o_survey_file_upload_item {
+        max-width: 100%;
+
+        span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

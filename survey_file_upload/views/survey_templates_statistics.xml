@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="survey_page_statistics_question_inherit_file_upload" inherit_id="survey.survey_page_statistics_question">
+        <xpath expr="//t[@t-elif=&quot;question.question_type in ['matrix']&quot;]" position="after">
+            <t t-elif="question.question_type == 'file_upload'" t-call="survey_file_upload.question_result_file_upload"/>
+        </xpath>
+    </template>
+
+    <template id="question_result_file_upload" name="Question: file upload result">
+        <div class="o_survey_results_answers mt-3">
+            <t t-foreach="table_data" t-as="line">
+                <div t-if="not line.skipped and line.value_file_upload" class="d-flex align-items-baseline gap-2 mb-2">
+                    <span class="fw-bold text-nowrap" t-esc="line.user_input_id.nickname or line.user_input_id.partner_id.name or line.user_input_id.email or 'Anonymous'"/>
+                    <span class="d-flex flex-wrap gap-2">
+                        <a t-foreach="line.value_file_upload" t-as="attach"
+                           t-attf-href="/web/content/#{attach.id}?access_token=#{attach.access_token}&amp;download=true"
+                           target="_blank" t-esc="attach.name"/>
+                    </span>
+                </div>
+            </t>
+        </div>
+    </template>
+</odoo>
