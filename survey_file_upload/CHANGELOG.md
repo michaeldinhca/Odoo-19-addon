@@ -5,6 +5,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.1.1] - 2026-09-02
+
+### Fixed
+- **Deleting a `survey.user_input` (a whole response) raised `MissingError`
+  on its uploaded attachment(s).** `SurveyUserInput.unlink()` (added in 1.0.0)
+  collected the response's file attachments, called `super().unlink()`, then
+  tried to unlink those attachments itself — but Odoo's core
+  `BaseModel.unlink()` already auto-deletes any `ir.attachment` whose
+  `res_model`/`res_id` point at the record being deleted, and these
+  attachments use `res_model='survey.user_input'` — so core had already
+  removed them by the time this module's own cleanup ran a second time.
+  Caught deleting a real (non-test) response created while reproducing the
+  1.1.0 "Skipped" report against a live deployment. Fixed by removing the
+  redundant override entirely — core already handles this case for free.
+  `SurveyUserInputLine.unlink()` is unaffected and still needed (see
+  `CLAUDE.md`): its attachments' `res_model` is the *response*, not the
+  line, so deleting a line directly isn't covered by core's sweep.
+
 ## [1.1.0] - 2026-09-02
 
 ### Fixed

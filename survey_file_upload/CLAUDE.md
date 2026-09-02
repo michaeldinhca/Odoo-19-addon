@@ -71,15 +71,25 @@ repo and shouldn't be.
   `/web/content/<id>?access_token=...` mechanism rather than a custom
   download route.
 
-- **Attachment cleanup needs two `unlink()` overrides, not one.**
-  `survey.user_input.line.user_input_id` is `ondelete='cascade'`, which
-  deletes lines at the **DB level** when a whole `survey.user_input` (the
-  response) is deleted — bypassing the line model's own Python `unlink()`
-  entirely. So `models/survey_user_input.py` overrides `unlink()` on *both*
-  `survey.user_input` (collects attachments from its lines before the cascade
-  fires) and `survey.user_input.line` (handles direct line deletion, e.g. an
-  admin deleting one row from the backend list view). Removing either one
-  reintroduces an orphaned-attachment leak for that deletion path.
+- **Attachment cleanup needs exactly one `unlink()` override, on the line —
+  not on `survey.user_input` too.** Odoo's core `BaseModel.unlink()` already
+  auto-deletes any `ir.attachment` whose `res_model`/`res_id` point at a
+  record being deleted (see `odoo/orm/models.py`, the `ir_attachment_unlink`
+  sweep) — and these attachments are stored with
+  `res_model='survey.user_input'` (see below), so deleting a whole response
+  is *already* handled by core, for free. An earlier version of this module
+  added a redundant `SurveyUserInput.unlink()` that re-collected and
+  re-deleted the same attachments after `super().unlink()` — which crashed
+  with `MissingError` in production, since core had already removed them by
+  then (caught deleting a live test response on a real deployment; see
+  CHANGELOG 1.1.1). `SurveyUserInputLine.unlink()` is still needed, though:
+  deleting a single *line* (e.g. from the backend list view, or a choice/
+  matrix question's old-answer replacement) doesn't match `res_model='survey.user_input.line'`
+  in core's sweep (the attachment's `res_model` is the parent response, not
+  the line), so that path needs the explicit cleanup this module provides.
+  If you're tempted to add cleanup on `survey.user_input.unlink()` again,
+  don't — check core's behavior for the model/res_id you're actually using
+  first.
 
 - **Replacing an already-uploaded file doesn't leak an orphan**, because the
   frontend widget's "remove" action calls the real delete route immediately
@@ -96,6 +106,22 @@ repo and shouldn't be.
   `models/survey_question.py` deliberately does **not** override
   `validate_question()` — don't add one unless a real per-type validation
   rule (beyond mandatory) is needed.
+
+- **`_compute_display_name()` needed a `file_upload` branch too** — easy to
+  miss since it doesn't affect saving/validation at all, only *display*. The
+  base method's fallback for any answer_type it doesn't recognize is
+  literally the string `"Skipped"` — so a correctly-saved, non-skipped
+  file-upload answer showed as "Skipped" everywhere `display_name` is used
+  (the response's Answers tab, most visibly) even though `skipped=False` and
+  `value_file_upload` were populated correctly the whole time. This was
+  reported as "the answer got skipped" and took a full automated-browser
+  reproduction (locally and against a live deployment, matching the exact
+  reported layout/question mix) to rule out an actual save-path bug before
+  finding the real (much smaller) cause. Moral: if a `file_upload`-specific
+  symptom shows up, check whether it's actually a *display* computation
+  (`_compute_display_name`, `file_upload_links`) before assuming the
+  save/validate path broke — those two are well-tested; the display layer is
+  exactly the kind of thing easy to forget when adding a new answer_type.
 
 ## Quick map: "I want to change X, where do I look?"
 

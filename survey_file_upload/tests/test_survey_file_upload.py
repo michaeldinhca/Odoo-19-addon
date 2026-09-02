@@ -17,8 +17,17 @@ class TestSurveyFileUpload(TransactionCase):
             'constr_error_msg': 'This question requires an answer.',
         })
         cls.answer = cls.env['survey.user_input'].create({'survey_id': cls.survey.id})
-        cls.attachment_1 = cls.env['ir.attachment'].create({'name': 'doc1.pdf', 'raw': b'%PDF-1.4 test'})
-        cls.attachment_2 = cls.env['ir.attachment'].create({'name': 'doc2.pdf', 'raw': b'%PDF-1.4 test2'})
+        # res_model/res_id mirror what controllers/main.py actually sets on upload - the
+        # 'response deleted' cleanup relies on Odoo's own res_model/res_id attachment sweep
+        # (see CLAUDE.md), which only kicks in when these are set, same as in production.
+        cls.attachment_1 = cls.env['ir.attachment'].create({
+            'name': 'doc1.pdf', 'raw': b'%PDF-1.4 test',
+            'res_model': 'survey.user_input', 'res_id': cls.answer.id,
+        })
+        cls.attachment_2 = cls.env['ir.attachment'].create({
+            'name': 'doc2.pdf', 'raw': b'%PDF-1.4 test2',
+            'res_model': 'survey.user_input', 'res_id': cls.answer.id,
+        })
 
     def test_question_type_selection(self):
         self.assertEqual(self.question.question_type, 'file_upload')

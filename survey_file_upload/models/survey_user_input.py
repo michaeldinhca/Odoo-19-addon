@@ -38,16 +38,6 @@ class SurveyUserInput(models.Model):
             vals['value_file_upload'] = [(6, 0, attachment_ids)]
         return vals
 
-    def unlink(self):
-        # user_input_line_ids cascades at the DB level on unlink (ondelete='cascade' on its
-        # user_input_id many2one), which bypasses SurveyUserInputLine.unlink() below — so the
-        # attachments it would have cleaned up must be collected here, before that happens.
-        attachments = self.user_input_line_ids.filtered(
-            lambda line: line.answer_type == 'file_upload').value_file_upload
-        result = super().unlink()
-        attachments.sudo().unlink()
-        return result
-
 
 class SurveyUserInputLine(models.Model):
     _inherit = 'survey.user_input.line'
@@ -83,7 +73,12 @@ class SurveyUserInputLine(models.Model):
             line.file_upload_links = Markup('<br/>').join(links)
 
     def unlink(self):
+        # Odoo's core BaseModel.unlink() already auto-deletes any ir.attachment whose
+        # res_model/res_id point at a record being deleted - but these attachments are stored
+        # with res_model='survey.user_input' (res_id = the response, not this line; see
+        # controllers/main.py), so that only covers deleting the whole response. Deleting a
+        # single line (e.g. from the backend list view) needs this explicit cleanup instead.
         attachments = self.filtered(lambda line: line.answer_type == 'file_upload').value_file_upload
         result = super().unlink()
-        attachments.sudo().unlink()
+        attachments.exists().sudo().unlink()
         return result
