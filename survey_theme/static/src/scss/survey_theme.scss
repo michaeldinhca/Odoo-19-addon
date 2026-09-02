@@ -1,0 +1,167 @@
+// Restyle of the survey taking flow, scoped entirely under .o_survey_theme_custom (added to
+// .o_survey_wrap by views/survey_templates.xml, conditional on survey.use_custom_theme) so a
+// per-survey toggle actually works at runtime - a survey with the toggle off gets 100% stock
+// Odoo styling. This is why this file does NOT touch Bootstrap's $primary/$border-radius
+// (those are compile-time Sass variables, baked into every survey's CSS output identically -
+// there is no way to make a Sass-variable override apply to only some surveys at runtime).
+// See CLAUDE.md for why an earlier version of this file did that, and why it was reverted.
+
+$survey-theme-accent: #4F46E5;
+$survey-theme-accent-tint: rgba(79, 70, 229, .08);
+$survey-theme-radius-lg: 1.25rem;
+$survey-theme-radius: .875rem;
+$survey-theme-radius-pill: 999px;
+
+.o_survey_theme_custom {
+
+    .o_survey_theme_logo {
+        display: block;
+        max-height: 44px;
+        width: auto;
+    }
+
+    // -- Question card ------------------------------------------------------
+    // Each question (and the start/completion screens) renders inside its own
+    // .js_question-wrapper regardless of layout - a card treatment works uniformly
+    // everywhere, including stacked one after another in one_page layout.
+    .js_question-wrapper {
+        background: rgba($white, .92);
+        border-radius: $survey-theme-radius-lg;
+        box-shadow: 0 12px 32px -16px rgba(0, 0, 0, .18);
+        padding: 1.75rem 1.5rem;
+
+        @include media-breakpoint-down(sm) {
+            padding: 1.5rem 1.25rem;
+        }
+    }
+
+    // -- Choice / multiple-choice options ------------------------------------
+    // Root cause of long labels breaking: the selection icon and the key badge are
+    // float-start/float-end children of the label, so text wraps around a float
+    // rather than flowing beside it. Floats are ignored on flex items per spec, so
+    // switching the label to a flex row (existing DOM order already puts the key
+    // badge and icon before the text) fixes wrapping with no template/JS change -
+    // the .o_survey_selected / :checked toggle logic is untouched.
+    .o_survey_choice_btn {
+        display: flex;
+        align-items: flex-start;
+        gap: .625rem;
+        padding: 1rem 1.125rem;
+        line-height: 1.45;
+        color: $survey-theme-accent;
+        background-color: $white;
+        box-shadow: rgba($body-color, .12) 0 0 0 1.5px;
+        border-radius: $survey-theme-radius;
+
+        &:hover {
+            background-color: $survey-theme-accent-tint;
+        }
+
+        &.o_survey_selected {
+            background-color: $survey-theme-accent-tint;
+            box-shadow: $survey-theme-accent 0 0 0 2px;
+        }
+
+        .o_survey_radio_btn {
+            margin-top: .0625rem;
+        }
+
+        i {
+            margin-top: .0625rem;
+            font-size: 1.25rem;
+        }
+
+        span.text-break {
+            margin-left: 0 !important;
+        }
+    }
+
+    // More breathing room between options than Bootstrap's default row gutter.
+    .o_survey_answer_wrapper.row {
+        --bs-gutter-y: .75rem;
+    }
+
+    // -- Matrix table ---------------------------------------------------------
+    // A full stacked-card mobile rebuild needs template changes (out of scope for
+    // a pure restyle pass - see CLAUDE.md); this is the safe baseline so a wide
+    // matrix never overflows the viewport on a phone, plus a color touch-up so
+    // the header doesn't stay stock-purple next to an otherwise-themed page.
+    .o_survey_question_matrix {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+
+        thead th {
+            background-color: $survey-theme-accent;
+        }
+        tbody th {
+            background-color: darken($survey-theme-accent, 6%);
+        }
+    }
+
+    // -- Progress bar -----------------------------------------------------
+    .o_survey_progress_wrapper .o_survey_progress {
+        height: .375rem;
+        border-radius: $survey-theme-radius-pill;
+
+        .progress-bar {
+            background-color: $survey-theme-accent;
+        }
+    }
+
+    // -- Buttons ------------------------------------------------------------
+    // .btn-secondary is what the stock template uses for the *last* question's
+    // submit button (button[value=finish], see survey_page_fill's t-attf-class)
+    // - a real, deliberate button, not a minor one, so it gets themed too rather
+    // than being left in stock Bootstrap tan/beige next to an otherwise-themed page.
+    button[type="submit"],
+    .o_survey_navigation_wrapper .o_survey_navigation_submit,
+    .btn-primary,
+    .btn-secondary {
+        border-radius: $survey-theme-radius-pill;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: $survey-theme-accent;
+        border-color: $survey-theme-accent;
+        color: $white;
+
+        &:hover, &:focus, &:active {
+            background-color: darken($survey-theme-accent, 8%);
+            border-color: darken($survey-theme-accent, 8%);
+            color: $white;
+        }
+    }
+
+    // -- File upload widget (survey_file_upload, if installed) --------------
+    // Optional: these selectors simply don't match anything when survey_file_upload
+    // isn't installed. Kept here (rather than in that module) so the whole taking
+    // flow - including a third-party question type's widget - reads as one
+    // consistent theme when this toggle is on, without survey_file_upload needing
+    // to know this module exists.
+    .o_survey_file_upload_dropzone {
+        border-radius: $survey-theme-radius;
+    }
+
+    .o_survey_file_upload_trigger {
+        background-color: $survey-theme-accent;
+        border-color: $survey-theme-accent;
+        border-radius: $survey-theme-radius-pill;
+
+        &:hover, &:focus, &:active {
+            background-color: darken($survey-theme-accent, 8%);
+            border-color: darken($survey-theme-accent, 8%);
+        }
+    }
+
+    .o_survey_file_upload_item {
+        border: 1.5px solid $survey-theme-accent;
+        background-color: $survey-theme-accent-tint;
+        border-radius: $survey-theme-radius;
+        padding: .5rem .75rem;
+    }
+
+    .o_survey_file_upload_progress_bar {
+        background-color: $survey-theme-accent;
+    }
+}

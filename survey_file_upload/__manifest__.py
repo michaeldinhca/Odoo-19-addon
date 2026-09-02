@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey File Upload',
-    'version': '19.0.1.1.1',
+    'version': '19.0.1.2.0',
     'category': 'Marketing/Surveys',
     'summary': 'Adds a "File Upload" question type to Survey, with AJAX (non-blocking) upload',
     'description': """
@@ -16,6 +16,9 @@ Features (v1):
 * Per-question configurable maximum file size (MB) and single/multiple file toggle.
 * Non-blocking AJAX upload: files are sent to the server and attached to the
   response as soon as they're picked, independent of the page-submit flow.
+* A real upload progress bar (0-100%, from actual bytes sent, not a fake
+  animation) so respondents can tell a large file is still going up rather
+  than wondering if the upload silently failed.
 * Respects the existing "Mandatory Answer" constraint like every other question type.
 * Uploaded files are listed (with download links) on the results page for each
   respondent's answer, and on the response's own Answers tab in the backend.

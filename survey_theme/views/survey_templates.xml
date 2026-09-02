@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- survey.survey_fill_header is called once per page load across every questions_layout
+         (one_page / page_per_section / page_per_question) and every state (start/in_progress/
+         done), so this is the single place that reaches the whole taking flow. -->
+    <template id="survey_fill_header_inherit_logo" inherit_id="survey.survey_fill_header">
+        <xpath expr="//h1[hasclass('o_survey_main_title')]" position="before">
+            <img t-if="survey.use_custom_theme and env.company.logo"
+                 t-attf-src="/web/image/res.company/#{env.company.id}/logo"
+                 t-att-alt="env.company.name" class="o_survey_theme_logo mb-2"/>
+        </xpath>
+    </template>
+
+    <!-- Everything in survey_theme.scss is scoped under .o_survey_theme_custom, so the
+         restyle is a genuine per-survey opt-in/out (survey.use_custom_theme), not a global
+         change - a survey with the toggle off renders 100% stock Odoo Survey styling.
+         o_survey_wrap wraps the whole taking flow (start/in_progress/done, every layout),
+         same reach as the logo injection above, so this single class covers it all. -->
+    <template id="survey_page_fill_inherit_theme_class" inherit_id="survey.survey_page_fill">
+        <xpath expr="//div[hasclass('o_survey_wrap')]" position="attributes">
+            <attribute name="t-attf-class"> #{'o_survey_theme_custom' if survey and survey.use_custom_theme else ''}</attribute>
+        </xpath>
+    </template>
+</odoo>

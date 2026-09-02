@@ -38,7 +38,16 @@
                     Max <t t-esc="question.file_upload_max_size_mb"/> MB per file
                 </div>
             </div>
-            <div class="o_survey_file_upload_progress d-none text-muted small mt-1">Uploading...</div>
+            <div class="o_survey_file_upload_progress d-none mt-2">
+                <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+                    <span><i class="fa fa-circle-o-notch fa-spin me-1"/>Uploading&#8230;</span>
+                    <span class="o_survey_file_upload_progress_pct">0%</span>
+                </div>
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar o_survey_file_upload_progress_bar" role="progressbar"
+                         style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"/>
+                </div>
+            </div>
             <div class="o_survey_file_upload_error text-danger small mt-1"></div>
         </div>
     </template>

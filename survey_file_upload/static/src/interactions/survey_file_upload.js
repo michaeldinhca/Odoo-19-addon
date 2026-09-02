@@ -17,9 +17,12 @@ export class SurveyFileUpload extends Interaction {
         this.formEl = this.el.closest("form.o_survey-fill-form");
         this.valueInputEl = this.el.querySelector(".o_survey_file_upload_value");
         this.fileInputEl = this.el.querySelector(".o_survey_file_upload_input");
+        this.triggerEl = this.el.querySelector(".o_survey_file_upload_trigger");
         this.listEl = this.el.querySelector(".o_survey_file_upload_list");
         this.errorEl = this.el.querySelector(".o_survey_file_upload_error");
         this.progressEl = this.el.querySelector(".o_survey_file_upload_progress");
+        this.progressBarEl = this.el.querySelector(".o_survey_file_upload_progress_bar");
+        this.progressPctEl = this.el.querySelector(".o_survey_file_upload_progress_pct");
     }
 
     _tokens() {
@@ -61,15 +64,17 @@ export class SurveyFileUpload extends Interaction {
             formData.append("ufile", file);
         }
 
+        this.triggerEl.disabled = true;
+        this._setProgress(0);
         this.progressEl.classList.remove("d-none");
         try {
-            const response = await this.waitFor(
-                fetch(`/survey/file_upload/${surveyToken}/${answerToken}/${this.questionId}`, {
-                    method: "POST",
-                    body: formData,
-                })
+            const data = await this.waitFor(
+                this._uploadWithProgress(
+                    `/survey/file_upload/${surveyToken}/${answerToken}/${this.questionId}`,
+                    formData,
+                    (pct) => this._setProgress(pct)
+                )
             );
-            const data = await this.waitFor(response.json());
             if (data.error) {
                 this.errorEl.textContent = data.error;
             } else {
@@ -83,8 +88,46 @@ export class SurveyFileUpload extends Interaction {
         } catch {
             this.errorEl.textContent = _t("Upload failed. Please try again.");
         } finally {
+            this.triggerEl.disabled = false;
             this.progressEl.classList.add("d-none");
         }
+    }
+
+    /**
+     * fetch() has no upload-progress event - only XMLHttpRequest exposes
+     * `upload.onprogress`, which is what lets the progress bar actually move
+     * instead of just showing an indeterminate "uploading" state.
+     */
+    _uploadWithProgress(url, formData, onProgress) {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", url);
+            xhr.upload.addEventListener("progress", (ev) => {
+                if (ev.lengthComputable) {
+                    onProgress(Math.round((ev.loaded / ev.total) * 100));
+                }
+            });
+            xhr.addEventListener("load", () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        resolve(JSON.parse(xhr.responseText));
+                    } catch (err) {
+                        reject(err);
+                    }
+                } else {
+                    reject(new Error(`HTTP ${xhr.status}`));
+                }
+            });
+            xhr.addEventListener("error", () => reject(new Error("network error")));
+            xhr.addEventListener("abort", () => reject(new Error("aborted")));
+            xhr.send(formData);
+        });
+    }
+
+    _setProgress(pct) {
+        this.progressBarEl.style.width = `${pct}%`;
+        this.progressBarEl.setAttribute("aria-valuenow", pct);
+        this.progressPctEl.textContent = `${pct}%`;
     }
 
     _addChip(uploaded) {

@@ -27,6 +27,16 @@ repo and shouldn't be.
 
 ## Non-obvious things worth knowing before you touch the code
 
+- **The upload call uses `XMLHttpRequest`, not `fetch()` — deliberately.**
+  `fetch()` has no upload-progress event (only a download-side
+  `ReadableStream`, which doesn't help here); `XMLHttpRequest.upload`'s
+  `progress` event is the only browser API that reports bytes actually sent,
+  which is what the progress bar in `survey_file_upload.js`
+  (`_uploadWithProgress`) is built on. The delete call
+  (`onRemoveClick`) is still plain `fetch()` — it's a small request with
+  nothing meaningful to show progress on, so there's no reason to carry the
+  extra complexity there too.
+
 - **The stock `survey` module has no extensibility hook for new question
   types.** `question_type`/`answer_type` dispatch is a series of closed
   `if/elif` chains and `switch` statements scattered across

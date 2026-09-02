@@ -57,11 +57,15 @@ Modules extending the standard Survey app.
 
 ### Modules
 - `survey_file_upload`
+- `survey_theme`
 
 ### Purpose
-- Adds a "File Upload" question type to Survey, with per-question size/multi-file
-  limits and AJAX (non-blocking) upload
-- Clean-room build (see `survey_file_upload/CLAUDE.md`) — not a port of any
+- `survey_file_upload`: adds a "File Upload" question type to Survey, with
+  per-question size/multi-file limits, AJAX (non-blocking) upload, and a
+  real upload progress bar
+- `survey_theme`: restyles the Survey taking flow (mobile-first, company
+  logo, long-text-safe choice options) with a per-survey on/off toggle
+- Clean-room builds (see each module's `CLAUDE.md`) — not ports of any
   third-party module
 
 

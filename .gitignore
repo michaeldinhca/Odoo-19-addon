@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 *.pyo
 .DS_Store
+survey_theme/__pycache__/
+survey_theme/models/__pycache__/
+survey_theme/tests/__pycache__/

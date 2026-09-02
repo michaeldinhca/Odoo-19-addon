@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.2.0] - 2026-09-02
+
+### Added
+- **Real upload progress bar.** The upload previously only showed a static
+  "Uploading..." label with no indication of how far along it was, or
+  whether it had stalled. `fetch()` has no upload-progress event, so
+  `survey_file_upload.js` now uses `XMLHttpRequest` with
+  `xhr.upload.onprogress` for the upload call specifically (`onRemoveClick`'s
+  delete call is unchanged, still `fetch()` - it's a tiny request with
+  nothing to show progress on). The bar reflects actual bytes sent, not a
+  fake animation, and the trigger button is disabled for the duration so a
+  second click can't start a second upload mid-flight.
+
 ## [1.1.1] - 2026-09-02
 
 ### Fixed
