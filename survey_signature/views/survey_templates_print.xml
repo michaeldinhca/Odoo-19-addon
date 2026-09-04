@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The "Review your answers" page (survey.survey_page_print) is a separate template from
+         survey.question_container with its own closed per-type dispatch - it needs its own hook,
+         the question_container one doesn't cover it. -->
+    <template id="survey_page_print_inherit_signature" inherit_id="survey.survey_page_print">
+        <xpath expr="//t[@t-if=&quot;question.question_type == 'matrix'&quot;]" position="after">
+            <t t-if="question.question_type == 'signature'">
+                <t t-if="answer_lines and answer_lines[0].skipped">
+                    <div class="row g-0">
+                        <div class="col-12 o_survey_choice_question_skipped mt-1">This question was skipped</div>
+                    </div>
+                </t>
+                <t t-elif="answer_lines and answer_lines[0].value_signature">
+                    <div class="o_survey_print">
+                        <img t-attf-src="data:image/png;base64,#{answer_lines[0].value_signature.decode()}"
+                             style="max-height: 80px; background: #fff; border: 1px solid #ddd; border-radius: 4px;"
+                             alt="Signature"/>
+                        <div t-if="answer_lines[0].value_signature_name" class="text-muted small mt-1"
+                             t-esc="answer_lines[0].value_signature_name"/>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

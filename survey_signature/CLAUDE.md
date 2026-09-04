@@ -129,6 +129,23 @@ own answer-saving pipeline instead of `portal`'s own RPC/submit flow.
   when nothing was signed) correctly triggers the mandatory error with zero
   extra code, same as `survey_file_upload` relies on.
 
+- **There are THREE separate per-question-type dispatch chains on the
+  frontend, not just `question_container`.** The live taking flow
+  (`survey.question_container`) and the backend results page
+  (`survey.survey_page_statistics_question`) are two of them; the third is
+  **`survey.survey_page_print`** (`survey/views/survey_templates_print.xml`)
+  — the respondent-facing "Review your answers" page (reached from the
+  Thank You screen's own "Review your answers" button) — a separate
+  template with its own closed per-type `t-if` chain, unrelated to
+  `question_container`. Missing it meant the signature saved and validated
+  correctly and showed correctly during the taking flow, but the question
+  title rendered with nothing underneath on the review page specifically
+  (found via a real screenshot on `odoo-comm-demo`, not a guess — the exact
+  same gap `survey_file_upload` had, fixed the same release). Fixed by
+  `views/survey_templates_print.xml`. **If this module's question type ever
+  needs another rendering surface, check all three templates, not just
+  `question_container`.**
+
 ## Quick map: "I want to change X, where do I look?"
 
 | Change | File |
@@ -140,6 +157,7 @@ own answer-saving pipeline instead of `portal`'s own RPC/submit flow.
 | Where the widget is inserted into the question page | `views/survey_templates.xml` (`question_container` hook) |
 | Mandatory-answer enforcement / how the value reaches the submit payload | `static/src/interactions/survey_form_patch.js` |
 | Results page rendering (image + signer name per respondent) | `views/survey_templates_statistics.xml` |
+| Respondent's own "Review your answers" page display | `views/survey_templates_print.xml` |
 | Backend Answers tab display | `views/survey_user_views.xml` |
 
 ## Known v1 limitations

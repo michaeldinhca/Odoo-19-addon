@@ -133,6 +133,24 @@ repo and shouldn't be.
   save/validate path broke — those two are well-tested; the display layer is
   exactly the kind of thing easy to forget when adding a new answer_type.
 
+- **There are THREE separate per-question-type dispatch chains on the
+  frontend, not two.** It's easy to think "live taking flow"
+  (`survey.question_container`) and "results page"
+  (`survey.survey_page_statistics_question`) are the whole surface, since
+  those are the two this module hooked from day one. There's a third:
+  **`survey.survey_page_print`** (`survey/views/survey_templates_print.xml`)
+  — the respondent-facing "Review your answers" page (reached from the
+  Thank You screen's own "Review your answers" button) — which is its own
+  template with its own closed per-type `t-if` chain, entirely independent
+  of `question_container`. Missing this one meant uploaded files saved and
+  validated correctly, showed correctly on the *results* page, and even
+  showed correctly *during* the taking flow — but the question title
+  rendered with nothing underneath on the review page specifically (found
+  via a real screenshot, not a guess). Fixed by
+  `views/survey_templates_print.xml`. **If you add another new question
+  type here later, or to any sibling survey module, hook all three
+  templates, not just `question_container`.**
+
 ## Quick map: "I want to change X, where do I look?"
 
 | Change | File |
@@ -144,6 +162,7 @@ repo and shouldn't be.
 | Backend question-builder UI (Options tab fields, preview block) | `views/survey_question_views.xml` |
 | Taking-form markup (dropzone, file chips, hidden value input) | `views/survey_templates.xml` — `question_file_upload` |
 | Results-page display (download links per respondent) | `views/survey_templates_statistics.xml` — `question_result_file_upload` |
+| Respondent's own "Review your answers" page display | `views/survey_templates_print.xml` |
 | Upload/remove AJAX behavior | `static/src/interactions/survey_file_upload.js` |
 | Folding the file answer into core's submit/validate switches | `static/src/interactions/survey_form_patch.js` |
 | Styling | `static/src/scss/survey_file_upload.scss` |

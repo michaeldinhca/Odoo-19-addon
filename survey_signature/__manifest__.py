@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey Signature',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Marketing/Surveys',
     'summary': 'Adds a "Signature" question type to Survey, using Odoo\'s own signature pad UI',
     'description': """
@@ -38,6 +38,7 @@ any third-party module; it reuses Odoo Community's own signature widget.
         'views/survey_question_views.xml',
         'views/survey_templates.xml',
         'views/survey_templates_statistics.xml',
+        'views/survey_templates_print.xml',
         'views/survey_user_views.xml',
     ],
     'assets': {

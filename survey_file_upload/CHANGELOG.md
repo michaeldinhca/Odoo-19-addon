@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.2.2] - 2026-09-04
+
+### Fixed
+- **Uploaded files didn't show up on the respondent-facing "Review your
+  answers" page** - only the question title appeared, nothing underneath.
+  Root cause: that page (`survey.survey_page_print`) is a separate template
+  from `survey.question_container` with its own closed per-question-type
+  dispatch chain, unrelated to the one this module already hooked for the
+  live taking flow and the backend results page - `file_upload` just wasn't
+  in it. Added `views/survey_templates_print.xml` to hook that template too
+  (lists the uploaded file name(s), or "This question was skipped").
+
 ## [1.2.1] - 2026-09-02
 
 ### Changed

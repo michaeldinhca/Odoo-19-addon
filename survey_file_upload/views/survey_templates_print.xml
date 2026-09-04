@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The "Review your answers" page (survey.survey_page_print) is a separate template from
+         survey.question_container with its own closed per-type dispatch - it needs its own hook,
+         the question_container one doesn't cover it. -->
+    <template id="survey_page_print_inherit_file_upload" inherit_id="survey.survey_page_print">
+        <xpath expr="//t[@t-if=&quot;question.question_type == 'matrix'&quot;]" position="after">
+            <t t-if="question.question_type == 'file_upload'">
+                <t t-if="answer_lines and answer_lines[0].skipped">
+                    <div class="row g-0">
+                        <div class="col-12 o_survey_choice_question_skipped mt-1">This question was skipped</div>
+                    </div>
+                </t>
+                <t t-elif="answer_lines and answer_lines[0].value_file_upload">
+                    <div class="o_survey_print o_survey_comment_container p-0 d-flex flex-column gap-1">
+                        <t t-foreach="answer_lines[0].value_file_upload" t-as="attach">
+                            <span t-esc="attach.name"/>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

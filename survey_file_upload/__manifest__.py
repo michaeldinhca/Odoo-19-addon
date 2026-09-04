@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Survey File Upload',
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.2.2',
     'category': 'Marketing/Surveys',
     'summary': 'Adds a "File Upload" question type to Survey, with AJAX (non-blocking) upload',
     'description': """
@@ -37,6 +37,7 @@ a port of any third-party module.
         'views/survey_question_views.xml',
         'views/survey_templates.xml',
         'views/survey_templates_statistics.xml',
+        'views/survey_templates_print.xml',
         'views/survey_user_views.xml',
     ],
     'assets': {
