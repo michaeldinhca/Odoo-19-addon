@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="question_container_inherit_signature" inherit_id="survey.question_container">
+        <xpath expr="//t[@t-if=&quot;question.question_type == 'matrix'&quot;]" position="after">
+            <t t-if="question.question_type == 'signature'" t-call="survey_signature.question_signature"/>
+        </xpath>
+    </template>
+
+    <template id="question_signature" name="Question: signature">
+        <t t-set="signature_line" t-value="answer_lines[0] if answer_lines and answer_lines[0].answer_type == 'signature' else None"/>
+        <owl-component name="survey_signature.signature_widget"
+            t-att-props="json.dumps({
+                'questionId': question.id,
+                'defaultName': signature_line.value_signature_name if signature_line else '',
+                'defaultImage': ('data:image/png;base64,' + signature_line.value_signature.decode()) if signature_line and signature_line.value_signature else '',
+            })"/>
+    </template>
+</odoo>

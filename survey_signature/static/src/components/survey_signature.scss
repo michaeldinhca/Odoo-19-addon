@@ -1,0 +1,16 @@
+.o_survey_signature_widget {
+    max-width: 480px;
+
+    .o_web_sign_name_and_signature {
+        margin-top: 0.5rem;
+    }
+
+    .o_web_sign_signature_group {
+        border-radius: $border-radius;
+    }
+
+    canvas.o_web_sign_signature {
+        width: 100%;
+        touch-action: none;
+    }
+}

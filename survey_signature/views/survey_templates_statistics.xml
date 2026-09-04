@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="survey_page_statistics_question_inherit_signature" inherit_id="survey.survey_page_statistics_question">
+        <xpath expr="//t[@t-elif=&quot;question.question_type in ['matrix']&quot;]" position="after">
+            <t t-elif="question.question_type == 'signature'" t-call="survey_signature.question_result_signature"/>
+        </xpath>
+    </template>
+
+    <template id="question_result_signature" name="Question: signature result">
+        <div class="o_survey_results_answers mt-3">
+            <t t-foreach="table_data" t-as="line">
+                <div t-if="not line.skipped and line.value_signature" class="d-flex align-items-center gap-2 mb-2">
+                    <span class="fw-bold text-nowrap" t-esc="line.user_input_id.nickname or line.user_input_id.partner_id.name or line.user_input_id.email or 'Anonymous'"/>
+                    <span t-if="line.value_signature_name" class="text-muted" t-esc="'(%s)' % line.value_signature_name"/>
+                    <img t-attf-src="data:image/png;base64,#{line.value_signature.decode()}"
+                         style="max-height: 60px; background: #fff; border: 1px solid #ddd; border-radius: 4px;"
+                         alt="Signature"/>
+                </div>
+            </t>
+        </div>
+    </template>
+</odoo>

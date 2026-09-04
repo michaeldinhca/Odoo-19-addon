@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="survey_user_input_line_view_form_inherit_signature" model="ir.ui.view">
+        <field name="name">survey.user_input.line.form.inherit.signature</field>
+        <field name="model">survey.user_input.line</field>
+        <field name="inherit_id" ref="survey.survey_user_input_line_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='suggested_answer_id']" position="after">
+                <field name="value_signature_name" invisible="answer_type != 'signature'"/>
+                <field name="value_signature" widget="image" class="oe_avatar"
+                       invisible="answer_type != 'signature'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

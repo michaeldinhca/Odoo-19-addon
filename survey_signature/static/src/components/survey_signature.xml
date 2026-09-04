@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="survey_signature.SurveySignature">
+        <div class="o_survey_signature_widget">
+            <input type="hidden" t-att-name="props.questionId" data-question-type="signature"
+                   class="o_survey_signature_value" t-ref="valueInput"/>
+            <NameAndSignature t-props="nameAndSignatureProps"/>
+        </div>
+    </t>
+</templates>

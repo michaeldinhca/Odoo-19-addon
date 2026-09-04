@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="survey_question_form_inherit_signature" model="ir.ui.view">
+        <field name="name">survey.question.form.inherit.signature</field>
+        <field name="model">survey.question</field>
+        <field name="inherit_id" ref="survey.survey_question_form"/>
+        <field name="arch" type="xml">
+            <!-- Preview panel: same pattern as the stock per-type preview blocks -->
+            <xpath expr="//div[hasclass('o_preview_questions')]" position="inside">
+                <div invisible="question_type != 'signature'">
+                    <span>Sign here</span><br/>
+                    <i class="fa fa-pencil-square-o fa-4x" role="img" aria-label="Signature" title="Signature"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
