@@ -1,38 +1,43 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onWillUpdateProps, useExternalListener } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { serializeDateTime, deserializeDateTime } from "@web/core/l10n/dates";
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
+import { WithSearch } from "@web/search/with_search/with_search";
+import { Layout } from "@web/search/layout";
+import { SearchBar } from "@web/search/search_bar/search_bar";
+import { Domain } from "@web/core/domain";
 
 const { DateTime } = luxon;
 
 /* =========================================================
-   Which calendar.event field rows are grouped by is chosen in
-   Calendar > Configuration > Settings (res_config_settings.py,
-   ngyn_calendar_gantt.groupby_field) — or from the quick picker
-   in this view's own toolbar, which writes to the same param.
-   This map is this file's copy of that same short list — kept
-   in sync manually, same hand-rolled approach
-   ngyn_resource_planning already uses for its own small lookups.
+   Rows are grouped by whichever field the real Odoo Group By
+   menu currently has active (driven by <filter> entries in
+   views/calendar_event_search_views.xml — adding a third
+   grouping option later is purely an XML change). This map is
+   this file's own copy of that short list of *supported*
+   fields, same hand-rolled-over-generic approach
+   ngyn_resource_planning already uses for its own lookups.
    ========================================================= */
 const GROUPBY_FIELDS = {
     opportunity_id: { label: "Opportunity", type: "many2one" },
-    x_ngyn_installer_ids: { label: "Installer", type: "many2many" },
+    partner_ids: { label: "Attendee", type: "many2many" },
 };
 const DEFAULT_GROUPBY = "opportunity_id";
 const UNASSIGNED_KEY = "__unassigned__";
 const LANE_HEIGHT = 32; // px — must match .o_ngyn_gantt_bar height + gap in the SCSS
 
-// Business-hours window the timeline is scaled to (per user request: 6am–8pm,
-// not a full 24h day). An event outside this window is visually clamped to
-// the nearest edge of the window — it still shows, just compressed to the
-// boundary, rather than being hidden or breaking the day-column math.
+// Business-hours window the timeline is scaled to (6am–8pm, not a full 24h
+// day). An event outside this window, or spanning past midnight, is visually
+// clamped to the nearest edge rather than hidden or breaking the day-column
+// math.
 const BUSINESS_START_HOUR = 6;
 const BUSINESS_END_HOUR = 20;
 const BUSINESS_WINDOW_MIN = (BUSINESS_END_HOUR - BUSINESS_START_HOUR) * 60;
 const HOUR_TICKS = [6, 9, 12, 15, 18];
+const RESIZE_SNAP_MIN = 15;
 
 const AVATAR_PALETTE = ["#2F5D8A", "#C1611F", "#3D7A5D", "#A87B12", "#6B4C7A", "#2E7A78", "#B5402C", "#55636F"];
 function computeInitials(name) {
@@ -42,15 +47,22 @@ function computeInitials(name) {
 function computeAvatarColor(id) {
     return AVATAR_PALETTE[id % AVATAR_PALETTE.length];
 }
+function formatDelta(minutes) {
+    const sign = minutes >= 0 ? "+" : "-";
+    const abs = Math.round(Math.abs(minutes));
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    if (h && m) return `${sign}${h}h ${m}m`;
+    if (h) return `${sign}${h}h`;
+    return `${sign}${m}m`;
+}
 
 function packLanes(events) {
     // Sort by start, then place each event in the first lane whose last
-    // event already ends before this one starts, else open a new lane.
-    // This is what actually solves the "4-5 things at once" problem — bars
-    // that overlap in time are stacked instead of drawn on top of each
-    // other. Lane assignment always uses the real start/stop, never the
-    // business-hours-clamped display values, so true time conflicts are
-    // never missed just because they render compressed.
+    // event already ends before this one starts, else open a new lane —
+    // this is what actually solves the "4-5 things at once" problem.
+    // Lane assignment always uses the real start/stop, never the
+    // business-hours-clamped display values.
     const sorted = [...events].sort((a, b) => a.start - b.start);
     const laneLastStop = [];
     for (const ev of sorted) {
@@ -68,9 +80,25 @@ function packLanes(events) {
     return lanes;
 }
 
-export class NgynCalendarGanttTimeline extends Component {
-    static template = "ngyn_calendar_gantt.Timeline";
-    static props = ["*"];
+async function resolveViewId(orm, module, name) {
+    const [, resId] = await orm.call("ir.model.data", "check_object_reference", [module, name]);
+    return resId;
+}
+
+/* =========================================================
+   Inner component: everything that isn't the search bar itself.
+   Receives domain/groupBy/context from the enclosing WithSearch's
+   scoped slot as plain props, and reloads whenever they change —
+   the same onWillUpdateProps pattern Odoo's own useModel() uses
+   (web/static/src/model/model.js).
+   ========================================================= */
+export class NgynGanttBody extends Component {
+    static template = "ngyn_calendar_gantt.Body";
+    static props = {
+        domain: { type: Array, optional: true },
+        groupBy: { type: Array, element: String, optional: true },
+        context: { type: Object, optional: true },
+    };
 
     setup() {
         this.orm = useService("orm");
@@ -79,48 +107,62 @@ export class NgynCalendarGanttTimeline extends Component {
         this.state = useState({
             loading: true,
             weekStart: DateTime.local().startOf("week"),
-            groupbyField: DEFAULT_GROUPBY,
-            searchQuery: "",
+            activeGroupbyField: DEFAULT_GROUPBY,
             rows: [],
+            resizing: null,
+            crmPopupViewId: null,
         });
+        this._suppressClick = false;
+        this._lastSearchKey = null;
 
         onWillStart(async () => {
-            const groupby = await this.orm.call("ir.config_parameter", "get_param", [
-                "ngyn_calendar_gantt.groupby_field",
-                DEFAULT_GROUPBY,
-            ]);
-            this.state.groupbyField = GROUPBY_FIELDS[groupby] ? groupby : DEFAULT_GROUPBY;
-            await this.loadData();
+            this.state.crmPopupViewId = await resolveViewId(
+                this.orm,
+                "ngyn_calendar_gantt",
+                "crm_lead_view_form_popup"
+            );
+            await this.loadData(this.props);
         });
+        onWillUpdateProps((nextProps) => {
+            const key = JSON.stringify([nextProps.domain, nextProps.groupBy]);
+            if (key === this._lastSearchKey) {
+                return;
+            }
+            return this.loadData(nextProps);
+        });
+
+        useExternalListener(window, "mousemove", this.onResizeMove.bind(this));
+        useExternalListener(window, "mouseup", this.onResizeEnd.bind(this));
     }
 
     /* =====================================================
        DATA LOADING
        ===================================================== */
-    async loadData() {
+    async loadData(props) {
         this.state.loading = true;
-        const field = this.state.groupbyField;
+        this._lastSearchKey = JSON.stringify([props.domain, props.groupBy]);
+
+        const field = GROUPBY_FIELDS[(props.groupBy || [])[0]] ? props.groupBy[0] : DEFAULT_GROUPBY;
+        this.state.activeGroupbyField = field;
+
         const weekStart = this.state.weekStart;
         const weekEnd = weekStart.plus({ days: 7 });
+        const weekDomain = [
+            ["start", "<", serializeDateTime(weekEnd)],
+            ["stop", ">", serializeDateTime(weekStart)],
+        ];
+        const domain = Domain.and([props.domain || [], weekDomain]).toList({});
 
-        // Always fetch the installer field too, even when grouping by
-        // Opportunity — it's needed for the per-bar installer avatars.
-        const fields = new Set(["name", "start", "stop", field, "x_ngyn_installer_ids"]);
+        const fields = new Set(["name", "start", "stop", field, "partner_ids"]);
 
-        const events = await this.orm.searchRead(
-            "calendar.event",
-            [
-                ["start", "<", serializeDateTime(weekEnd)],
-                ["stop", ">", serializeDateTime(weekStart)],
-            ],
-            [...fields],
-            { order: "start asc" }
-        );
+        const events = await this.orm.searchRead("calendar.event", domain, [...fields], {
+            order: "start asc",
+        });
 
-        const installerIds = [...new Set(events.flatMap((ev) => ev.x_ngyn_installer_ids || []))];
+        const partnerIds = [...new Set(events.flatMap((ev) => ev.partner_ids || []))];
         let partnerNames = {};
-        if (installerIds.length) {
-            const partners = await this.orm.read("res.partner", installerIds, ["name"]);
+        if (partnerIds.length) {
+            const partners = await this.orm.read("res.partner", partnerIds, ["name"]);
             partnerNames = Object.fromEntries(partners.map((p) => [p.id, p.name]));
         }
 
@@ -133,7 +175,7 @@ export class NgynCalendarGanttTimeline extends Component {
         };
 
         for (const ev of events) {
-            const installers = (ev.x_ngyn_installer_ids || []).map((id) => ({
+            const attendees = (ev.partner_ids || []).map((id) => ({
                 id,
                 name: partnerNames[id] || `#${id}`,
             }));
@@ -142,7 +184,7 @@ export class NgynCalendarGanttTimeline extends Component {
                 name: ev.name,
                 start: deserializeDateTime(ev.start),
                 stop: deserializeDateTime(ev.stop),
-                installers,
+                attendees,
             };
             if (GROUPBY_FIELDS[field].type === "many2one") {
                 const value = ev[field];
@@ -180,37 +222,20 @@ export class NgynCalendarGanttTimeline extends Component {
        ===================================================== */
     prevWeek() {
         this.state.weekStart = this.state.weekStart.minus({ days: 7 });
-        this.loadData();
+        this.loadData(this.props);
     }
     nextWeek() {
         this.state.weekStart = this.state.weekStart.plus({ days: 7 });
-        this.loadData();
+        this.loadData(this.props);
     }
     today() {
         this.state.weekStart = DateTime.local().startOf("week");
-        this.loadData();
-    }
-    onSearchInput(ev) {
-        this.state.searchQuery = ev.target.value;
-    }
-    async onGroupbyChange(ev) {
-        const value = ev.target.value;
-        this.state.groupbyField = value;
-        // Keep the toolbar picker and the Settings screen in sync — both
-        // read/write the same ir.config_parameter.
-        await this.orm.call("ir.config_parameter", "set_param", [
-            "ngyn_calendar_gantt.groupby_field",
-            value,
-        ]);
-        await this.loadData();
+        this.loadData(this.props);
     }
 
     /* =====================================================
        RENDER HELPERS
        ===================================================== */
-    get groupbyOptions() {
-        return Object.entries(GROUPBY_FIELDS).map(([value, { label }]) => ({ value, label }));
-    }
     get timezoneLabel() {
         try {
             return Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -241,36 +266,32 @@ export class NgynCalendarGanttTimeline extends Component {
             leftPct: ((hour - BUSINESS_START_HOUR) / (BUSINESS_END_HOUR - BUSINESS_START_HOUR)) * 100,
         }));
     }
-    get filteredRows() {
-        const q = this.state.searchQuery.trim().toLowerCase();
-        if (!q) {
-            return this.state.rows;
-        }
-        const result = [];
-        for (const row of this.state.rows) {
-            const rowMatches = row.label.toLowerCase().includes(q);
-            const events = rowMatches ? row.events : row.events.filter((ev) => ev.name.toLowerCase().includes(q));
-            if (!events.length) {
-                continue;
-            }
-            result.push({ ...row, events, lanes: packLanes(events) });
-        }
-        return result;
+    showCrmIcon(row) {
+        return this.state.activeGroupbyField === "opportunity_id" && row.key !== UNASSIGNED_KEY;
     }
     barTitle(ev) {
-        const installerNames = ev.installers.map((p) => p.name).join(", ");
-        const suffix = installerNames ? ` — ${installerNames}` : "";
+        const names = ev.attendees.map((p) => p.name).join(", ");
+        const suffix = names ? ` — ${names}` : "";
         return `${ev.name} (${ev.start.toFormat("ccc h:mm a")} – ${ev.stop.toFormat("h:mm a")})${suffix}`;
+    }
+    effectiveTimes(ev) {
+        const r = this.state.resizing;
+        if (r && r.eventId === ev.id) {
+            return { start: r.previewStart, stop: r.previewStop };
+        }
+        return { start: ev.start, stop: ev.stop };
     }
     barStyle(ev) {
         const weekStart = this.state.weekStart;
-        let dayIndex = Math.round(ev.start.startOf("day").diff(weekStart, "days").days);
+        const { start, stop } = this.effectiveTimes(ev);
+
+        let dayIndex = Math.round(start.startOf("day").diff(weekStart, "days").days);
         dayIndex = Math.min(6, Math.max(0, dayIndex));
 
-        const dayStart = ev.start.startOf("day");
-        const startMinRaw = ev.start.diff(dayStart, "minutes").minutes;
-        const stopMinRaw = ev.stop.hasSame(ev.start, "day")
-            ? ev.stop.diff(dayStart, "minutes").minutes
+        const dayStart = start.startOf("day");
+        const startMinRaw = start.diff(dayStart, "minutes").minutes;
+        const stopMinRaw = stop.hasSame(start, "day")
+            ? stop.diff(dayStart, "minutes").minutes
             : BUSINESS_END_HOUR * 60;
 
         const clampToWindow = (m) => Math.min(BUSINESS_END_HOUR * 60, Math.max(BUSINESS_START_HOUR * 60, m));
@@ -291,13 +312,163 @@ export class NgynCalendarGanttTimeline extends Component {
     avatarColor(id) {
         return computeAvatarColor(id);
     }
+
+    /* =====================================================
+       DRAG-TO-RESIZE
+       ===================================================== */
+    onResizeStart(mouseEvent, ev, edge) {
+        mouseEvent.preventDefault();
+        mouseEvent.stopPropagation();
+        const trackEl = mouseEvent.currentTarget.closest(".o_ngyn_gantt_track");
+        this.state.resizing = {
+            eventId: ev.id,
+            edge,
+            startX: mouseEvent.clientX,
+            trackWidth: trackEl.getBoundingClientRect().width,
+            originalStart: ev.start,
+            originalStop: ev.stop,
+            previewStart: ev.start,
+            previewStop: ev.stop,
+            moved: false,
+        };
+    }
+    onResizeMove(mouseEvent) {
+        const r = this.state.resizing;
+        if (!r) {
+            return;
+        }
+        const deltaPx = mouseEvent.clientX - r.startX;
+        if (Math.abs(deltaPx) > 3) {
+            r.moved = true;
+        }
+        const dayWidthPx = r.trackWidth / 7;
+        const minutesPerPx = BUSINESS_WINDOW_MIN / dayWidthPx;
+        const deltaMinRaw = deltaPx * minutesPerPx;
+        const deltaMin = Math.round(deltaMinRaw / RESIZE_SNAP_MIN) * RESIZE_SNAP_MIN;
+
+        if (r.edge === "stop") {
+            const dayEnd = r.originalStart.startOf("day").plus({ hours: BUSINESS_END_HOUR });
+            const minStop = r.originalStart.plus({ minutes: RESIZE_SNAP_MIN });
+            let newStop = r.originalStop.plus({ minutes: deltaMin });
+            if (newStop > dayEnd) newStop = dayEnd;
+            if (newStop < minStop) newStop = minStop;
+            r.previewStop = newStop;
+        } else {
+            const dayStart = r.originalStop.startOf("day").plus({ hours: BUSINESS_START_HOUR });
+            const maxStart = r.originalStop.minus({ minutes: RESIZE_SNAP_MIN });
+            let newStart = r.originalStart.plus({ minutes: deltaMin });
+            if (newStart < dayStart) newStart = dayStart;
+            if (newStart > maxStart) newStart = maxStart;
+            r.previewStart = newStart;
+        }
+    }
+    async onResizeEnd() {
+        const r = this.state.resizing;
+        if (!r) {
+            return;
+        }
+        this.state.resizing = null;
+        if (!r.moved) {
+            return;
+        }
+        this._suppressClick = true;
+        await this.orm.write("calendar.event", [r.eventId], {
+            start: serializeDateTime(r.previewStart),
+            stop: serializeDateTime(r.previewStop),
+        });
+        await this.loadData(this.props);
+    }
+    get resizeLabel() {
+        const r = this.state.resizing;
+        if (!r) {
+            return "";
+        }
+        const boundary = r.edge === "stop" ? r.previewStop : r.previewStart;
+        const original = r.edge === "stop" ? r.originalStop : r.originalStart;
+        const deltaMin = boundary.diff(original, "minutes").minutes;
+        return `${boundary.toFormat("ccc h:mm a")} (${deltaMin === 0 ? "no change" : formatDelta(deltaMin)})`;
+    }
+    resizingEventId() {
+        return this.state.resizing ? this.state.resizing.eventId : null;
+    }
+    resizeBadgeStyle() {
+        return this.state.resizing?.edge === "stop" ? "right:0; left:auto;" : "left:0;";
+    }
+
+    /* =====================================================
+       DIALOGS
+       ===================================================== */
     openEvent(ev) {
+        if (this._suppressClick) {
+            this._suppressClick = false;
+            return;
+        }
         this.dialog.add(FormViewDialog, {
             resModel: "calendar.event",
             resId: ev.id,
             title: ev.name,
-            onRecordSaved: () => this.loadData(),
+            onRecordSaved: () => this.loadData(this.props),
         });
+    }
+    openOpportunity(row) {
+        this.dialog.add(FormViewDialog, {
+            resModel: "crm.lead",
+            resId: row.key,
+            viewId: this.state.crmPopupViewId,
+            title: row.label,
+        });
+    }
+    get defaultNewEventStart() {
+        const now = DateTime.local();
+        const weekStart = this.state.weekStart;
+        const weekEnd = weekStart.plus({ days: 7 });
+        const base = now >= weekStart && now < weekEnd ? now : weekStart;
+        return base.set({ hour: 9, minute: 0, second: 0, millisecond: 0 });
+    }
+    createEvent() {
+        const start = this.defaultNewEventStart;
+        this.dialog.add(FormViewDialog, {
+            resModel: "calendar.event",
+            resId: false,
+            title: "New Event",
+            context: {
+                default_start: serializeDateTime(start),
+                default_stop: serializeDateTime(start.plus({ hours: 1 })),
+            },
+            onRecordSaved: () => this.loadData(this.props),
+        });
+    }
+}
+
+/* =========================================================
+   Outer component: the registered client action. Its only job
+   is resolving our dedicated search view's id once, then handing
+   off to WithSearch — which provides the real Filters/Group By/
+   Favorites search bar backed by that view's own <filter> entries.
+   ========================================================= */
+export class NgynCalendarGanttTimeline extends Component {
+    static template = "ngyn_calendar_gantt.Timeline";
+    static components = { WithSearch, Layout, SearchBar, NgynGanttBody };
+    static props = ["*"];
+
+    setup() {
+        this.orm = useService("orm");
+        this.state = useState({ searchViewId: null });
+        onWillStart(async () => {
+            this.state.searchViewId = await resolveViewId(
+                this.orm,
+                "ngyn_calendar_gantt",
+                "calendar_event_view_search_gantt"
+            );
+        });
+    }
+
+    get withSearchProps() {
+        return {
+            resModel: "calendar.event",
+            searchViewId: this.state.searchViewId,
+            searchMenuTypes: ["filter", "groupBy", "favorite"],
+        };
     }
 }
 

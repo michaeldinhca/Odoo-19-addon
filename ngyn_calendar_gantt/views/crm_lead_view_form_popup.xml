@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Standalone quick-view form for the Timeline's "open CRM record" icon.
+         Deliberately NOT an inherit of the stock Opportunity form — a fresh,
+         minimal <form> with no chatter/log-note panel, per direct request
+         ("just form is ok, do not need right panel of log note"). The real
+         CRM app's own Opportunity form is completely untouched by this. -->
+    <record id="crm_lead_view_form_popup" model="ir.ui.view">
+        <field name="name">crm.lead.form.ngyn.gantt.popup</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <form string="Opportunity">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" string="Customer"/>
+                            <field name="user_id" string="Salesperson"/>
+                            <field name="team_id"/>
+                        </group>
+                        <group>
+                            <field name="stage_id"/>
+                            <field name="expected_revenue"/>
+                            <field name="probability"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

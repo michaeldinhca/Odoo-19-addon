@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dedicated search view for the Timeline action — deliberately not an
+         inherit of calendar's own default search view, so this module's
+         Filters/Group By additions stay scoped to the Timeline and never
+         affect the regular Calendar/List views elsewhere in the app.
+         Adding a new filter or group-by option later is just another
+         <field>/<filter> element here — no JS change needed. -->
+    <record id="calendar_event_view_search_gantt" model="ir.ui.view">
+        <field name="name">calendar.event.search.ngyn.gantt</field>
+        <field name="model">calendar.event</field>
+        <field name="arch" type="xml">
+            <search string="Timeline Search">
+                <field name="name" string="Event"/>
+                <field name="opportunity_id"/>
+                <field name="partner_ids" string="Attendee"/>
+                <separator/>
+                <group>
+                    <filter string="Opportunity" name="group_opportunity" context="{'group_by': 'opportunity_id'}"/>
+                    <filter string="Attendee" name="group_attendee" context="{'group_by': 'partner_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

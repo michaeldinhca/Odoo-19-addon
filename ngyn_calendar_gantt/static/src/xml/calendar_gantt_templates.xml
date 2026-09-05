@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ngyn_calendar_gantt.Timeline" owl="1">
+        <WithSearch t-if="state.searchViewId" t-props="withSearchProps" t-slot-scope="search">
+            <Layout display="{controlPanel: true}">
+                <t t-set-slot="layout-actions">
+                    <SearchBar/>
+                </t>
+                <NgynGanttBody domain="search.domain" groupBy="search.groupBy" context="search.context"/>
+            </Layout>
+        </WithSearch>
+    </t>
+
+    <t t-name="ngyn_calendar_gantt.Body" owl="1">
         <div class="o_ngyn_gantt">
             <div class="o_ngyn_gantt_header">
                 <div class="o_ngyn_gantt_nav">
@@ -13,25 +24,9 @@
                     </button>
                     <span class="o_ngyn_gantt_range" t-esc="weekRangeLabel"/>
                     <span class="o_ngyn_gantt_tz" t-if="timezoneLabel" t-esc="timezoneLabel"/>
-                </div>
-                <div class="o_ngyn_gantt_toolbar">
-                    <div class="o_ngyn_gantt_search">
-                        <i class="fa fa-search"/>
-                        <input type="text"
-                               placeholder="Search name, opportunity, installer..."
-                               t-att-value="state.searchQuery"
-                               t-on-input="onSearchInput"/>
-                    </div>
-                    <div class="o_ngyn_gantt_groupby">
-                        <label>Group by</label>
-                        <select t-on-change="onGroupbyChange">
-                            <t t-foreach="groupbyOptions" t-as="opt" t-key="opt.value">
-                                <option t-att-value="opt.value" t-att-selected="opt.value === state.groupbyField">
-                                    <t t-esc="opt.label"/>
-                                </option>
-                            </t>
-                        </select>
-                    </div>
+                    <button class="btn btn-primary ms-auto" t-on-click="createEvent">
+                        <i class="fa fa-plus"/> New
+                    </button>
                 </div>
             </div>
 
@@ -55,13 +50,17 @@
                 <t t-if="state.loading">
                     <div class="o_ngyn_gantt_empty">Loading…</div>
                 </t>
-                <t t-elif="!filteredRows.length">
+                <t t-elif="!state.rows.length">
                     <div class="o_ngyn_gantt_empty">No events match.</div>
                 </t>
 
-                <t t-foreach="filteredRows" t-as="row" t-key="row.key">
+                <t t-foreach="state.rows" t-as="row" t-key="row.key">
                     <div class="o_ngyn_gantt_row">
-                        <div class="o_ngyn_gantt_row_label" t-esc="row.label"/>
+                        <div class="o_ngyn_gantt_row_label">
+                            <i t-if="showCrmIcon(row)" class="fa fa-external-link o_ngyn_gantt_row_icon"
+                               title="Open opportunity" t-on-click="() => this.openOpportunity(row)"/>
+                            <span t-esc="row.label"/>
+                        </div>
                         <div class="o_ngyn_gantt_days o_ngyn_gantt_track" t-att-style="rowHeight(row)">
                             <t t-foreach="[0,1,2,3,4,5,6]" t-as="col" t-key="col">
                                 <div class="o_ngyn_gantt_gridline"/>
@@ -72,18 +71,27 @@
                                          t-att-style="barStyle(ev)"
                                          t-att-title="barTitle(ev)"
                                          t-on-click="() => this.openEvent(ev)">
-                                        <t t-if="state.groupbyField === 'opportunity_id' and ev.installers.length">
-                                            <span class="o_ngyn_gantt_avatars">
-                                                <t t-foreach="ev.installers.slice(0, 2)" t-as="installer" t-key="installer.id">
-                                                    <span class="o_ngyn_gantt_avatar"
-                                                          t-attf-style="background-color:{{avatarColor(installer.id)}}"
-                                                          t-esc="initials(installer.name)"/>
-                                                </t>
-                                                <span class="o_ngyn_gantt_avatar_more" t-if="ev.installers.length > 2"
-                                                      t-esc="'+' + (ev.installers.length - 2)"/>
-                                            </span>
+                                        <div class="o_ngyn_gantt_handle o_ngyn_gantt_handle_start"
+                                             t-on-mousedown="(mouseEvent) => this.onResizeStart(mouseEvent, ev, 'start')"/>
+                                        <div class="o_ngyn_gantt_bar_label">
+                                            <t t-if="state.activeGroupbyField === 'opportunity_id' and ev.attendees.length">
+                                                <span class="o_ngyn_gantt_avatars">
+                                                    <t t-foreach="ev.attendees.slice(0, 2)" t-as="attendee" t-key="attendee.id">
+                                                        <span class="o_ngyn_gantt_avatar"
+                                                              t-attf-style="background-color:{{avatarColor(attendee.id)}}"
+                                                              t-esc="initials(attendee.name)"/>
+                                                    </t>
+                                                    <span class="o_ngyn_gantt_avatar_more" t-if="ev.attendees.length > 2"
+                                                          t-esc="'+' + (ev.attendees.length - 2)"/>
+                                                </span>
+                                            </t>
+                                            <span t-esc="ev.name"/>
+                                        </div>
+                                        <t t-if="resizingEventId() === ev.id">
+                                            <span class="o_ngyn_gantt_resize_badge" t-att-style="resizeBadgeStyle()" t-esc="resizeLabel"/>
                                         </t>
-                                        <span t-esc="ev.name"/>
+                                        <div class="o_ngyn_gantt_handle o_ngyn_gantt_handle_stop"
+                                             t-on-mousedown="(mouseEvent) => this.onResizeStart(mouseEvent, ev, 'stop')"/>
                                     </div>
                                 </t>
                             </t>

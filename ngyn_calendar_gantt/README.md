@@ -1,6 +1,6 @@
 # NGYN Calendar Timeline
 
-A read-only Gantt-style weekly timeline for Odoo's Calendar app.
+A Gantt-style weekly timeline for Odoo's Calendar app.
 
 ## Why
 
@@ -12,15 +12,20 @@ CRM opportunity — is already busy.
 ## What it does
 
 - Adds a **Timeline** menu item next to **Calendar** in the Calendar app.
-- Rows are grouped by either the native `opportunity_id` (CRM Opportunity) or
-  a new `x_ngyn_installer_ids` many2many field this module adds to
-  `calendar.event` (Installers — plain Contacts). Pick which one under
-  **Calendar > Configuration > Settings > Calendar Timeline**.
+- A real Odoo search bar (Filters / Group By / Favorites), backed by this
+  module's own `views/calendar_event_search_views.xml` — Group By Opportunity
+  (native `opportunity_id`) or Attendee (native `partner_ids`) out of the box.
+  Add more filters/group-bys later by editing that XML file — no code change
+  needed.
 - Overlapping bookings within a row are stacked into separate lanes instead
   of being drawn on top of each other.
-- Clicking a bar opens the underlying event.
-
-v1 is intentionally read-only — no drag-to-reschedule yet.
+- Time axis is scaled to business hours (6am–8pm) with hour tick marks.
+- Clicking a bar opens the event in a popup editor; drag its left/right edge
+  to reschedule its start/end time directly on the timeline (snapped to 15
+  minutes, clamped within that day).
+- When grouped by Opportunity, a small icon on each row opens that CRM
+  record in a lightweight popup (own minimal form, no chatter panel).
+- A **New** button creates a fresh event from the timeline.
 
 ## License and Enterprise-code policy
 
@@ -31,10 +36,14 @@ any other Enterprise-only module) — deliberately, per explicit instruction.
 If you ever see Enterprise gantt-specific view types, arch attributes, or JS
 imports creeping into this module, that's a bug: revert it.
 
-## Configuration
+## Adding a filter or Group By option
 
-`ir.config_parameter` key `ngyn_calendar_gantt.groupby_field`, one of:
-- `opportunity_id` (default)
-- `x_ngyn_installer_ids`
-
-Set via the Settings UI, not by hand, in normal use.
+Edit `views/calendar_event_search_views.xml` — it's a plain Odoo `<search>`
+view. A new `<filter string="..." name="..." context="{'group_by': '...'}"/>`
+inside the `Group By` group adds a new grouping option; the Timeline picks up
+whatever field the search bar's Group By menu has active (falls back to
+Opportunity if none, or a field this module doesn't know how to render rows
+for — currently only `opportunity_id` and `partner_ids` are supported row
+dimensions; extending that list is a one-line change in
+`static/src/js/calendar_gantt_action.js`'s `GROUPBY_FIELDS` map, matching
+whatever new field name the XML filter groups by).

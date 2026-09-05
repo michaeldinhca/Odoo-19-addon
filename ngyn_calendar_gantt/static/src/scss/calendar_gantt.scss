@@ -35,54 +35,6 @@
         }
     }
 
-    .o_ngyn_gantt_toolbar {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-
-    .o_ngyn_gantt_search {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        border: 1px solid var(--bs-border-color, #dee2e6);
-        border-radius: 4px;
-        padding: 4px 10px;
-        min-width: 260px;
-        color: var(--bs-secondary-color, #6c757d);
-
-        input {
-            border: none;
-            outline: none;
-            flex: 1;
-            font-size: 13px;
-            background: transparent;
-            color: var(--bs-body-color, #212529);
-        }
-    }
-
-    .o_ngyn_gantt_groupby {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 13px;
-
-        label {
-            margin: 0;
-            color: var(--bs-secondary-color, #6c757d);
-        }
-
-        select {
-            border: 1px solid var(--bs-border-color, #dee2e6);
-            border-radius: 4px;
-            padding: 3px 6px;
-            font-size: 13px;
-            background-color: var(--bs-body-bg, #fff);
-            color: var(--bs-body-color, #212529);
-        }
-    }
-
     .o_ngyn_gantt_grid {
         border: 1px solid var(--bs-border-color, #dee2e6);
         border-radius: 4px;
@@ -112,7 +64,19 @@
         border-right: 1px solid var(--bs-border-color, #dee2e6);
         align-self: stretch;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .o_ngyn_gantt_row_icon {
+        flex: 0 0 auto;
+        margin-top: 3px;
+        color: var(--bs-secondary-color, #6c757d);
+        cursor: pointer;
+
+        &:hover {
+            color: var(--bs-primary, #714b67);
+        }
     }
 
     .o_ngyn_gantt_days {
@@ -184,14 +148,63 @@
         border-radius: 3px;
         padding: 3px 6px;
         font-size: 12px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         cursor: pointer;
+        // Deliberately NOT overflow:hidden here — the resize badge and drag
+        // handles need to render outside this box (the badge floats above
+        // it). Truncation instead lives on .o_ngyn_gantt_bar_label below.
 
         &:hover {
             filter: brightness(1.1);
         }
+    }
+
+    .o_ngyn_gantt_bar_label {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .o_ngyn_gantt_handle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        cursor: ew-resize;
+        flex: 0 0 auto;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+    }
+
+    .o_ngyn_gantt_handle_start {
+        left: 0;
+        border-radius: 3px 0 0 3px;
+    }
+
+    .o_ngyn_gantt_handle_stop {
+        right: 0;
+        margin-left: auto;
+        border-radius: 0 3px 3px 0;
+    }
+
+    .o_ngyn_gantt_resize_badge {
+        position: absolute;
+        top: -22px;
+        white-space: nowrap;
+        background-color: var(--bs-body-bg, #fff);
+        color: var(--bs-body-color, #212529);
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 3px;
+        padding: 1px 6px;
+        font-size: 11px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        z-index: 1;
     }
 
     .o_ngyn_gantt_avatars {
