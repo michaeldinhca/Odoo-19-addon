@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
     <t t-name="ngyn_calendar_gantt.Timeline" owl="1">
         <WithSearch t-if="state.searchViewId" t-props="withSearchProps" t-slot-scope="search">
-            <Layout display="{controlPanel: true}">
+            <Layout display="{controlPanel: {}}">
                 <t t-set-slot="layout-actions">
                     <SearchBar/>
                 </t>

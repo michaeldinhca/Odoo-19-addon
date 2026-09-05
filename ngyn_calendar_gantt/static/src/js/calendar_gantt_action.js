@@ -38,6 +38,11 @@ const BUSINESS_END_HOUR = 20;
 const BUSINESS_WINDOW_MIN = (BUSINESS_END_HOUR - BUSINESS_START_HOUR) * 60;
 const HOUR_TICKS = [6, 9, 12, 15, 18];
 const RESIZE_SNAP_MIN = 15;
+// Bars render at least this wide (as a % of the whole 7-day grid) so short
+// bookings stay legible instead of shrinking to an unreadable sliver — see
+// packLanes() for why lane-packing has to know about this floor too, not
+// just barStyle().
+const MIN_BAR_WIDTH_PCT = 3.5;
 
 const AVATAR_PALETTE = ["#2F5D8A", "#C1611F", "#3D7A5D", "#A87B12", "#6B4C7A", "#2E7A78", "#B5402C", "#55636F"];
 function computeInitials(name) {
@@ -57,7 +62,31 @@ function formatDelta(minutes) {
     return `${sign}${m}m`;
 }
 
-function packLanes(events) {
+// Pure function: where an event would ideally sit on the grid (as % of the
+// whole 7-day width), before any minimum-width floor is applied. Shared by
+// the normal render path and the live drag-resize preview, which needs the
+// same math for whichever start/stop it's currently previewing.
+function idealPosition(start, stop, weekStart) {
+    let dayIndex = Math.round(start.startOf("day").diff(weekStart, "days").days);
+    dayIndex = Math.min(6, Math.max(0, dayIndex));
+
+    const dayStart = start.startOf("day");
+    const startMinRaw = start.diff(dayStart, "minutes").minutes;
+    const stopMinRaw = stop.hasSame(start, "day")
+        ? stop.diff(dayStart, "minutes").minutes
+        : BUSINESS_END_HOUR * 60;
+
+    const clampToWindow = (m) => Math.min(BUSINESS_END_HOUR * 60, Math.max(BUSINESS_START_HOUR * 60, m));
+    const startMin = clampToWindow(startMinRaw) - BUSINESS_START_HOUR * 60;
+    const stopMin = clampToWindow(stopMinRaw) - BUSINESS_START_HOUR * 60;
+
+    const dayWidthPct = 100 / 7;
+    const left = dayIndex * dayWidthPct + (startMin / BUSINESS_WINDOW_MIN) * dayWidthPct;
+    const width = ((stopMin - startMin) / BUSINESS_WINDOW_MIN) * dayWidthPct;
+    return { left, width };
+}
+
+function packLanes(events, weekStart) {
     // Sort by start, then place each event in the first lane whose last
     // event already ends before this one starts, else open a new lane —
     // this is what actually solves the "4-5 things at once" problem.
@@ -76,6 +105,26 @@ function packLanes(events) {
     const lanes = laneLastStop.map(() => []);
     for (const ev of sorted) {
         lanes[ev.lane].push(ev);
+    }
+
+    // Second pass, per lane: two events can be correctly placed in the same
+    // lane (they don't truly overlap in time) yet still visually collide,
+    // because MIN_BAR_WIDTH_PCT can render a short event wider than the real
+    // gap to the next one — e.g. a 1-hour booking followed 15 minutes later
+    // by another. Walking each lane in start order and never letting a bar
+    // start before the previous one's *rendered* right edge guarantees no
+    // visual overlap within a lane, while every bar's left edge still
+    // reflects its true start time whenever there's room for it to.
+    for (const lane of lanes) {
+        let prevRight = -Infinity;
+        for (const ev of lane) {
+            const ideal = idealPosition(ev.start, ev.stop, weekStart);
+            const left = Math.max(ideal.left, prevRight);
+            const width = Math.max(MIN_BAR_WIDTH_PCT, ideal.width);
+            ev.renderLeft = left;
+            ev.renderWidth = width;
+            prevRight = left + width;
+        }
     }
     return lanes;
 }
@@ -210,7 +259,7 @@ export class NgynGanttBody extends Component {
             return a.label.localeCompare(b.label);
         });
         for (const row of rows) {
-            row.lanes = packLanes(row.events);
+            row.lanes = packLanes(row.events, weekStart);
         }
 
         this.state.rows = rows;
@@ -274,34 +323,18 @@ export class NgynGanttBody extends Component {
         const suffix = names ? ` — ${names}` : "";
         return `${ev.name} (${ev.start.toFormat("ccc h:mm a")} – ${ev.stop.toFormat("h:mm a")})${suffix}`;
     }
-    effectiveTimes(ev) {
+    barStyle(ev) {
         const r = this.state.resizing;
         if (r && r.eventId === ev.id) {
-            return { start: r.previewStart, stop: r.previewStop };
+            // Mid-drag: show the live preview position directly, not the
+            // lane-packed one — only one bar is ever being dragged at a
+            // time, so there's nothing else in its lane to collide with
+            // during the drag itself.
+            const ideal = idealPosition(r.previewStart, r.previewStop, this.state.weekStart);
+            const width = Math.max(MIN_BAR_WIDTH_PCT, ideal.width);
+            return `left:${ideal.left}%; width:${width}%; top:${ev.lane * LANE_HEIGHT}px;`;
         }
-        return { start: ev.start, stop: ev.stop };
-    }
-    barStyle(ev) {
-        const weekStart = this.state.weekStart;
-        const { start, stop } = this.effectiveTimes(ev);
-
-        let dayIndex = Math.round(start.startOf("day").diff(weekStart, "days").days);
-        dayIndex = Math.min(6, Math.max(0, dayIndex));
-
-        const dayStart = start.startOf("day");
-        const startMinRaw = start.diff(dayStart, "minutes").minutes;
-        const stopMinRaw = stop.hasSame(start, "day")
-            ? stop.diff(dayStart, "minutes").minutes
-            : BUSINESS_END_HOUR * 60;
-
-        const clampToWindow = (m) => Math.min(BUSINESS_END_HOUR * 60, Math.max(BUSINESS_START_HOUR * 60, m));
-        const startMin = clampToWindow(startMinRaw) - BUSINESS_START_HOUR * 60;
-        const stopMin = clampToWindow(stopMinRaw) - BUSINESS_START_HOUR * 60;
-
-        const dayWidthPct = 100 / 7;
-        const left = dayIndex * dayWidthPct + (startMin / BUSINESS_WINDOW_MIN) * dayWidthPct;
-        const width = Math.max(0.5, ((stopMin - startMin) / BUSINESS_WINDOW_MIN) * dayWidthPct);
-        return `left:${left}%; width:${width}%; top:${ev.lane * LANE_HEIGHT}px;`;
+        return `left:${ev.renderLeft}%; width:${ev.renderWidth}%; top:${ev.lane * LANE_HEIGHT}px;`;
     }
     rowHeight(row) {
         return `height:${Math.max(1, row.lanes.length) * LANE_HEIGHT}px;`;

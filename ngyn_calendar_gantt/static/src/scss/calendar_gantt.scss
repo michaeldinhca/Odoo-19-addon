@@ -136,13 +136,11 @@
         display: flex;
         align-items: center;
         gap: 3px;
-        // Short bookings would otherwise shrink to an unreadable sliver on a
-        // narrow business-hours column — a floor width keeps the label
-        // legible. Position (left%) still reflects the real start time;
-        // only the rendered width is floored, so very short events read
-        // slightly "fatter" than their true duration. Full name + exact
-        // time + installers is in the title tooltip regardless.
-        min-width: 52px;
+        // No CSS min-width here on purpose — the minimum render width is
+        // computed in JS (packLanes()/MIN_BAR_WIDTH_PCT) so that lane
+        // packing knows about it too and can push a later bar right instead
+        // of letting two non-overlapping events visually collide because
+        // one of them got floored wider than the real gap between them.
         background-color: var(--bs-primary, #714b67);
         color: #fff;
         border-radius: 3px;

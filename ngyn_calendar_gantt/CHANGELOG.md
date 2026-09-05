@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.2.1] - 2026-09-05
+
+### Fixed
+- **Two events that don't actually overlap could still render as visually
+  overlapping bars** when close together (e.g. a 1-hour booking followed 15
+  minutes later by another) — the minimum-render-width floor added in 1.1.0
+  for legibility widened a short bar enough to visually collide with its
+  neighbor, even though lane-packing had correctly kept them non-overlapping
+  in time. Lane-packing now knows about that floor too: within a lane, each
+  bar's rendered left edge is pushed to at least the previous bar's rendered
+  right edge, so two bars in the same lane can never visually overlap
+  regardless of how close their real times are. A bar's position only ever
+  shifts *later* than its true start when a floored neighbor to its left
+  demands it — never earlier, and never for bars in different lanes.
+- **`OwlError: Invalid props for component 'ControlPanel': 'display' is not
+  an object`**, thrown only in debug mode (Owl's strict prop validation only
+  runs against non-minified/dev assets — reported directly from
+  `odoo-comm-demo.ngynsolutions.com` with a debug-mode stack trace). Root
+  cause: `Layout`'s own template forwards `props.display.controlPanel`
+  itself as `ControlPanel`'s `display` prop (confirmed by reading
+  `web/static/src/search/layout.xml`), not the whole `display` object — this
+  module passed `display="{controlPanel: true}"`, i.e. a boolean, where an
+  object was expected. Fixed to `display="{controlPanel: {}}"`. Harmless in
+  production (prop validation is skipped there) but a real latent bug,
+  worth fixing regardless of where it happened to surface first.
+
 ## [1.2.0] - 2026-09-05
 
 ### Changed
