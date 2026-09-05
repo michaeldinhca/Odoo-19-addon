@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ngyn_calendar_gantt" model="ir.actions.client">
+        <field name="name">Timeline</field>
+        <field name="tag">ngyn_calendar_gantt.timeline</field>
+    </record>
+
+    <menuitem id="menu_ngyn_calendar_gantt"
+              name="Timeline"
+              parent="calendar.mail_menu_calendar"
+              action="action_ngyn_calendar_gantt"
+              groups="base.group_user"
+              sequence="2"/>
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ngyn_calendar_gantt.Timeline" owl="1">
+        <div class="o_ngyn_gantt">
+            <div class="o_ngyn_gantt_header">
+                <div class="o_ngyn_gantt_nav">
+                    <button class="btn btn-secondary" t-on-click="prevWeek" title="Previous week">
+                        <i class="fa fa-chevron-left"/>
+                    </button>
+                    <button class="btn btn-secondary" t-on-click="today">Today</button>
+                    <button class="btn btn-secondary" t-on-click="nextWeek" title="Next week">
+                        <i class="fa fa-chevron-right"/>
+                    </button>
+                    <span class="o_ngyn_gantt_range" t-esc="weekRangeLabel"/>
+                </div>
+                <div class="o_ngyn_gantt_groupby_label">
+                    Grouped by: <strong t-esc="groupbyLabel"/>
+                </div>
+            </div>
+
+            <div class="o_ngyn_gantt_grid">
+                <div class="o_ngyn_gantt_row o_ngyn_gantt_row_head">
+                    <div class="o_ngyn_gantt_row_label"/>
+                    <div class="o_ngyn_gantt_days">
+                        <t t-foreach="dayHeaders" t-as="day" t-key="day.iso">
+                            <div t-attf-class="o_ngyn_gantt_day_col{{ day.isToday ? ' o_today' : '' }}">
+                                <t t-esc="day.label"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <t t-if="state.loading">
+                    <div class="o_ngyn_gantt_empty">Loading…</div>
+                </t>
+                <t t-elif="!state.rows.length">
+                    <div class="o_ngyn_gantt_empty">No events scheduled this week.</div>
+                </t>
+
+                <t t-foreach="state.rows" t-as="row" t-key="row.key">
+                    <div class="o_ngyn_gantt_row">
+                        <div class="o_ngyn_gantt_row_label" t-esc="row.label"/>
+                        <div class="o_ngyn_gantt_days o_ngyn_gantt_track" t-att-style="rowHeight(row)">
+                            <t t-foreach="[0,1,2,3,4,5,6]" t-as="col" t-key="col">
+                                <div class="o_ngyn_gantt_gridline"/>
+                            </t>
+                            <t t-foreach="row.lanes" t-as="lane" t-key="lane_index">
+                                <t t-foreach="lane" t-as="ev" t-key="ev.id">
+                                    <div class="o_ngyn_gantt_bar"
+                                         t-att-style="barStyle(ev)"
+                                         t-att-title="barTitle(ev)"
+                                         t-on-click="() => this.openEvent(ev)">
+                                        <span t-esc="ev.name"/>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>
