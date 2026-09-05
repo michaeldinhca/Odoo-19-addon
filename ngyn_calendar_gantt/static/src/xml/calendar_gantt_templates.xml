@@ -12,9 +12,26 @@
                         <i class="fa fa-chevron-right"/>
                     </button>
                     <span class="o_ngyn_gantt_range" t-esc="weekRangeLabel"/>
+                    <span class="o_ngyn_gantt_tz" t-if="timezoneLabel" t-esc="timezoneLabel"/>
                 </div>
-                <div class="o_ngyn_gantt_groupby_label">
-                    Grouped by: <strong t-esc="groupbyLabel"/>
+                <div class="o_ngyn_gantt_toolbar">
+                    <div class="o_ngyn_gantt_search">
+                        <i class="fa fa-search"/>
+                        <input type="text"
+                               placeholder="Search name, opportunity, installer..."
+                               t-att-value="state.searchQuery"
+                               t-on-input="onSearchInput"/>
+                    </div>
+                    <div class="o_ngyn_gantt_groupby">
+                        <label>Group by</label>
+                        <select t-on-change="onGroupbyChange">
+                            <t t-foreach="groupbyOptions" t-as="opt" t-key="opt.value">
+                                <option t-att-value="opt.value" t-att-selected="opt.value === state.groupbyField">
+                                    <t t-esc="opt.label"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -24,7 +41,12 @@
                     <div class="o_ngyn_gantt_days">
                         <t t-foreach="dayHeaders" t-as="day" t-key="day.iso">
                             <div t-attf-class="o_ngyn_gantt_day_col{{ day.isToday ? ' o_today' : '' }}">
-                                <t t-esc="day.label"/>
+                                <div class="o_ngyn_gantt_day_label" t-esc="day.label"/>
+                                <div class="o_ngyn_gantt_hour_ruler">
+                                    <t t-foreach="hourTicks" t-as="tick" t-key="tick.hour">
+                                        <span t-attf-style="left:{{tick.leftPct}}%" t-esc="tick.label"/>
+                                    </t>
+                                </div>
                             </div>
                         </t>
                     </div>
@@ -33,11 +55,11 @@
                 <t t-if="state.loading">
                     <div class="o_ngyn_gantt_empty">Loading…</div>
                 </t>
-                <t t-elif="!state.rows.length">
-                    <div class="o_ngyn_gantt_empty">No events scheduled this week.</div>
+                <t t-elif="!filteredRows.length">
+                    <div class="o_ngyn_gantt_empty">No events match.</div>
                 </t>
 
-                <t t-foreach="state.rows" t-as="row" t-key="row.key">
+                <t t-foreach="filteredRows" t-as="row" t-key="row.key">
                     <div class="o_ngyn_gantt_row">
                         <div class="o_ngyn_gantt_row_label" t-esc="row.label"/>
                         <div class="o_ngyn_gantt_days o_ngyn_gantt_track" t-att-style="rowHeight(row)">
@@ -50,6 +72,17 @@
                                          t-att-style="barStyle(ev)"
                                          t-att-title="barTitle(ev)"
                                          t-on-click="() => this.openEvent(ev)">
+                                        <t t-if="state.groupbyField === 'opportunity_id' and ev.installers.length">
+                                            <span class="o_ngyn_gantt_avatars">
+                                                <t t-foreach="ev.installers.slice(0, 2)" t-as="installer" t-key="installer.id">
+                                                    <span class="o_ngyn_gantt_avatar"
+                                                          t-attf-style="background-color:{{avatarColor(installer.id)}}"
+                                                          t-esc="initials(installer.name)"/>
+                                                </t>
+                                                <span class="o_ngyn_gantt_avatar_more" t-if="ev.installers.length > 2"
+                                                      t-esc="'+' + (ev.installers.length - 2)"/>
+                                            </span>
+                                        </t>
                                         <span t-esc="ev.name"/>
                                     </div>
                                 </t>
