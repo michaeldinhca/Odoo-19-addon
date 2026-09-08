@@ -67,8 +67,8 @@
                             </t>
                             <t t-foreach="row.lanes" t-as="lane" t-key="lane_index">
                                 <t t-foreach="lane" t-as="ev" t-key="ev.id">
-                                    <div class="o_ngyn_gantt_bar"
-                                         t-att-style="barStyle(ev)"
+                                    <div t-attf-class="o_ngyn_gantt_bar{{ !ev.tagColor ? ' o_ngyn_gantt_bar_notag' : '' }}"
+                                         t-attf-style="{{barStyle(ev)}} {{barColorStyle(ev)}}"
                                          t-att-title="barTitle(ev)"
                                          t-on-click="() => this.openEvent(ev)">
                                         <div class="o_ngyn_gantt_handle o_ngyn_gantt_handle_start"

@@ -141,8 +141,9 @@
         // packing knows about it too and can push a later bar right instead
         // of letting two non-overlapping events visually collide because
         // one of them got floored wider than the real gap between them.
-        background-color: var(--bs-primary, #714b67);
-        color: #fff;
+        // No default background/color here — every bar gets one explicitly,
+        // either via inline style (barColorStyle(), matching the event's own
+        // Tag color) or the .o_ngyn_gantt_bar_notag class below.
         border-radius: 3px;
         padding: 3px 6px;
         font-size: 12px;
@@ -154,6 +155,21 @@
         &:hover {
             filter: brightness(1.1);
         }
+    }
+
+    // No Tag set on the event — a light grey + diagonal stripe so "untagged"
+    // reads as its own deliberate state rather than looking like a color
+    // choice or a rendering glitch.
+    .o_ngyn_gantt_bar_notag {
+        background-color: #e0e0e0;
+        background-image: repeating-linear-gradient(
+            45deg,
+            rgba(0, 0, 0, 0.08) 0,
+            rgba(0, 0, 0, 0.08) 6px,
+            transparent 6px,
+            transparent 12px
+        );
+        color: #3a3a3a;
     }
 
     .o_ngyn_gantt_bar_label {
@@ -176,7 +192,10 @@
         flex: 0 0 auto;
 
         &:hover {
-            background-color: rgba(255, 255, 255, 0.4);
+            // Neutral grey overlay, not white — bars are now tag-colored
+            // (or the light-grey "no tag" pattern), so a white hover tint
+            // would barely show on light backgrounds.
+            background-color: rgba(128, 128, 128, 0.35);
         }
     }
 

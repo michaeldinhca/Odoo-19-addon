@@ -52,6 +52,35 @@ function computeInitials(name) {
 function computeAvatarColor(id) {
     return AVATAR_PALETTE[id % AVATAR_PALETTE.length];
 }
+
+// Odoo's own standard tag/kanban color palette ($o-colors,
+// web/static/src/scss/secondary_variables.scss), indices 1-11 — this is
+// exactly what calendar.event.type.color (an Integer "color index" field)
+// already indexes into everywhere else in Odoo (the Tags field on the event
+// form, kanban cards, etc.). Reproduced by hex value here rather than reused
+// via CSS class because the real .o_colorlist_item_color_N classes are
+// scoped to the color-picker widget's own DOM structure and won't apply to
+// an arbitrary element. Index 0 is Odoo's own "No Color" and is deliberately
+// not in this list — this module always treats it the same as "no tag" (see
+// tagColorHex()), matching the explicit request to make untagged events
+// visually distinct rather than quietly grey.
+const TAG_COLOR_PALETTE = [
+    "#ee2d2d", "#dc8534", "#e8bb1d", "#5794dd", "#9f628f", "#db8865",
+    "#41a9a2", "#304be0", "#ee2f8a", "#61c36e", "#9872e6",
+];
+function tagColorHex(colorIndex) {
+    return TAG_COLOR_PALETTE[colorIndex - 1] || null;
+}
+// Simple perceptual-luminance check to pick readable text color against a
+// tag's background — good enough for this cosmetic purpose, not aiming for
+// full WCAG contrast math.
+function readableTextColor(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 150 ? "#3a3a3a" : "#fff";
+}
 function formatDelta(minutes) {
     const sign = minutes >= 0 ? "+" : "-";
     const abs = Math.round(Math.abs(minutes));
@@ -202,7 +231,7 @@ export class NgynGanttBody extends Component {
         ];
         const domain = Domain.and([props.domain || [], weekDomain]).toList({});
 
-        const fields = new Set(["name", "start", "stop", field, "partner_ids"]);
+        const fields = new Set(["name", "start", "stop", field, "partner_ids", "categ_ids"]);
 
         const events = await this.orm.searchRead("calendar.event", domain, [...fields], {
             order: "start asc",
@@ -213,6 +242,13 @@ export class NgynGanttBody extends Component {
         if (partnerIds.length) {
             const partners = await this.orm.read("res.partner", partnerIds, ["name"]);
             partnerNames = Object.fromEntries(partners.map((p) => [p.id, p.name]));
+        }
+
+        const categIds = [...new Set(events.flatMap((ev) => ev.categ_ids || []))];
+        let categInfo = {};
+        if (categIds.length) {
+            const categs = await this.orm.read("calendar.event.type", categIds, ["name", "color"]);
+            categInfo = Object.fromEntries(categs.map((c) => [c.id, c]));
         }
 
         const groups = new Map();
@@ -228,12 +264,18 @@ export class NgynGanttBody extends Component {
                 id,
                 name: partnerNames[id] || `#${id}`,
             }));
+            // First tag wins when an event has several — matches how most
+            // Odoo widgets (kanban cards, etc.) lead with the first tag
+            // rather than trying to blend/split multiple colors.
+            const firstCateg = categInfo[(ev.categ_ids || [])[0]];
             const bar = {
                 id: ev.id,
                 name: ev.name,
                 start: deserializeDateTime(ev.start),
                 stop: deserializeDateTime(ev.stop),
                 attendees,
+                tagName: firstCateg?.name || null,
+                tagColor: firstCateg ? tagColorHex(firstCateg.color) : null,
             };
             if (GROUPBY_FIELDS[field].type === "many2one") {
                 const value = ev[field];
@@ -321,7 +363,8 @@ export class NgynGanttBody extends Component {
     barTitle(ev) {
         const names = ev.attendees.map((p) => p.name).join(", ");
         const suffix = names ? ` — ${names}` : "";
-        return `${ev.name} (${ev.start.toFormat("ccc h:mm a")} – ${ev.stop.toFormat("h:mm a")})${suffix}`;
+        const tagSuffix = ev.tagName ? ` [${ev.tagName}]` : "";
+        return `${ev.name} (${ev.start.toFormat("ccc h:mm a")} – ${ev.stop.toFormat("h:mm a")})${suffix}${tagSuffix}`;
     }
     barStyle(ev) {
         const r = this.state.resizing;
@@ -335,6 +378,15 @@ export class NgynGanttBody extends Component {
             return `left:${ideal.left}%; width:${width}%; top:${ev.lane * LANE_HEIGHT}px;`;
         }
         return `left:${ev.renderLeft}%; width:${ev.renderWidth}%; top:${ev.lane * LANE_HEIGHT}px;`;
+    }
+    barColorStyle(ev) {
+        // No tag: leave background/color to the .o_ngyn_gantt_bar_notag CSS
+        // class instead (grey + diagonal stripe) — handled in the template,
+        // not here, so there's nothing to override via inline style.
+        if (!ev.tagColor) {
+            return "";
+        }
+        return `background-color:${ev.tagColor}; color:${readableTextColor(ev.tagColor)};`;
     }
     rowHeight(row) {
         return `height:${Math.max(1, row.lanes.length) * LANE_HEIGHT}px;`;

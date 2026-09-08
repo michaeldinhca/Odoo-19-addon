@@ -5,6 +5,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.3.0] - 2026-09-07
+
+### Added
+- **Bars are now colored to match the event's own Tag** (`calendar.event.categ_ids`
+  / `calendar.event.type.color`), using Odoo's own standard tag color palette
+  (`$o-colors`) so a bar's color is exactly the same color shown on the
+  Tags field on the real calendar record — no separate color scheme to learn.
+  When an event has several tags, the first one wins (matches how most Odoo
+  widgets lead with the first tag rather than blending colors). Text color
+  (white vs. dark) is picked automatically per bar for readability against
+  whichever tag color it got.
+- **Events with no tag at all render as light grey with a diagonal stripe**,
+  a deliberately distinct pattern (not just "grey," which could be mistaken
+  for a real tag color) so "nobody has categorized this yet" reads as its
+  own state at a glance.
+- Tag name (when present) now appears in the bar's hover tooltip alongside
+  the existing name/time/attendees.
+
 ## [1.2.1] - 2026-09-05
 
 ### Fixed

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'NGYN Calendar Timeline',
-    'version': '19.0.1.2.1',
+    'version': '19.0.1.3.0',
     'category': 'Productivity/Calendar',
     'summary': 'Read-only Gantt-style timeline for Calendar, grouped by CRM Opportunity or Attendee',
     'description': """
