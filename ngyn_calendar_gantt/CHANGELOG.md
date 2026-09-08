@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 The module itself is versioned using Odoo's convention: `{odoo_series}.{major}.{minor}.{patch}`
 (e.g. `19.0.1.0.0`); this file's version headings use the trailing `major.minor.patch` for readability.
 
+## [1.3.1] - 2026-09-08
+
+### Fixed
+- **Searching or filtering by Attendee while grouped by Attendee could show a
+  matching booking under co-attendees who didn't personally match**, e.g.
+  searching for one specific person on a multi-attendee event also created a
+  row for everyone else on that same event, or a custom Filter based on a
+  Contact tag (`partner_ids.category_id...`) showed every attendee of a
+  matching booking, not just the tagged one. Root cause: a domain restricts
+  which *events* qualify, not which specific attendee on a qualifying event
+  the row-grouping should explode into — an inherent property of filtering
+  and grouping by the same many2many field, not specific to how this module
+  built it, but fixable here. `resolveFieldRestriction()` now inspects the
+  active search domain for conditions on whichever field rows are currently
+  grouped by and resolves them into a concrete set of ids (handling a direct
+  id/id-list match, a relational condition like `partner_ids.category_id.name`
+  via a lookup query, and the search bar's own free-text fallback via that
+  model's real `name_search`) — row creation for a matching event is then
+  restricted to just those ids. Deliberately conservative: bails to the
+  previous show-every-co-attendee behavior whenever the domain has an
+  explicit `|`/`!` anywhere, rather than risk an incorrect narrow guess under
+  a boolean combination it can't safely reason about.
+
 ## [1.3.0] - 2026-09-07
 
 ### Added

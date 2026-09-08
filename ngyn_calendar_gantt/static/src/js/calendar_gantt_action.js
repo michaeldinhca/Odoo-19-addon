@@ -22,8 +22,8 @@ const { DateTime } = luxon;
    ngyn_resource_planning already uses for its own lookups.
    ========================================================= */
 const GROUPBY_FIELDS = {
-    opportunity_id: { label: "Opportunity", type: "many2one" },
-    partner_ids: { label: "Attendee", type: "many2many" },
+    opportunity_id: { label: "Opportunity", type: "many2one", comodel: "crm.lead" },
+    partner_ids: { label: "Attendee", type: "many2many", comodel: "res.partner" },
 };
 const DEFAULT_GROUPBY = "opportunity_id";
 const UNASSIGNED_KEY = "__unassigned__";
@@ -164,6 +164,80 @@ async function resolveViewId(orm, module, name) {
 }
 
 /* =========================================================
+   When the active search domain has a condition on the SAME
+   many2many field rows are grouped by (e.g. searching/filtering
+   by Attendee while grouped by Attendee), a matching event's row
+   explosion should only create a row for the attendee(s) that
+   actually satisfy that condition — not every co-attendee on the
+   same booking. A plain Odoo domain can't express that natively
+   (it decides which *events* qualify, not which specific related
+   value on a qualifying event does), so this walks the domain
+   looking for leaves about that field and resolves them into a
+   concrete set of ids ourselves.
+
+   Deliberately conservative: only handles a flat, implicitly-ANDed
+   domain (no explicit '|' or '!' anywhere in the whole domain) —
+   correctly restricting under arbitrary boolean combinations would
+   require evaluating the whole domain per-candidate-related-record,
+   which is a lot of machinery for what's usually a simple search
+   or a single custom filter. Anything it can't confidently resolve
+   falls back to null (no restriction — today's "show every
+   co-attendee too" behavior), never a wrong/overly-narrow guess.
+   ========================================================= */
+async function resolveFieldRestriction(orm, domain, fieldName, comodel) {
+    if (!Array.isArray(domain) || !domain.length) {
+        return null;
+    }
+    if (domain.some((term) => term === "|" || term === "!")) {
+        return null; // can't safely reason about this domain's structure
+    }
+    const leaves = domain.filter(
+        (term) =>
+            Array.isArray(term) &&
+            typeof term[0] === "string" &&
+            (term[0] === fieldName || term[0].startsWith(`${fieldName}.`))
+    );
+    if (!leaves.length) {
+        return null;
+    }
+
+    let restriction = null; // Set of ids, intersected across every relevant leaf
+    const intersect = (ids) => {
+        restriction = restriction ? new Set([...restriction].filter((id) => ids.has(id))) : new Set(ids);
+    };
+
+    for (const [field, op, value] of leaves) {
+        if (field === fieldName) {
+            if (op === "in" && Array.isArray(value)) {
+                intersect(new Set(value));
+            } else if (op === "=" && typeof value === "number") {
+                intersect(new Set([value]));
+            } else if (typeof value === "string") {
+                // Picking the search bar's generic "Search Attendee for: ..."
+                // suggestion (rather than a specific matched record) produces
+                // a text operator directly on the relational field — Odoo
+                // itself resolves that via the comodel's own name_search, so
+                // replicate that exactly rather than re-deriving a domain.
+                const matches = await orm.call(comodel, "name_search", [], {
+                    name: value,
+                    operator: op,
+                    limit: 1000,
+                });
+                intersect(new Set(matches.map(([id]) => id)));
+            } else {
+                return null; // unrecognized shape (e.g. negation) — don't guess
+            }
+        } else {
+            // e.g. "partner_ids.category_id.name" -> "category_id.name"
+            const remainder = field.slice(fieldName.length + 1);
+            const ids = await orm.search(comodel, [[remainder, op, value]]);
+            intersect(new Set(ids));
+        }
+    }
+    return restriction;
+}
+
+/* =========================================================
    Inner component: everything that isn't the search bar itself.
    Receives domain/groupBy/context from the enclosing WithSearch's
    scoped slot as plain props, and reloads whenever they change —
@@ -251,6 +325,16 @@ export class NgynGanttBody extends Component {
             categInfo = Object.fromEntries(categs.map((c) => [c.id, c]));
         }
 
+        // See resolveFieldRestriction() — null unless the active search
+        // domain has a condition specifically on the field we're grouping
+        // by, in which case it's the set of related ids that actually
+        // satisfy it (so a matching event's row explosion doesn't also
+        // create a row for co-attendees who didn't personally match).
+        const groupRestriction =
+            GROUPBY_FIELDS[field].type === "many2many"
+                ? await resolveFieldRestriction(this.orm, props.domain || [], field, GROUPBY_FIELDS[field].comodel)
+                : null;
+
         const groups = new Map();
         const ensureGroup = (key, label) => {
             if (!groups.has(key)) {
@@ -289,6 +373,9 @@ export class NgynGanttBody extends Component {
                     ensureGroup(UNASSIGNED_KEY, "Unassigned").events.push(bar);
                 } else {
                     for (const id of ids) {
+                        if (groupRestriction && !groupRestriction.has(id)) {
+                            continue;
+                        }
                         ensureGroup(id, partnerNames[id] || `#${id}`).events.push({ ...bar });
                     }
                 }
