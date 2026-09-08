@@ -23,6 +23,15 @@ be charged on the installment(s) actually overdue.
   the human-readable explanation (invoice line label, new invoice line,
   and email body all read this same field — never regenerate the text
   in more than one place).
+- For a `recurring` model, `_generate_for_line` must backfill **every**
+  uncharged elapsed cycle (1..current, capped at `max_occurrences`) as
+  separate records in one run, never just the latest cycle — an invoice
+  that goes unnoticed for 3 monthly cycles before the cron first catches
+  it must get 3 separate fee lines, not one. Each record's `period_date`
+  and `overdue_days` describe *that cycle's* trigger date, not "today"
+  reused across cycles. This was a real bug found in production
+  (`ineng_pilot_15Aug`, 2026-09-08) — regression-tested by
+  `test_recurring_backfills_all_elapsed_periods_on_first_run`.
 
 ## Workflow
 
