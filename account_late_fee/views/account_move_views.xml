@@ -27,6 +27,8 @@
                         <list>
                             <field name="name"/>
                             <field name="due_date"/>
+                            <field name="period_index"/>
+                            <field name="period_date"/>
                             <field name="overdue_days"/>
                             <field name="fee_amount"/>
                             <field name="state" widget="badge"/>

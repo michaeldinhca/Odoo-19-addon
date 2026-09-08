@@ -12,6 +12,8 @@
                 <field name="installment_sequence"/>
                 <field name="installment_count"/>
                 <field name="due_date"/>
+                <field name="period_index"/>
+                <field name="period_date"/>
                 <field name="overdue_days"/>
                 <field name="overdue_amount"/>
                 <field name="fee_amount"/>
@@ -62,9 +64,10 @@
                             <field name="due_date" readonly="1"/>
                         </group>
                         <group string="Overdue">
-                            <field name="computation_date" readonly="1"/>
+                            <field name="period_date" readonly="1"/>
                             <field name="overdue_days" readonly="1"/>
                             <field name="overdue_amount" readonly="1"/>
+                            <field name="computation_date" readonly="1"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>

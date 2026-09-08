@@ -87,6 +87,7 @@ class TestLateFeeCronRecurrence(AccountTestInvoicingCommon):
                 'computation_date': Date.today(),
                 'overdue_amount': 100.0,
                 'overdue_days': 30 * period,
+                'period_date': Date.today(),
                 'computation_type': 'fixed',
                 'fixed_amount_applied': 10.0,
                 'interval_type': 'month',
@@ -108,6 +109,36 @@ class TestLateFeeCronRecurrence(AccountTestInvoicingCommon):
         LateFee._generate_for_line(self.term_line, self.recurring_model, far_future)
         fees = LateFee.search([('invoice_line_id', '=', self.term_line.id)])
         self.assertEqual(len(fees), 3)
+
+    def test_recurring_backfills_all_elapsed_periods_on_first_run(self):
+        # Mirrors a real-world bug: an invoice overdue long enough for
+        # several monthly cycles to have elapsed before the cron ever
+        # catches it must get one fee record PER elapsed cycle, not just
+        # the latest one -- 3 cycles overdue on a 3%/month model means 3
+        # separate ~3% lines, not a single one.
+        LateFee = self.env['account.late.fee']
+        today = Date.today() + relativedelta(months=3, days=5)
+
+        LateFee._generate_for_line(self.term_line, self.recurring_model, today)
+
+        fees = LateFee.search(
+            [('invoice_line_id', '=', self.term_line.id)]).sorted('period_index')
+        self.assertEqual(
+            len(fees), 3,
+            'One record per elapsed cycle (capped at max_occurrences=3), '
+            'not just the latest cycle')
+        self.assertEqual(fees.mapped('period_index'), [1, 2, 3])
+        self.assertEqual(
+            len(set(fees.mapped('period_date'))), 3,
+            'Each cycle must show its own distinct "Fee Applies On" date')
+        self.assertEqual(
+            len(set(fees.mapped('overdue_days'))), 3,
+            "Each cycle must show its own days-overdue, not today's figure repeated")
+
+        # Re-running must not duplicate any already-generated cycle.
+        LateFee._generate_for_line(self.term_line, self.recurring_model, today)
+        fees_again = LateFee.search([('invoice_line_id', '=', self.term_line.id)])
+        self.assertEqual(len(fees_again), 3)
 
     def test_once_only_charges_a_single_period(self):
         self.recurring_model.write({'recurrence': 'once'})
