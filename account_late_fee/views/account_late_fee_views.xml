@@ -1,0 +1,131 @@
+<odoo>
+    <record id="view_account_late_fee_list" model="ir.ui.view">
+        <field name="name">account.late.fee.list</field>
+        <field name="model">account.late.fee</field>
+        <field name="arch" type="xml">
+            <list string="Late Fees" decoration-muted="state == 'waived'"
+                  decoration-danger="state == 'error'"
+                  decoration-info="state == 'draft'">
+                <field name="name"/>
+                <field name="move_id"/>
+                <field name="partner_id"/>
+                <field name="installment_sequence"/>
+                <field name="installment_count"/>
+                <field name="due_date"/>
+                <field name="overdue_days"/>
+                <field name="overdue_amount"/>
+                <field name="fee_amount"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="application_mode" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'confirmed'"
+                       decoration-muted="state == 'waived'"
+                       decoration-danger="state == 'error'"/>
+                <button name="action_confirm" type="object" string="Confirm"
+                        invisible="state != 'draft'"
+                        groups="account.group_account_invoice"
+                        class="btn-link"/>
+                <button name="action_waive" type="object" string="Waive"
+                        invisible="state != 'draft'"
+                        groups="account.group_account_invoice"
+                        class="btn-link"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_late_fee_form" model="ir.ui.view">
+        <field name="name">account.late.fee.form</field>
+        <field name="model">account.late.fee</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            invisible="state != 'draft'" class="oe_highlight"
+                            groups="account.group_account_invoice"/>
+                    <button name="action_waive" type="object" string="Waive"
+                            invisible="state != 'draft'"
+                            groups="account.group_account_invoice"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Invoice">
+                            <field name="move_id" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="installment_sequence" readonly="1"/>
+                            <field name="installment_count" readonly="1"/>
+                            <field name="due_date" readonly="1"/>
+                        </group>
+                        <group string="Overdue">
+                            <field name="computation_date" readonly="1"/>
+                            <field name="overdue_days" readonly="1"/>
+                            <field name="overdue_amount" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Fee">
+                            <field name="late_fee_model_id" readonly="1"/>
+                            <field name="period_index" readonly="1"/>
+                            <field name="fee_amount" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Result">
+                            <field name="fee_move_id" readonly="1"/>
+                            <field name="fee_invoice_line_id" readonly="1"/>
+                            <field name="mail_sent" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" readonly="state != 'draft'"/>
+                        <field name="error_message" invisible="not error_message" readonly="1"/>
+                        <field name="waive_reason" invisible="state not in ('draft', 'waived')"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_account_late_fee_search" model="ir.ui.view">
+        <field name="name">account.late.fee.search</field>
+        <field name="model">account.late.fee</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="move_id"/>
+                <field name="partner_id"/>
+                <filter name="draft" string="To Review" domain="[('state', '=', 'draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="waived" string="Waived" domain="[('state', '=', 'waived')]"/>
+                <filter name="error" string="Error" domain="[('state', '=', 'error')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_model" string="Late Fee Model" context="{'group_by': 'late_fee_model_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_account_late_fee_review" model="ir.actions.act_window">
+        <field name="name">Late Fees to Review</field>
+        <field name="res_model">account.late.fee</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                No late fees to review right now
+            </p>
+            <p>
+                Late fees are generated automatically every night for
+                overdue invoice installments. Review and confirm them
+                here before they are applied and the customer is
+                notified.
+            </p>
+        </field>
+    </record>
+</odoo>

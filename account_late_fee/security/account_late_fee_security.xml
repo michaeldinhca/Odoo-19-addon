@@ -1,0 +1,12 @@
+<odoo>
+    <record id="late_fee_model_company_rule" model="ir.rule">
+        <field name="name">Late Fee Model: multi-company</field>
+        <field name="model_id" ref="model_late_fee_model"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="account_late_fee_company_rule" model="ir.rule">
+        <field name="name">Account Late Fee: multi-company</field>
+        <field name="model_id" ref="model_account_late_fee"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

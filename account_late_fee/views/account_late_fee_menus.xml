@@ -1,0 +1,15 @@
+<odoo>
+    <menuitem id="menu_late_fee_review"
+              name="Late Fees to Review"
+              action="action_account_late_fee_review"
+              parent="account.menu_finance_receivables"
+              groups="account.group_account_invoice"
+              sequence="15"/>
+
+    <menuitem id="menu_late_fee_model_config"
+              name="Late Fee Models"
+              action="action_late_fee_model"
+              parent="account.account_account_menu"
+              groups="account.group_account_manager"
+              sequence="60"/>
+</odoo>

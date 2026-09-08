@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_partner_form_late_fee" model="ir.ui.view">
+        <field name="name">res.partner.form.late.fee</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@id='invoice_send_settings']" position="inside">
+                <field name="late_fee_exempt"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
