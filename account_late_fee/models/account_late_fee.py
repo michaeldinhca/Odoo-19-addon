@@ -435,6 +435,8 @@ class AccountLateFee(models.Model):
 
     def _send_notification_email(self):
         self.ensure_one()
+        if not self.late_fee_model_id.send_notification_email:
+            return
         template = self.late_fee_model_id.mail_template_id or self.env.ref(
             'account_late_fee.mail_template_late_fee_notice',
             raise_if_not_found=False)

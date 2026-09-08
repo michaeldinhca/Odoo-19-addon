@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class LateFeeModel(models.Model):
@@ -79,6 +79,12 @@ class LateFeeModel(models.Model):
         domain=[('type', '=', 'sale')],
         help='Journal used when creating a new late fee invoice. If '
              "empty, the original invoice's journal is used.")
+    send_notification_email = fields.Boolean(
+        string='Send Notification Email', default=True,
+        help='If checked, a notification email is sent to the customer '
+             '(CC company/salesperson) whenever a fee from this model is '
+             'confirmed. If unchecked, the fee is still applied but no '
+             'email is sent.')
     mail_template_id = fields.Many2one(
         'mail.template', string='Email Template',
         domain=[('model', '=', 'account.late.fee')],
@@ -141,6 +147,22 @@ class LateFeeModel(models.Model):
     def action_set_default(self):
         self.ensure_one()
         self.is_company_default = True
+
+    def action_edit_mail_template(self):
+        self.ensure_one()
+        template = self.mail_template_id or self.env.ref(
+            'account_late_fee.mail_template_late_fee_notice',
+            raise_if_not_found=False)
+        if not template:
+            raise UserError(_('No email template available to edit.'))
+        return {
+            'name': _('Edit Email Template'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'mail.template',
+            'res_id': template.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     @api.model
     def _get_default(self, company):

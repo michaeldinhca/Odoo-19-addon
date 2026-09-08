@@ -65,7 +65,14 @@
                             <field name="application_mode"/>
                             <field name="late_fee_product_id"/>
                             <field name="late_fee_journal_id"/>
-                            <field name="mail_template_id"/>
+                            <field name="send_notification_email"/>
+                            <field name="mail_template_id"
+                                   invisible="not send_notification_email"
+                                   placeholder="Default template"/>
+                            <button name="action_edit_mail_template" type="object"
+                                    string="Edit Email Template" icon="fa-pencil"
+                                    invisible="not send_notification_email"
+                                    class="btn-link"/>
                         </group>
                     </group>
                     <group>

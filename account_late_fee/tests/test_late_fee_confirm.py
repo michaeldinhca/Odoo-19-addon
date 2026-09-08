@@ -53,6 +53,14 @@ class TestLateFeeConfirm(AccountTestInvoicingCommon):
         self.assertEqual(self.fee.fee_move_id.invoice_origin, self.move.name)
         self.assertAlmostEqual(self.fee.fee_move_id.amount_total, 25.0, places=2)
         self.assertEqual(self.move.late_fee_status, 'applied')
+        self.assertTrue(self.fee.mail_sent)
+
+    def test_email_toggle_off_skips_send(self):
+        self.late_fee_model.send_notification_email = False
+        self.fee.action_confirm()
+        self.assertEqual(self.fee.state, 'confirmed')
+        self.assertTrue(self.fee.fee_move_id, 'The fee itself must still apply')
+        self.assertFalse(self.fee.mail_sent, 'No email should be sent when disabled')
 
     def test_waive_leaves_no_trace(self):
         self.fee.action_waive()
