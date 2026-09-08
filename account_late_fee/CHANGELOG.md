@@ -3,6 +3,18 @@
 All notable changes to this module are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.0.1] - 2026-09-08
+
+### Fixed
+- `account.late.fee.period_date` was marked DB-required, but it was
+  added after the module already had live data — every upgrade attempt
+  since then failed with `column "period_date" ... contains null values`
+  while Postgres tried to enforce NOT NULL against those pre-existing
+  rows, silently blocking the two previous releases from ever actually
+  deploying. Relaxed to non-required (the code already guarantees every
+  new record sets it; only historical rows predating the field can be
+  NULL, and that's fine).
+
 ## [19.0.2.0.0] - 2026-09-08
 
 ### Changed
