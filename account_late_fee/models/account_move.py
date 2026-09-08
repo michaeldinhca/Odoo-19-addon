@@ -23,10 +23,17 @@ class AccountMove(models.Model):
              'added line, or as a dedicated late fee invoice).')
     late_fee_status = fields.Selection(
         [('none', 'No Fee'), ('pending', 'Pending Review'),
-         ('applied', 'Fee Applied')],
-        compute='_compute_late_fee_status', store=True, readonly=True)
+         ('confirmed', 'Confirmed, Awaiting Invoice'),
+         ('invoiced', 'Fee Invoiced')],
+        compute='_compute_late_fee_status', store=True, readonly=True,
+        help='Pending Review: cron-generated, awaiting accountant '
+             'confirm. Confirmed: amount locked in, customer notified, '
+             'but no invoice exists yet -- open for negotiation. '
+             'Invoiced: included on a posted consolidated invoice.')
     late_fee_last_applied_date = fields.Date(
-        compute='_compute_late_fee_status', store=True, readonly=True)
+        compute='_compute_late_fee_status', store=True, readonly=True,
+        help='Date of the most recent consolidated invoice covering a '
+             'fee charged against this invoice.')
     late_fee_count = fields.Integer(compute='_compute_late_fee_count')
 
     @api.depends('late_fee_ids')
@@ -34,20 +41,22 @@ class AccountMove(models.Model):
         for move in self:
             move.late_fee_count = len(move.late_fee_ids)
 
-    @api.depends('late_fee_ids.state', 'late_fee_ids.confirmed_date')
+    @api.depends('late_fee_ids.state', 'late_fee_ids.invoiced_date')
     def _compute_late_fee_status(self):
         for move in self:
             fees = move.late_fee_ids
             if fees.filtered(lambda f: f.state == 'draft'):
                 move.late_fee_status = 'pending'
             elif fees.filtered(lambda f: f.state == 'confirmed'):
-                move.late_fee_status = 'applied'
+                move.late_fee_status = 'confirmed'
+            elif fees.filtered(lambda f: f.state == 'invoiced'):
+                move.late_fee_status = 'invoiced'
             else:
                 move.late_fee_status = 'none'
-            confirmed = fees.filtered(lambda f: f.state == 'confirmed' and f.confirmed_date)
+            invoiced = fees.filtered(lambda f: f.state == 'invoiced' and f.invoiced_date)
             move.late_fee_last_applied_date = (
-                max(confirmed.mapped('confirmed_date')).date()
-                if confirmed else False)
+                max(invoiced.mapped('invoiced_date')).date()
+                if invoiced else False)
 
     def action_view_late_fees(self):
         self.ensure_one()

@@ -34,7 +34,6 @@ class TestLateFeeCronRecurrence(AccountTestInvoicingCommon):
             'grace_period_days': 0,
             'recurrence': 'recurring',
             'max_occurrences': 3,
-            'application_mode': 'new_invoice',
             'late_fee_product_id': cls.late_fee_product.id,
         })
         cls.payment_term_immediate = cls.env.ref(
@@ -91,7 +90,6 @@ class TestLateFeeCronRecurrence(AccountTestInvoicingCommon):
                 'computation_type': 'fixed',
                 'fixed_amount_applied': 10.0,
                 'interval_type': 'month',
-                'application_mode': 'new_invoice',
                 'fee_amount': 10.0,
                 'state': 'confirmed',
                 'confirmed_date': Datetime.now(),

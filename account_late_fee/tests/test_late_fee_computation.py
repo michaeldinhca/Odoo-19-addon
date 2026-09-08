@@ -26,7 +26,6 @@ class TestLateFeeComputation(AccountTestInvoicingCommon):
             'interval_number': 1,
             'grace_period_days': 0,
             'recurrence': 'once',
-            'application_mode': 'new_invoice',
             'late_fee_product_id': cls.late_fee_product.id,
         })
         cls.payment_term_3x = cls.env['account.payment.term'].create({

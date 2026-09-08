@@ -1,8 +1,17 @@
 <odoo noupdate="1">
-    <record id="mail_template_late_fee_notice" model="mail.template">
-        <field name="name">Late Fee Notice</field>
+    <!-- Sent when a fee is Confirmed: a running summary of every
+         outstanding confirmed-but-not-yet-invoiced fee for that customer.
+         No invoice exists yet at this point; this is the negotiation
+         window for accounting/sales to finalize the number with the
+         customer before any bill is issued. The itemized list and running
+         total are generated in Python (account.late.fee._build_fee_list_html)
+         and injected at send time, since this covers a variable set of
+         records rather than a single one; the body below is the
+         surrounding wrapper only. -->
+    <record id="mail_template_late_fee_summary" model="mail.template">
+        <field name="name">Late Fee Summary (Confirmed, Not Yet Invoiced)</field>
         <field name="model_id" ref="model_account_late_fee"/>
-        <field name="subject">Late Fee Applied — Invoice {{ object.move_id.name }}</field>
+        <field name="subject">Late Fee Summary — {{ object.partner_id.name }}</field>
         <field name="email_from">{{ (object.company_id.email or user.email or '') }}</field>
         <field name="email_to">{{ object.partner_id.email or '' }}</field>
         <field name="partner_to">{{ object.partner_id.id }}</field>
@@ -12,12 +21,41 @@
 <div style="margin: 0px; padding: 0px;">
     <p>Dear <t t-out="object.partner_id.name"/>,</p>
     <p>
-        A late fee has been applied related to invoice
-        <t t-out="object.move_id.name"/>. Full details below:
+        This is a summary of the late fees currently confirmed on your
+        account. No invoice has been issued yet -- please reach out to
+        your account representative if you have any questions before
+        this is finalized.
     </p>
-    <div style="white-space: pre-line; border-left: 3px solid #875A7B; padding: 8px 12px; margin: 12px 0; background-color: #f8f8f8;">
-        <t t-out="object.description"/>
-    </div>
+    <p>(Itemized breakdown generated automatically.)</p>
+    <p>
+        Thank you,<br/>
+        <t t-out="object.company_id.name"/>
+    </p>
+</div>
+]]>
+        </field>
+    </record>
+
+    <!-- Sent when fees are included on a consolidated invoice: the
+         actual bill. Itemized list + running total generated the same
+         way as the summary template above. -->
+    <record id="mail_template_late_fee_notice" model="mail.template">
+        <field name="name">Late Fee Invoice</field>
+        <field name="model_id" ref="model_account_late_fee"/>
+        <field name="subject">Late Fee Invoice {{ object.fee_move_id.name }} — {{ object.partner_id.name }}</field>
+        <field name="email_from">{{ (object.company_id.email or user.email or '') }}</field>
+        <field name="email_to">{{ object.partner_id.email or '' }}</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p>Dear <t t-out="object.partner_id.name"/>,</p>
+    <p>
+        Please find below the details of late fee invoice
+        <t t-out="object.fee_move_id.name"/>:
+    </p>
+    <p>(Itemized breakdown generated automatically.)</p>
     <p>
         If you have already made this payment or believe this fee was
         applied in error, please contact us and we will be happy to

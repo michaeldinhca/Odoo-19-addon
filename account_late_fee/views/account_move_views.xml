@@ -18,7 +18,8 @@
             <xpath expr="//div[@name='due_date']" position="after">
                 <field name="late_fee_status" widget="badge"
                        decoration-info="late_fee_status == 'pending'"
-                       decoration-success="late_fee_status == 'applied'"
+                       decoration-warning="late_fee_status == 'confirmed'"
+                       decoration-success="late_fee_status == 'invoiced'"
                        invisible="move_type != 'out_invoice' or late_fee_status == 'none'"/>
             </xpath>
             <xpath expr="//page[last()]" position="after">

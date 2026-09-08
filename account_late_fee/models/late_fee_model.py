@@ -59,16 +59,6 @@ class LateFeeModel(models.Model):
         help='Maximum number of times the fee can recur per installment. '
              '0 means unlimited.')
 
-    application_mode = fields.Selection(
-        [('same_invoice', 'Add Line to Same Invoice'),
-         ('new_invoice', 'Create New Late Fee Invoice')],
-        required=True, default='new_invoice',
-        help='Same Invoice: the fee is added as a new line on the '
-             'original invoice (only possible if it has not already been '
-             'sent to the customer and is not locked; otherwise this '
-             'automatically falls back to a new invoice). New Invoice: a '
-             'separate invoice is created and linked to the original.')
-
     late_fee_product_id = fields.Many2one(
         'product.product', string='Late Fee Product', required=True,
         domain=[('type', '=', 'service')],
@@ -81,15 +71,23 @@ class LateFeeModel(models.Model):
              "empty, the original invoice's journal is used.")
     send_notification_email = fields.Boolean(
         string='Send Notification Email', default=True,
-        help='If checked, a notification email is sent to the customer '
-             '(CC company/salesperson) whenever a fee from this model is '
-             'confirmed. If unchecked, the fee is still applied but no '
-             'email is sent.')
+        help='If checked, the customer is emailed (CC company/salesperson) '
+             'both when a fee is confirmed (a running summary, before any '
+             'invoice exists) and when it is included on a consolidated '
+             'invoice. If unchecked, fees still proceed normally but no '
+             'email is ever sent for them.')
     mail_template_id = fields.Many2one(
-        'mail.template', string='Email Template',
+        'mail.template', string='Summary Email Template',
         domain=[('model', '=', 'account.late.fee')],
-        help='Overrides the default late fee notification email for this '
-             'model.')
+        help='Sent when a fee is Confirmed: a running summary of every '
+             'outstanding confirmed-but-not-yet-invoiced fee for that '
+             'customer, before any invoice exists. Overrides the module '
+             'default if set.')
+    invoice_mail_template_id = fields.Many2one(
+        'mail.template', string='Invoice Email Template',
+        domain=[('model', '=', 'account.late.fee')],
+        help='Sent when fees are included on a consolidated invoice. '
+             'Overrides the module default if set.')
     additional_note = fields.Text(
         string='Additional Note',
         help='Optional extra text appended after the automatically '
@@ -148,11 +146,18 @@ class LateFeeModel(models.Model):
         self.ensure_one()
         self.is_company_default = True
 
-    def action_edit_mail_template(self):
+    def action_edit_summary_mail_template(self):
         self.ensure_one()
-        template = self.mail_template_id or self.env.ref(
-            'account_late_fee.mail_template_late_fee_notice',
-            raise_if_not_found=False)
+        return self._open_mail_template(
+            self.mail_template_id, 'account_late_fee.mail_template_late_fee_summary')
+
+    def action_edit_invoice_mail_template(self):
+        self.ensure_one()
+        return self._open_mail_template(
+            self.invoice_mail_template_id, 'account_late_fee.mail_template_late_fee_notice')
+
+    def _open_mail_template(self, override, default_xmlid):
+        template = override or self.env.ref(default_xmlid, raise_if_not_found=False)
         if not template:
             raise UserError(_('No email template available to edit.'))
         return {

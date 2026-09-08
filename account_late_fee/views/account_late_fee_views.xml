@@ -18,10 +18,11 @@
                 <field name="overdue_amount"/>
                 <field name="fee_amount"/>
                 <field name="currency_id" column_invisible="True"/>
-                <field name="application_mode" optional="hide"/>
+                <field name="fee_move_id" optional="hide"/>
                 <field name="state" widget="badge"
                        decoration-info="state == 'draft'"
-                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-success="state == 'invoiced'"
                        decoration-muted="state == 'waived'"
                        decoration-danger="state == 'error'"/>
                 <button name="action_confirm" type="object" string="Confirm"
@@ -29,7 +30,7 @@
                         groups="account.group_account_invoice"
                         class="btn-link"/>
                 <button name="action_waive" type="object" string="Waive"
-                        invisible="state != 'draft'"
+                        invisible="state not in ('draft', 'confirmed')"
                         groups="account.group_account_invoice"
                         class="btn-link"/>
             </list>
@@ -45,11 +46,15 @@
                     <button name="action_confirm" type="object" string="Confirm"
                             invisible="state != 'draft'" class="oe_highlight"
                             groups="account.group_account_invoice"/>
+                    <button name="action_create_consolidated_invoice" type="object"
+                            string="Create Consolidated Invoice"
+                            invisible="state != 'confirmed'" class="oe_highlight"
+                            groups="account.group_account_invoice"/>
                     <button name="action_waive" type="object" string="Waive"
-                            invisible="state != 'draft'"
+                            invisible="state not in ('draft', 'confirmed')"
                             groups="account.group_account_invoice"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,confirmed"/>
+                           statusbar_visible="draft,confirmed,invoiced"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -78,6 +83,7 @@
                             <field name="fee_amount" readonly="state != 'draft'"/>
                         </group>
                         <group string="Result">
+                            <field name="confirmed_date" readonly="1"/>
                             <field name="fee_move_id" readonly="1"/>
                             <field name="fee_invoice_line_id" readonly="1"/>
                             <field name="mail_sent" readonly="1"/>
@@ -86,7 +92,7 @@
                     <group>
                         <field name="description" readonly="state != 'draft'"/>
                         <field name="error_message" invisible="not error_message" readonly="1"/>
-                        <field name="waive_reason" invisible="state not in ('draft', 'waived')"/>
+                        <field name="waive_reason" invisible="state not in ('draft', 'confirmed', 'waived')"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -103,6 +109,7 @@
                 <field name="partner_id"/>
                 <filter name="draft" string="To Review" domain="[('state', '=', 'draft')]"/>
                 <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="invoiced" string="Invoiced" domain="[('state', '=', 'invoiced')]"/>
                 <filter name="waived" string="Waived" domain="[('state', '=', 'waived')]"/>
                 <filter name="error" string="Error" domain="[('state', '=', 'error')]"/>
                 <group>
@@ -125,10 +132,23 @@
             </p>
             <p>
                 Late fees are generated automatically every night for
-                overdue invoice installments. Review and confirm them
-                here before they are applied and the customer is
-                notified.
+                overdue invoice installments. Confirm a fee to lock in its
+                amount and notify the customer with a running summary --
+                nothing is invoiced yet. Once accounting/sales have
+                finalized the number with the customer, select the
+                Confirmed fees to bill and use "Create Consolidated
+                Invoice" to issue one invoice covering them.
             </p>
         </field>
+    </record>
+
+    <record id="action_late_fee_create_consolidated_invoice" model="ir.actions.server">
+        <field name="name">Create Consolidated Invoice</field>
+        <field name="model_id" ref="model_account_late_fee"/>
+        <field name="group_ids" eval="[(4, ref('account.group_account_invoice'))]"/>
+        <field name="binding_model_id" ref="model_account_late_fee"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_create_consolidated_invoice()</field>
     </record>
 </odoo>
