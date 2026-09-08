@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="payment_provider_form_inherit_fee" model="ir.ui.view">
+        <field name="name">payment.provider.form.inherit.payment.provider.fee</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='configuration']" position="after">
+                <page string="Payment Fees" name="payment_provider_fee">
+                    <group name="payment_provider_fee_config">
+                        <field name="provider_fee_enabled"/>
+                        <group string="Amount" name="payment_provider_fee_amount"
+                               invisible="not provider_fee_enabled">
+                            <field name="provider_fee_fixed_amount"/>
+                            <field name="provider_fee_percentage"/>
+                            <field name="provider_fee_amount_min"/>
+                            <field name="provider_fee_amount_max"/>
+                            <field name="provider_fee_order_threshold"/>
+                        </group>
+                        <group string="Taxes" name="payment_provider_fee_tax"
+                               invisible="not provider_fee_enabled">
+                            <field name="provider_fee_tax_mode"/>
+                            <field name="provider_fee_tax_ids"
+                                   widget="many2many_tags"
+                                   invisible="provider_fee_tax_mode != 'manual'"/>
+                        </group>
+                        <group string="Fee Product" name="payment_provider_fee_product"
+                               invisible="not provider_fee_enabled">
+                            <field name="provider_fee_product_id" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
