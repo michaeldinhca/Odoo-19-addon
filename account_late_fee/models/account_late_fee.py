@@ -556,3 +556,87 @@ class AccountLateFee(models.Model):
             email_values['email_cc'] = ','.join(cc_list)
         template.send_mail(first_fee.id, force_send=True, email_values=email_values)
         self.write({'mail_sent': True})
+
+    # ------------------------------------------------------------------
+    # Daily internal digest (accounting mailing list, not customer-facing)
+    # ------------------------------------------------------------------
+
+    @api.model
+    def _cron_send_daily_digest(self):
+        for company in self.env['res.company'].sudo().search(
+                [('late_fee_enabled', '=', True)]):
+            draft_fees = self.sudo().search([
+                ('company_id', '=', company.id),
+                ('state', '=', 'draft'),
+            ])
+            if not draft_fees:
+                continue  # nothing to review -- skip, don't send a "0" email
+            draft_fees._send_daily_digest_email(company)
+
+    def _send_daily_digest_email(self, company):
+        """self = today's To-Review fees for `company`, possibly spanning
+        many customers -- an internal accounting notice, not sent to any
+        customer. The template ships with an empty To field on purpose;
+        an admin fills in the accounting/internal mailing list address
+        directly on the template."""
+        template = self.env.ref(
+            'account_late_fee.mail_template_late_fee_daily_digest',
+            raise_if_not_found=False)
+        if not template:
+            return
+        email_values = {'body_html': self._build_digest_html()}
+        template.send_mail(company.id, force_send=True, email_values=email_values)
+
+    def _build_digest_html(self):
+        """self = draft (To Review) fees for one company, across possibly
+        many customers -- a compact count/total plus a itemized table,
+        distinct from _build_fee_list_html which is per-customer and
+        reuses each fee's full frozen description."""
+        currency_name = self[:1].currency_id.name or ''
+        total_amount = sum(self.mapped('fee_amount'))
+        partner_count = len(self.mapped('partner_id'))
+
+        summary = '<p><strong>%s</strong></p>' % html.escape(_(
+            '%(count)s late fee(s) awaiting review today, across '
+            '%(partners)s customer(s), totaling %(total)s %(cur)s.',
+            count=len(self), partners=partner_count,
+            total='%.2f' % total_amount, cur=currency_name,
+        ))
+
+        rows = []
+        for fee in self.sorted(key=lambda f: f.overdue_days, reverse=True):
+            rows.append(
+                '<tr>'
+                '<td style="padding:4px 8px;border-bottom:1px solid #eee;">%s</td>'
+                '<td style="padding:4px 8px;border-bottom:1px solid #eee;">%s</td>'
+                '<td style="padding:4px 8px;border-bottom:1px solid #eee;">%s</td>'
+                '<td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;">%s</td>'
+                '<td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;">%s %s</td>'
+                '</tr>' % (
+                    html.escape(fee.name or ''),
+                    html.escape(fee.partner_id.name or ''),
+                    html.escape(fee.move_id.name or ''),
+                    fee.overdue_days,
+                    '%.2f' % fee.fee_amount, html.escape(currency_name),
+                )
+            )
+        table = (
+            '<table style="width:100%%;border-collapse:collapse;font-size:13px;">'
+            '<thead><tr>'
+            '<th style="text-align:left;padding:4px 8px;">Reference</th>'
+            '<th style="text-align:left;padding:4px 8px;">Customer</th>'
+            '<th style="text-align:left;padding:4px 8px;">Invoice</th>'
+            '<th style="text-align:right;padding:4px 8px;">Days Overdue</th>'
+            '<th style="text-align:right;padding:4px 8px;">Fee</th>'
+            '</tr></thead><tbody>%s</tbody></table>'
+        ) % ''.join(rows)
+
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        action = self.env.ref(
+            'account_late_fee.action_account_late_fee_review', raise_if_not_found=False)
+        link_html = ''
+        if base_url and action:
+            link_html = '<p><a href="%s/odoo/action-%s">%s</a></p>' % (
+                base_url, action.id, html.escape(_('Open Late Fees to Review')))
+
+        return summary + table + link_html

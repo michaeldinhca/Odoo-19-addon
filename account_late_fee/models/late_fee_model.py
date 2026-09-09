@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 
 class LateFeeModel(models.Model):
@@ -145,29 +145,6 @@ class LateFeeModel(models.Model):
     def action_set_default(self):
         self.ensure_one()
         self.is_company_default = True
-
-    def action_edit_summary_mail_template(self):
-        self.ensure_one()
-        return self._open_mail_template(
-            self.mail_template_id, 'account_late_fee.mail_template_late_fee_summary')
-
-    def action_edit_invoice_mail_template(self):
-        self.ensure_one()
-        return self._open_mail_template(
-            self.invoice_mail_template_id, 'account_late_fee.mail_template_late_fee_notice')
-
-    def _open_mail_template(self, override, default_xmlid):
-        template = override or self.env.ref(default_xmlid, raise_if_not_found=False)
-        if not template:
-            raise UserError(_('No email template available to edit.'))
-        return {
-            'name': _('Edit Email Template'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'mail.template',
-            'res_id': template.id,
-            'view_mode': 'form',
-            'target': 'current',
-        }
 
     @api.model
     def _get_default(self, company):

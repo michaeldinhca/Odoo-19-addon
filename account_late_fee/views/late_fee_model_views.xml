@@ -67,17 +67,9 @@
                             <field name="mail_template_id"
                                    invisible="not send_notification_email"
                                    placeholder="Default summary template"/>
-                            <button name="action_edit_summary_mail_template" type="object"
-                                    string="Edit Summary Email Template" icon="fa-pencil"
-                                    invisible="not send_notification_email"
-                                    class="btn-link"/>
                             <field name="invoice_mail_template_id"
                                    invisible="not send_notification_email"
                                    placeholder="Default invoice template"/>
-                            <button name="action_edit_invoice_mail_template" type="object"
-                                    string="Edit Invoice Email Template" icon="fa-pencil"
-                                    invisible="not send_notification_email"
-                                    class="btn-link"/>
                         </group>
                     </group>
                     <group>

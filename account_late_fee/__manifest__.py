@@ -1,6 +1,6 @@
 {
     'name': 'Late Fee Management',
-    'version': '19.0.2.0.1',
+    'version': '19.0.2.0.2',
     'category': 'Accounting/Accounting',
     'summary': 'Configurable late payment fees for customer invoices',
     'description': """

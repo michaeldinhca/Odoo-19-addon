@@ -69,4 +69,28 @@
 ]]>
         </field>
     </record>
+
+    <!-- Internal daily digest, NOT customer-facing: sent to an
+         accounting/internal mailing list summarizing how many late fees
+         need review today. "To" is intentionally left blank; an admin
+         fills in the internal address directly on this template (editing
+         template content requires this instance's "mail_template_editor"
+         group or Settings admin). Itemized table + summary generated in
+         Python (account.late.fee._build_digest_html) since it covers a
+         variable, possibly multi-customer set of records for the whole
+         company, not a single one. -->
+    <record id="mail_template_late_fee_daily_digest" model="mail.template">
+        <field name="name">Late Fees Daily Digest (Internal)</field>
+        <field name="model_id" ref="base.model_res_company"/>
+        <field name="subject">Late Fees to Review Today — {{ object.name }}</field>
+        <field name="email_from">{{ (object.email or user.email or '') }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px;">
+    <p>Late fees awaiting review for <t t-out="object.name"/>:</p>
+    <p>(Summary and itemized table generated automatically.)</p>
+</div>
+]]>
+        </field>
+    </record>
 </odoo>

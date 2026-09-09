@@ -3,6 +3,22 @@
 All notable changes to this module are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [19.0.2.0.2] - 2026-09-09
+
+### Added
+- Daily internal digest email ("Late Fees: Daily Digest (Internal)"
+  scheduled action) summarizing how many fees need review today (count,
+  customers affected, total amount, itemized table, link to the review
+  list). Not customer-facing -- goes to an accounting/internal mailing
+  list. The template ships with the To field intentionally blank; fill in
+  the internal address directly on `mail_template_late_fee_daily_digest`.
+  Skips sending on days with nothing to review.
+
+### Fixed
+- Late Fee Model form: the two "Edit ... Email Template" buttons broke
+  the two-column group layout. Removed both -- Odoo's native hover link
+  on a filled Many2one field already opens the template record directly.
+
 ## [19.0.2.0.1] - 2026-09-08
 
 ### Fixed
