@@ -11,8 +11,10 @@ class AccountFiscalPosition(models.Model):
              "tax ID on document headers. Leave blank for fiscal positions "
              "that don't need one.")
 
-    def _get_document_provincial_tax_id(self, record):
-        """Resolve the Provincial Tax ID applicable to a business document.
+    def _get_document_provincial_fiscal_position(self, record):
+        """Resolve the fiscal position whose Provincial Tax ID applies to a
+        business document, so the report can print both its name and its
+        Provincial Tax ID (e.g. "Manitoba Tax ID: 163809-7").
 
         Prefers the fiscal position already assigned to the document
         (e.g. sale.order/account.move fiscal_position_id), so manual
@@ -21,11 +23,15 @@ class AccountFiscalPosition(models.Model):
         partner (per the company's configured Delivery/Invoice address
         preference) only for documents with no fiscal_position_id field
         of their own (e.g. stock.picking).
-        """
-        if not record:
-            return False
 
-        fiscal_position = self.env['account.fiscal.position']
+        :return: an account.fiscal.position record with a Provincial Tax ID
+            set, or an empty recordset if none applies.
+        """
+        empty = self.env['account.fiscal.position']
+        if not record:
+            return empty
+
+        fiscal_position = empty
         if 'fiscal_position_id' in record._fields and record.fiscal_position_id:
             fiscal_position = record.fiscal_position_id
         else:
@@ -40,4 +46,5 @@ class AccountFiscalPosition(models.Model):
 
         # sudo(): the acting report user (e.g. a portal user viewing an
         # invoice/SO PDF) may not have read access to account.fiscal.position.
-        return fiscal_position.sudo().provincial_tax_id if fiscal_position else False
+        fiscal_position = fiscal_position.sudo()
+        return fiscal_position if fiscal_position.provincial_tax_id else empty

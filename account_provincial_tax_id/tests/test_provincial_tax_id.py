@@ -18,6 +18,10 @@ class TestProvincialTaxId(AccountTestInvoicingCommon):
             'company_id': cls.company_data['company'].id,
             'provincial_tax_id': 'FALLBACK-456',
         })
+        cls.fiscal_position_blank = cls.env['account.fiscal.position'].create({
+            'name': 'Blank Fiscal Position',
+            'company_id': cls.company_data['company'].id,
+        })
         cls.partner_a.property_account_position_id = cls.fiscal_position_fallback
 
     def _create_invoice(self, **extra_vals):
@@ -36,8 +40,9 @@ class TestProvincialTaxId(AccountTestInvoicingCommon):
         the partner's property_account_position_id would resolve to a
         different one."""
         move = self._create_invoice(fiscal_position_id=self.fiscal_position_assigned.id)
-        result = self.env['account.fiscal.position']._get_document_provincial_tax_id(move)
-        self.assertEqual(result, 'ASSIGNED-123')
+        result = self.env['account.fiscal.position']._get_document_provincial_fiscal_position(move)
+        self.assertEqual(result, self.fiscal_position_assigned)
+        self.assertEqual(result.provincial_tax_id, 'ASSIGNED-123')
 
     def test_fallback_resolves_via_partner_when_unset(self):
         """When the document has no fiscal_position_id of its own, fall back
@@ -51,16 +56,24 @@ class TestProvincialTaxId(AccountTestInvoicingCommon):
         the same fiscal position in this case)."""
         move = self._create_invoice(fiscal_position_id=False)
         self.assertFalse(move.fiscal_position_id)
-        result = self.env['account.fiscal.position']._get_document_provincial_tax_id(move)
-        self.assertEqual(result, 'FALLBACK-456')
+        result = self.env['account.fiscal.position']._get_document_provincial_fiscal_position(move)
+        self.assertEqual(result, self.fiscal_position_fallback)
+        self.assertEqual(result.provincial_tax_id, 'FALLBACK-456')
+
+    def test_fiscal_position_without_provincial_tax_id_returns_empty(self):
+        """A resolvable fiscal position with no Provincial Tax ID configured
+        should not be treated as applicable -> no line should be printed."""
+        move = self._create_invoice(fiscal_position_id=self.fiscal_position_blank.id)
+        result = self.env['account.fiscal.position']._get_document_provincial_fiscal_position(move)
+        self.assertFalse(result)
 
     def test_no_fiscal_position_returns_false(self):
         """No resolvable fiscal position at all -> no error, no value."""
         self.partner_a.property_account_position_id = False
-        move = self._create_invoice()
-        result = self.env['account.fiscal.position']._get_document_provincial_tax_id(move)
+        move = self._create_invoice(fiscal_position_id=False)
+        result = self.env['account.fiscal.position']._get_document_provincial_fiscal_position(move)
         self.assertFalse(result)
 
     def test_blank_record_returns_false(self):
-        result = self.env['account.fiscal.position']._get_document_provincial_tax_id(self.env['account.move'])
+        result = self.env['account.fiscal.position']._get_document_provincial_fiscal_position(self.env['account.move'])
         self.assertFalse(result)
