@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Single shared injection point: web.external_layout is the dispatcher
+        every report calls before picking a layout variant (standard, boxed,
+        bold, striped, folder, wave, bubble). Computing provincial_tax_id
+        here - after o/company are normalized, before the variant is chosen -
+        makes it available to whichever variant renders next, since QWeb
+        t-call shares the rendering scope (same mechanism core uses for
+        forced_vat).
+    -->
+    <template id="external_layout_provincial_tax_id" inherit_id="web.external_layout">
+        <xpath expr="//t[@t-if='company.external_report_layout_id']" position="before">
+            <t t-set="provincial_tax_id" t-value="env['account.fiscal.position']._get_document_provincial_tax_id(o)"/>
+        </xpath>
+    </template>
+
+    <!--
+        Each variant repeats the same VAT <li t-if="not forced_vat">/<li
+        t-else=""> pair. We target the "else" li by its forced_vat span
+        (there's an unrelated t-else="" li earlier in each template, for the
+        company-details block) and insert our line right after it, so it
+        always renders immediately below whichever GST/HST line actually
+        shows.
+    -->
+    <template id="external_layout_standard_provincial_tax_id" inherit_id="web.external_layout_standard">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_boxed_provincial_tax_id" inherit_id="web.external_layout_boxed">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_bold_provincial_tax_id" inherit_id="web.external_layout_bold">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_striped_provincial_tax_id" inherit_id="web.external_layout_striped">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_folder_provincial_tax_id" inherit_id="web.external_layout_folder">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_wave_provincial_tax_id" inherit_id="web.external_layout_wave">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+
+    <template id="external_layout_bubble_provincial_tax_id" inherit_id="web.external_layout_bubble">
+        <xpath expr="//li[@t-else='' and .//span[@t-esc='forced_vat']]" position="after">
+            <li t-if="provincial_tax_id">Provincial Tax ID: <span t-esc="provincial_tax_id">1232703641 TQ0001</span></li>
+        </xpath>
+    </template>
+</odoo>

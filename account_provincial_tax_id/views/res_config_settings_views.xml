@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_provincial_tax_id" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.provincial.tax.id</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='invoicing_settings']" position="inside">
+                <setting id="provincial_tax_id_settings" string="Provincial Tax ID"
+                         help="Address used to resolve the Provincial Tax ID on documents without their own fiscal position (e.g. Delivery Slips)">
+                    <field name="provincial_tax_id_source" widget="radio"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>
