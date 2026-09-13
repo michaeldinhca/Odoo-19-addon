@@ -1,5 +1,5 @@
-// Compact "<count> Σ" prefix inserted before the CRM Kanban stage's
-// expected-revenue aggregate (o_kanban_counter / crm.ColumnProgress).
+// Compact "🎯<count>   $revenue" prefix inserted before the CRM Kanban
+// stage's expected-revenue aggregate (o_kanban_counter / crm.ColumnProgress).
 // Kept deliberately minimal: no extra row, no extra header height.
 
 .o_kanban_renderer .o_opportunity_kanban {
@@ -16,8 +16,7 @@
     }
 
     .o_crm_kanban_stage_sep {
-        opacity: 0.7;
-        font-size: 0.9375rem;
-        font-weight: 600;
+        font-size: 0.8125rem;
+        margin-right: 0.125rem;
     }
 }

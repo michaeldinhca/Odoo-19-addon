@@ -7,20 +7,17 @@
         which itself extends mail's "mail.RottingColumnProgress" (rotting
         badge) which extends web's "web.ColumnProgress" (bars + revenue
         AnimatedNumber). No new component/class is introduced: this only
-        inserts a "<count> Σ" prefix right before the existing revenue
+        inserts a "🎯<count>" prefix right before the existing revenue
         AnimatedNumber, using data (props.group.count) already available
         on CrmColumnProgress - same component, same props, zero extra RPC.
     -->
     <t t-name="crm_kanban_total_count.ColumnProgressTotals"
        t-inherit="crm.ColumnProgress" t-inherit-mode="extension">
         <xpath expr="//AnimatedNumber[@value='props.aggregate.value']" position="before">
-            <span class="o_crm_kanban_stage_totals d-inline-flex align-items-baseline text-nowrap ms-1"
+            <span class="o_crm_kanban_stage_totals d-inline-flex align-items-baseline text-nowrap ms-1 me-1"
                   t-att-title="props.group.count + ' ' + (props.group.count === 1 ? 'opportunity' : 'opportunities') + ' in this stage'"
-                  t-if="props.progressBar.isReady">
-                <span class="o_crm_kanban_stage_count fw-bold" t-esc="props.group.count"/>
-                <span t-if="!(props.aggregate.value === 0 and getRecurringRevenueGroupAggregate(props.group).value)"
-                      class="o_crm_kanban_stage_sep text-muted px-1">&#8721;</span>
-            </span>
+                  t-if="props.progressBar.isReady"><span t-if="!(props.aggregate.value === 0 and getRecurringRevenueGroupAggregate(props.group).value)"
+                      class="o_crm_kanban_stage_sep">&#127919;</span><span class="o_crm_kanban_stage_count fw-bold" t-esc="props.group.count"/></span>
         </xpath>
     </t>
 
