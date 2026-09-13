@@ -1,0 +1,21 @@
+// Compact "<count> -" prefix inserted before the CRM Kanban stage's
+// expected-revenue aggregate (o_kanban_counter / crm.ColumnProgress).
+// Kept deliberately minimal: no extra row, no extra header height.
+
+.o_kanban_renderer .o_opportunity_kanban {
+    .o_designco_stage_totals {
+        font-size: 0.8125rem;
+        line-height: 1;
+        max-width: 45%;
+        overflow: hidden;
+    }
+
+    .o_designco_stage_count {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .o_designco_stage_sep {
+        opacity: 0.6;
+    }
+}
