@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'CRM Kanban Stage Header Totals',
+    'name': 'CRM Kanban Total Count',
     'version': '19.0.1.0.0',
     'category': 'Sales/CRM',
     'summary': 'Show the stage total opportunity count next to the expected revenue in the CRM Kanban column header',
     'description': """
-CRM Kanban Stage Header Totals
-===============================
+CRM Kanban Total Count
+========================
 
 Odoo's own CRM pipeline Kanban already shows, per stage column:
 
@@ -37,15 +37,15 @@ Implementation notes
 * The rotting count badge and the revenue aggregate (including its
   currency formatting) are entirely native and untouched.
 """,
-    'author': 'NGYN Solutions',
+    'author': 'NGYN Solutions Inc.',
     'website': 'https://ngynsolutions.com',
     'license': 'LGPL-3',
     'depends': ['crm'],
     'data': [],
     'assets': {
         'web.assets_backend': [
-            'designco_crm_kanban_header/static/src/xml/crm_kanban_stage_header.xml',
-            'designco_crm_kanban_header/static/src/scss/crm_kanban_stage_header.scss',
+            'crm_kanban_total_count/static/src/xml/crm_kanban_stage_header.xml',
+            'crm_kanban_total_count/static/src/scss/crm_kanban_stage_header.scss',
         ],
     },
     'installable': True,

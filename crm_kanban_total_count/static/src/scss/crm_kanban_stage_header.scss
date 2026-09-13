@@ -3,19 +3,19 @@
 // Kept deliberately minimal: no extra row, no extra header height.
 
 .o_kanban_renderer .o_opportunity_kanban {
-    .o_designco_stage_totals {
+    .o_crm_kanban_stage_totals {
         font-size: 0.8125rem;
         line-height: 1;
         max-width: 45%;
         overflow: hidden;
     }
 
-    .o_designco_stage_count {
+    .o_crm_kanban_stage_count {
         text-overflow: ellipsis;
         overflow: hidden;
     }
 
-    .o_designco_stage_sep {
+    .o_crm_kanban_stage_sep {
         opacity: 0.6;
     }
 }

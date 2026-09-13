@@ -11,15 +11,15 @@
         AnimatedNumber, using data (props.group.count) already available
         on CrmColumnProgress - same component, same props, zero extra RPC.
     -->
-    <t t-name="designco_crm_kanban_header.ColumnProgressTotals"
+    <t t-name="crm_kanban_total_count.ColumnProgressTotals"
        t-inherit="crm.ColumnProgress" t-inherit-mode="extension">
         <xpath expr="//AnimatedNumber[@value='props.aggregate.value']" position="before">
-            <span class="o_designco_stage_totals d-inline-flex align-items-baseline text-nowrap ms-1"
+            <span class="o_crm_kanban_stage_totals d-inline-flex align-items-baseline text-nowrap ms-1"
                   t-att-title="props.group.count + ' ' + (props.group.count === 1 ? 'opportunity' : 'opportunities') + ' in this stage'"
                   t-if="props.progressBar.isReady">
-                <span class="o_designco_stage_count fw-bold" t-esc="props.group.count"/>
+                <span class="o_crm_kanban_stage_count fw-bold" t-esc="props.group.count"/>
                 <span t-if="!(props.aggregate.value === 0 and getRecurringRevenueGroupAggregate(props.group).value)"
-                      class="o_designco_stage_sep text-muted px-1">-</span>
+                      class="o_crm_kanban_stage_sep text-muted px-1">-</span>
             </span>
         </xpath>
     </t>
