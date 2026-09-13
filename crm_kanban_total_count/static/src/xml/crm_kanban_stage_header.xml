@@ -7,7 +7,7 @@
         which itself extends mail's "mail.RottingColumnProgress" (rotting
         badge) which extends web's "web.ColumnProgress" (bars + revenue
         AnimatedNumber). No new component/class is introduced: this only
-        inserts a "<count> -" prefix right before the existing revenue
+        inserts a "<count> Σ" prefix right before the existing revenue
         AnimatedNumber, using data (props.group.count) already available
         on CrmColumnProgress - same component, same props, zero extra RPC.
     -->
@@ -19,7 +19,7 @@
                   t-if="props.progressBar.isReady">
                 <span class="o_crm_kanban_stage_count fw-bold" t-esc="props.group.count"/>
                 <span t-if="!(props.aggregate.value === 0 and getRecurringRevenueGroupAggregate(props.group).value)"
-                      class="o_crm_kanban_stage_sep text-muted px-1">-</span>
+                      class="o_crm_kanban_stage_sep text-muted px-1">&#8721;</span>
             </span>
         </xpath>
     </t>

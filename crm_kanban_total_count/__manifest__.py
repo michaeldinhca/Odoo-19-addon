@@ -20,8 +20,8 @@ The one thing missing natively is the stage's **total opportunity count**
 printed next to that revenue figure. This module adds it, so the header
 reads e.g.::
 
-    [progress bar]   4            18 - $68,163
-                      ^rotting      ^count  ^revenue (native)
+    [progress bar]   4            18 Σ $68,163
+                      ^rotting      ^count ^revenue (native)
 
 Implementation notes
 ---------------------
