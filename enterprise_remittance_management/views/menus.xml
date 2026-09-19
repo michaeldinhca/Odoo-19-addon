@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_remittance_registration"
+              name="Remittances"
+              parent="account.menu_finance_payables"
+              action="action_remittance_registration"
+              sequence="25"
+              groups="account.group_account_readonly,account.group_account_invoice"/>
+
+    <!-- The parent Configuration menu is restricted to Accounting Advisers, so this needs both that level and Settings rights. -->
+    <menuitem id="menu_remittance_migration"
+              name="Legacy Allocation Migration"
+              parent="account.menu_finance_configuration"
+              action="action_remittance_migration_wizard"
+              sequence="95"
+              groups="base.group_system"/>
+</odoo>

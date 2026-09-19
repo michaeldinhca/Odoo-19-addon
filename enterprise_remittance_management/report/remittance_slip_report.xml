@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- No paper format is forced: the slip follows the paper format configured on the company
+         (A4 or Letter). It uses web.external_layout, so the company header and footer apply. -->
+    <record id="action_report_remittance_slip" model="ir.actions.report">
+        <field name="name">Print Remittance Slip</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">enterprise_remittance_management.report_remittance_slip</field>
+        <field name="report_file">enterprise_remittance_management.report_remittance_slip</field>
+        <field name="print_report_name">'Remittance Slip - %s' % (object.name or 'Draft').replace('/', '-')</field>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_type">report</field>
+        <field name="domain">[('partner_type', '=', 'supplier')]</field>
+        <field name="group_ids" eval="[(6, 0, [ref('account.group_account_invoice'), ref('account.group_account_readonly')])]"/>
+    </record>
+</odoo>

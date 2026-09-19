@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="remittance_registration_view_search" model="ir.ui.view">
+        <field name="name">enterprise.remittance.registration.search</field>
+        <field name="model">enterprise.remittance.registration</field>
+        <field name="arch" type="xml">
+            <search string="Remittance Records">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="memo"/>
+                <field name="run_ref"/>
+                <field name="allocation_ids" string="Bill/Credit" filter_domain="['|', ('allocation_ids.document_name', 'ilike', self), ('allocation_ids.document_ref', 'ilike', self)]"/>
+                <filter name="filter_active" string="Posted" domain="[('state', '=', 'active')]"/>
+                <filter name="filter_draft" string="Reset to Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <filter name="filter_deleted" string="Payment Deleted" domain="[('state', '=', 'deleted')]"/>
+                <separator/>
+                <filter name="filter_retained_offsets" string="Retained Bill/Credit Offsets"
+                        domain="[('state', '!=', 'active'), ('reconciliation_ids', 'any', [('kind', '=', 'offset'), ('partial_id', '!=', False)])]"/>
+                <filter name="filter_diagnostic" string="With Diagnostics" domain="[('has_diagnostic', '=', True)]"/>
+                <filter name="filter_migrated" string="Migrated" domain="[('origin', '=', 'migrated')]"/>
+                <separator/>
+                <filter name="filter_outbound" string="Sent to Vendor" domain="[('payment_type', '=', 'outbound')]"/>
+                <filter name="filter_inbound" string="Received from Vendor" domain="[('payment_type', '=', 'inbound')]"/>
+                <group>
+                    <filter name="group_partner" string="Vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Payment Date" context="{'group_by': 'payment_date:month'}"/>
+                    <filter name="group_run" string="Registration Run" context="{'group_by': 'run_ref'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="remittance_registration_view_list" model="ir.ui.view">
+        <field name="name">enterprise.remittance.registration.list</field>
+        <field name="model">enterprise.remittance.registration</field>
+        <field name="arch" type="xml">
+            <list string="Remittance Records" create="0" delete="0" edit="0"
+                  decoration-danger="has_diagnostic" decoration-muted="state in ('cancelled', 'deleted')">
+                <field name="name"/>
+                <field name="payment_date"/>
+                <field name="partner_id"/>
+                <field name="payment_type" optional="show"/>
+                <field name="net_amount" string="Net Payment"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="allocation_count" string="Documents"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'"
+                       decoration-warning="state == 'draft'" decoration-danger="state in ('cancelled', 'deleted')"/>
+                <field name="active_offset_count" string="Offsets" optional="hide"/>
+                <field name="has_diagnostic" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="remittance_registration_view_form" model="ir.ui.view">
+        <field name="name">enterprise.remittance.registration.form</field>
+        <field name="model">enterprise.remittance.registration</field>
+        <field name="arch" type="xml">
+            <form string="Remittance Record" create="0" delete="0" edit="0">
+                <header>
+                    <button name="action_print_remittance_slip" type="object" string="Print Remittance Slip"
+                            class="btn-primary" invisible="not payment_id"/>
+                    <button name="action_reverse_retained_offsets" type="object" string="Reverse Retained Offsets"
+                            invisible="state == 'active' or not active_offset_count"
+                            groups="account.group_account_manager,account.group_account_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,draft,cancelled,deleted"/>
+                </header>
+                <sheet>
+                    <field name="payment_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="active_offset_count" invisible="1"/>
+                    <field name="has_diagnostic" invisible="1"/>
+                    <field name="payment_changed" invisible="1"/>
+                    <field name="origin" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_payment" type="object" class="oe_stat_button" icon="fa-money"
+                                invisible="not payment_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Payment</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" text="Migrated" bg_color="text-bg-info" invisible="origin != 'migrated'"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not has_diagnostic">
+                        <strong>Allocation diagnostic</strong>
+                        <field name="diagnostic" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not payment_changed">
+                        The payment was edited after it was registered. This record keeps the original figures.
+                    </div>
+                    <group>
+                        <group name="payment_info">
+                            <field name="partner_id"/>
+                            <field name="payment_type"/>
+                            <field name="payment_date"/>
+                            <field name="memo"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group name="payment_amounts">
+                            <field name="payment_amount"/>
+                            <field name="net_amount"/>
+                            <field name="settled_amount"/>
+                            <field name="writeoff_amount" invisible="not writeoff_amount"/>
+                            <field name="unallocated_amount" invisible="not unallocated_amount"/>
+                            <field name="run_ref"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bills and Credits" name="allocations">
+                            <field name="allocation_ids" nolabel="1">
+                                <list create="0" delete="0" edit="0"
+                                      decoration-info="document_type == 'credit'" decoration-warning="has_remaining">
+                                    <field name="display_reference" string="Bill/Credit Reference"/>
+                                    <field name="document_type" string="Type"/>
+                                    <field name="document_date"/>
+                                    <field name="due_date"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="original_amount"/>
+                                    <field name="amount_due_before"/>
+                                    <field name="payment_applied" optional="hide"/>
+                                    <field name="offset_applied" optional="hide"/>
+                                    <field name="amount_applied"/>
+                                    <field name="amount_remaining"/>
+                                    <field name="has_remaining" column_invisible="True"/>
+                                    <field name="previous_settlement_note" optional="show"/>
+                                    <button name="action_open_document" type="object" icon="fa-external-link"
+                                            title="View Document"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Reconciliation Trail" name="reconciliation_trail"
+                              groups="account.group_account_manager,account.group_account_user">
+                            <field name="reconciliation_ids" nolabel="1">
+                                <list create="0" delete="0" edit="0" decoration-muted="not is_active">
+                                    <field name="kind"/>
+                                    <field name="debit_document" string="Debit Entry"/>
+                                    <field name="credit_document" string="Credit Entry"/>
+                                    <field name="company_currency_id" column_invisible="True"/>
+                                    <field name="amount"/>
+                                    <field name="reversal_status" widget="badge"
+                                           decoration-success="reversal_status == 'eligible'"
+                                           decoration-warning="reversal_status == 'blocked'"
+                                           decoration-muted="reversal_status in ('removed', 'not_applicable')"/>
+                                    <field name="reversal_blocker"/>
+                                    <field name="removed_on" optional="show"/>
+                                    <field name="removed_via" optional="show"/>
+                                    <field name="is_active" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cancellation Audit" name="cancellation_audit">
+                            <group>
+                                <field name="cancel_operation"/>
+                                <field name="cancel_outcome"/>
+                                <field name="cancel_user_id"/>
+                                <field name="cancel_date"/>
+                                <field name="cancel_reason"/>
+                            </group>
+                        </page>
+                        <page string="Debug" name="debug" groups="account.group_account_manager">
+                            <group>
+                                <field name="debug_snapshot" widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_remittance_registration" model="ir.actions.act_window">
+        <field name="name">Remittances</field>
+        <field name="res_model">enterprise.remittance.registration</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="remittance_registration_view_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No remittance record yet</p>
+            <p>A record is created automatically every time a vendor payment is registered from bills and credits.</p>
+        </field>
+    </record>
+</odoo>

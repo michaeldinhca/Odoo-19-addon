@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_remittance" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.remittance</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='print_vendor_checks_setting_container']" position="after">
+                <block title="Remittance Management" id="remittance_management_setting_container">
+                    <setting id="remittance_capture_setting"
+                             help="Record an immutable snapshot of the bills and credits settled by every vendor payment registered from the Register Payment wizard.">
+                        <field name="remittance_capture_enabled"/>
+                    </setting>
+                    <setting id="remittance_strict_setting"
+                             help="Refuse a payment registration when its allocation cannot be reconciled to the payment. When off, the mismatch is recorded as a diagnostic and the payment is created normally.">
+                        <field name="remittance_strict_mode"/>
+                    </setting>
+                    <setting id="remittance_note_setting"
+                             help="Print the optional payment note on the remittance slip.">
+                        <field name="remittance_show_note"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

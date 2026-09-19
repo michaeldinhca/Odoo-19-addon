@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_payment_form_remittance" model="ir.ui.view">
+        <field name="name">account.payment.form.remittance</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <!-- The statusbar field and the localization notebook are the documented extension points of the payment form. -->
+            <xpath expr="//header/field[@name='state']" position="before">
+                <button name="action_send_remittance" string="Send Remittance" type="object"
+                        invisible="partner_type != 'supplier' or state not in ('in_process', 'paid')"
+                        groups="account.group_account_invoice"/>
+            </xpath>
+            <xpath expr="//notebook[@name='payment_notebook']" position="inside">
+                <page string="Payment Allocation" name="remittance_allocation" invisible="partner_type != 'supplier'">
+                    <field name="remittance_registration_id" invisible="1"/>
+                    <field name="remittance_has_snapshot" invisible="1"/>
+                    <field name="remittance_payment_changed" invisible="1"/>
+                    <div class="alert alert-info" role="alert" invisible="remittance_has_snapshot or state == 'draft'">
+                        No allocation snapshot exists for this payment: it was not created with allocation
+                        tracking. The remittance slip falls back to the current reconciliation and says so.
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not remittance_diagnostic">
+                        <strong>Allocation diagnostic</strong>
+                        <field name="remittance_diagnostic" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not remittance_payment_changed">
+                        This payment was edited after registration. The allocation below keeps the original figures.
+                    </div>
+                    <field name="remittance_allocation_ids" nolabel="1" invisible="not remittance_has_snapshot">
+                        <list create="0" delete="0" edit="0"
+                              decoration-info="document_type == 'credit'" decoration-warning="has_remaining">
+                            <field name="display_reference" string="Bill/Credit Reference"/>
+                            <field name="document_date" string="Bill/Credit Date"/>
+                            <field name="due_date"/>
+                            <field name="document_type" string="Type"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="original_amount"/>
+                            <field name="amount_due_before" string="Amount Due Before Payment"/>
+                            <field name="amount_applied" string="Applied Amount"/>
+                            <field name="amount_remaining" string="Remaining Immediately After Payment"/>
+                            <field name="has_remaining" column_invisible="True"/>
+                            <button name="action_open_document" type="object" icon="fa-external-link"
+                                    title="View Document"/>
+                        </list>
+                    </field>
+                    <group string="Reconciliation Trail" invisible="not remittance_has_snapshot"
+                           groups="account.group_account_manager,account.group_account_user">
+                        <field name="remittance_reconciliation_ids" nolabel="1" colspan="2">
+                            <list create="0" delete="0" edit="0" decoration-muted="not is_active">
+                                <field name="kind"/>
+                                <field name="debit_document" string="Debit Entry"/>
+                                <field name="credit_document" string="Credit Entry"/>
+                                <field name="company_currency_id" column_invisible="True"/>
+                                <field name="amount"/>
+                                <field name="removed_on" optional="show"/>
+                                <field name="removed_via" optional="show"/>
+                                <field name="is_active" column_invisible="True"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Remittance Note">
+                        <field name="remittance_note" nolabel="1" colspan="2"
+                               placeholder="Optional message printed on the remittance slip"/>
+                    </group>
+                    <group string="Debug" groups="account.group_account_manager"
+                           invisible="not remittance_has_snapshot">
+                        <field name="remittance_debug_snapshot" nolabel="1" colspan="2" widget="text"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

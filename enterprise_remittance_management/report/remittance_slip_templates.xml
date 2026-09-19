@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- One detail table, called once per section (bills, credits, other adjustments). -->
+    <template id="report_remittance_slip_table">
+        <!-- A short section stays on one page (heading and header row are never left behind); a long one flows. -->
+        <div t-att-class="'remittance-section remittance-keep' if len(rows) &lt;= 8 else 'remittance-section'">
+        <h5 class="mt-4 mb-2"><t t-out="title"/></h5>
+        <table class="table table-sm remittance-table">
+            <thead>
+                <tr>
+                    <th class="remittance-col-ref">Document Reference / Number</th>
+                    <th class="remittance-col-date">Date</th>
+                    <th class="remittance-col-date">Due Date</th>
+                    <th class="text-end">Original Amount</th>
+                    <th class="text-end">Amount Due Before Payment</th>
+                    <th class="text-end">Payment / Applied Amount</th>
+                    <th class="text-end">Remaining After Payment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="rows" t-as="row">
+                    <tr t-att-class="'remittance-remaining' if row['has_remaining'] else ''">
+                        <td class="remittance-col-ref">
+                            <span t-out="row['reference']"/>
+                            <div t-if="row['number']" class="text-muted remittance-small"><span t-out="row['number']"/></div>
+                            <div t-if="row['note']" class="text-muted remittance-small"><span t-out="row['note']"/></div>
+                        </td>
+                        <td><span t-if="row['date']" t-out="row['date']" t-options="{'widget': 'date'}"/></td>
+                        <td><span t-if="row['due_date']" t-out="row['due_date']" t-options="{'widget': 'date'}"/></td>
+                        <td class="text-end"><span t-out="row['original']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/></td>
+                        <td class="text-end">
+                            <span t-if="row['due_before'] is not False" t-out="row['due_before']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/>
+                            <span t-else="" class="text-muted">n/a</span>
+                        </td>
+                        <td class="text-end">
+                            <span t-out="row['applied']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/>
+                            <div t-if="row['paid_in_payment_currency'] is not False" class="text-muted remittance-small">
+                                paid <span t-out="row['paid_in_payment_currency']" t-options="{'widget': 'monetary', 'display_currency': slip['currency']}"/>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <span t-if="row['remaining'] is not False" t-att-class="'remittance-remaining-amount' if row['has_remaining'] else ''"
+                                  t-out="row['remaining']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/>
+                            <span t-else="" class="text-muted">n/a</span>
+                        </td>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+        </div>
+    </template>
+
+    <template id="report_remittance_slip_amounts">
+        <!-- Prints a list of (currency, amount) pairs, one per line; zero in the payment currency when empty. -->
+        <t t-if="items">
+            <t t-foreach="items" t-as="item">
+                <div><span t-out="item[1]" t-options="{'widget': 'monetary', 'display_currency': item[0]}"/></div>
+            </t>
+        </t>
+        <div t-else=""><span t-out="0.0" t-options="{'widget': 'monetary', 'display_currency': slip['currency']}"/></div>
+    </template>
+
+    <template id="report_remittance_slip_document">
+        <t t-call="web.external_layout">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <t t-set="slip" t-value="o._remittance_slip_data()"/>
+            <div class="page remittance-slip">
+                <style>
+                    .remittance-slip .remittance-table { table-layout: fixed; width: 100%; font-size: 9pt; }
+                    .remittance-slip .remittance-table thead { display: table-header-group; }
+                    .remittance-slip .remittance-table tfoot { display: table-row-group; }
+                    .remittance-slip .remittance-table tr td,
+                    .remittance-slip .remittance-table tr th { page-break-inside: avoid; }
+                    .remittance-slip .remittance-table th,
+                    .remittance-slip .remittance-table td { padding: 3px 4px; vertical-align: top; word-wrap: break-word; }
+                    .remittance-slip h5 { page-break-after: avoid; }
+                    .remittance-slip .remittance-keep { page-break-inside: avoid; }
+                    .remittance-slip .remittance-col-ref { width: 22%; }
+                    .remittance-slip .remittance-col-date { width: 11%; }
+                    .remittance-slip .remittance-small { font-size: 8pt; }
+                    .remittance-slip .remittance-remaining td { background-color: #fff3cd; }
+                    .remittance-slip .remittance-remaining-amount { font-weight: bold; color: #b02a37; }
+                    .remittance-slip .remittance-summary th { font-weight: normal; padding-right: 24px; }
+                    .remittance-slip .remittance-summary td { text-align: right; }
+                </style>
+
+                <h2><strong>Remittance Slip</strong></h2>
+
+                <div class="alert alert-warning" role="alert" t-if="slip['status_banner'] == 'draft'">
+                    <strong>DRAFT</strong> - this payment has not been confirmed yet. Do not treat it as a payment notice.
+                </div>
+                <div class="alert alert-danger" role="alert" t-if="slip['status_banner'] == 'cancelled'">
+                    <strong>CANCELLED</strong> - this payment was cancelled. Ignore any earlier remittance for it.
+                </div>
+
+                <div class="row mt-3 mb-3">
+                    <div class="col-6">
+                        <div><strong>Vendor:</strong> <span t-field="o.partner_id"/></div>
+                        <div t-if="o.date"><strong>Payment Date:</strong> <span t-field="o.date"/></div>
+                        <div><strong>Reference:</strong> <span t-out="o.name or ''"/></div>
+                        <div t-if="slip['memo']"><strong>Memo:</strong> <span t-out="slip['memo']"/></div>
+                    </div>
+                    <div class="col-6">
+                        <div t-if="o.payment_method_line_id"><strong>Payment Method:</strong> <span t-field="o.payment_method_line_id.name"/></div>
+                        <div t-if="slip['show_note']"><strong>Note:</strong> <span t-field="o.remittance_note"/></div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning" role="alert" t-if="slip['legacy_notice']">
+                    <span t-out="slip['legacy_notice']"/>
+                </div>
+
+                <table class="table table-sm remittance-summary" style="width: auto;">
+                    <tbody>
+                        <tr>
+                            <th>Bills Paid</th>
+                            <td>
+                                <t t-call="enterprise_remittance_management.report_remittance_slip_amounts">
+                                    <t t-set="items" t-value="slip['totals']['bills']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Credits Applied</th>
+                            <td>
+                                <t t-call="enterprise_remittance_management.report_remittance_slip_amounts">
+                                    <t t-set="items" t-value="slip['totals']['credits']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr t-if="slip['totals']['other']">
+                            <th>Other Adjustments</th>
+                            <td>
+                                <t t-call="enterprise_remittance_management.report_remittance_slip_amounts">
+                                    <t t-set="items" t-value="slip['totals']['other']"/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr t-if="slip['writeoff']">
+                            <th>Payment Difference (write-off / discount)</th>
+                            <td><span t-out="slip['writeoff']" t-options="{'widget': 'monetary', 'display_currency': slip['currency']}"/></td>
+                        </tr>
+                        <tr t-if="slip['unallocated']">
+                            <th>Not Applied to a Document</th>
+                            <td><span t-out="slip['unallocated']" t-options="{'widget': 'monetary', 'display_currency': slip['currency']}"/></td>
+                        </tr>
+                        <tr class="border-top">
+                            <th>
+                                <strong t-if="slip['payment_type'] == 'inbound'">Net Payment Received from Vendor</strong>
+                                <strong t-else="">Net Payment Sent to Vendor</strong>
+                            </th>
+                            <td>
+                                <strong><span t-out="abs(slip['net'])" t-options="{'widget': 'monetary', 'display_currency': slip['currency']}"/></strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <t t-if="slip['rows']['bill']">
+                    <t t-call="enterprise_remittance_management.report_remittance_slip_table">
+                        <t t-set="title">Bills Paid</t>
+                        <t t-set="rows" t-value="slip['rows']['bill']"/>
+                    </t>
+                </t>
+                <t t-if="slip['rows']['credit']">
+                    <t t-call="enterprise_remittance_management.report_remittance_slip_table">
+                        <t t-set="title">Credits Applied</t>
+                        <t t-set="rows" t-value="slip['rows']['credit']"/>
+                    </t>
+                </t>
+                <t t-if="slip['rows']['other']">
+                    <t t-call="enterprise_remittance_management.report_remittance_slip_table">
+                        <t t-set="title">Other Adjustments</t>
+                        <t t-set="rows" t-value="slip['rows']['other']"/>
+                    </t>
+                </t>
+
+                <p class="text-muted remittance-small mt-3">
+                    Credits are shown as negative amounts.
+                    <t t-if="slip['payment_type'] == 'inbound'">The credits exceed the bills, so the net amount is received from the vendor.</t>
+                    <t t-if="slip['multi_currency']">
+                        Amounts are shown in the currency of each document; the payment was made in
+                        <span t-out="slip['currency'].name"/>.
+                    </t>
+                    <t t-if="slip['has_remaining']">Highlighted lines still have a balance remaining after this payment.</t>
+                </p>
+                <div class="oe_structure"></div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_remittance_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.partner_id.lang or o.company_id.partner_id.lang"/>
+                <t t-call="enterprise_remittance_management.report_remittance_slip_document" t-lang="lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

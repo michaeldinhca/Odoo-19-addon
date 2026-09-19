@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Multi-company: same rule as the native payment. Branch users see the records of the
+         companies enabled in the company switcher. -->
+    <record id="remittance_registration_company_rule" model="ir.rule">
+        <field name="name">Remittance registration: multi-company</field>
+        <field name="model_id" ref="model_enterprise_remittance_registration"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="remittance_allocation_company_rule" model="ir.rule">
+        <field name="name">Remittance allocation: multi-company</field>
+        <field name="model_id" ref="model_enterprise_remittance_allocation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="remittance_reconciliation_company_rule" model="ir.rule">
+        <field name="name">Remittance reconciliation trail: multi-company</field>
+        <field name="model_id" ref="model_enterprise_remittance_reconciliation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="remittance_migration_wizard_view_form" model="ir.ui.view">
+        <field name="name">enterprise.remittance.migration.wizard.form</field>
+        <field name="model">enterprise.remittance.migration.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Legacy Allocation Migration">
+                <div class="alert alert-info" role="alert">
+                    Optional tool for databases that used Studio to store payment allocations. It reads the legacy
+                    fields configured below and creates immutable remittance records. Rows that are malformed,
+                    ambiguous or inconsistent are reported and skipped: no historical value is invented. Legacy
+                    actions, automations and reports are never changed or disabled.
+                </div>
+                <group string="Legacy Data" name="legacy_names">
+                    <group>
+                        <field name="legacy_snapshot_field"/>
+                        <field name="legacy_line_model"/>
+                        <field name="legacy_lines_field"/>
+                        <field name="credits_stored_positive"/>
+                    </group>
+                    <group>
+                        <field name="legacy_payment_field"/>
+                        <field name="legacy_move_field"/>
+                        <field name="legacy_total_field"/>
+                        <field name="legacy_before_field"/>
+                        <field name="legacy_applied_field"/>
+                        <field name="legacy_remaining_field"/>
+                        <field name="legacy_currency_field"/>
+                    </group>
+                </group>
+                <group string="Result" invisible="not report">
+                    <group>
+                        <field name="payment_count"/>
+                        <field name="migrated_count"/>
+                    </group>
+                    <group>
+                        <field name="skipped_count"/>
+                        <field name="issue_count"/>
+                    </group>
+                    <field name="report" nolabel="1" colspan="2" widget="text"/>
+                </group>
+                <footer>
+                    <button name="action_scan" type="object" string="Scan (Dry Run)" class="btn-primary"/>
+                    <button name="action_migrate" type="object" string="Migrate"
+                            confirm="Create the remittance records now? Migrated records are immutable."/>
+                    <button name="action_find_legacy_artifacts" type="object" string="Find Legacy Artifacts"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_remittance_migration_wizard" model="ir.actions.act_window">
+        <field name="name">Legacy Allocation Migration</field>
+        <field name="res_model">enterprise.remittance.migration.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
