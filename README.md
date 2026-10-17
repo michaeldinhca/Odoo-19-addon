@@ -71,6 +71,32 @@ Modules extending the standard Survey app.
 
 ---
 
+## Technical / Server Action Addons
+Modules that extend Odoo's technical layer (server actions, automation rules,
+scheduled actions).
+
+### Modules
+- `server_action_requests`
+
+### Purpose
+- `server_action_requests`: makes `requests` available inside Python code of
+  server actions, automation rules and scheduled actions
+- Needed after moving a database from Odoo Online to odoo.sh or on-premise:
+  Odoo Online's SaaS build provides `requests` to server action code, the
+  stable 19.0 build does not, so migrated actions fail with
+  `name 'requests' is not defined`
+- Exposes a restricted wrapper only (HTTP verbs `get`, `post`, `put`,
+  `patch`, `delete`, `head`, `request` plus the exception classes); sessions,
+  adapters and internals stay blocked by the sandbox
+- No models, views or data; does nothing if the Odoo build already provides
+  `requests`; uninstall to revert
+- Security: only users who can edit server action code (Settings /
+  Administration with developer mode) can use it. Keep API keys in System
+  Parameters, not in the action code
+
+
+---
+
 ## Notes
 - Repository target version: Odoo 19
 - Some modules may originate from older Odoo versions and require compatibility testing
