@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_budget_approval_rule"
+              name="Budget Approval Rules"
+              parent="account.menu_finance_configuration"
+              action="action_budget_approval_rule"
+              sequence="95"/>
+
+    <menuitem id="menu_budget_to_approve_by_me"
+              name="Budgets to Approve"
+              parent="account.account_transactions_menu"
+              action="action_budget_to_approve_by_me"
+              sequence="58"/>
+
+    <menuitem id="menu_budget_my_requests"
+              name="My Budget Requests"
+              parent="account.account_transactions_menu"
+              action="action_budget_my_requests"
+              sequence="62"/>
+
+    <menuitem id="menu_budget_approval_my"
+              name="My Budget Approvals"
+              parent="account.account_transactions_menu"
+              action="action_budget_approval_step_my"
+              sequence="60"/>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_budget_approval_decision_wizard_form" model="ir.ui.view">
+        <field name="name">budget.approval.decision.wizard.form</field>
+        <field name="model">budget.approval.decision.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="budget_ids" widget="many2many_tags" readonly="1" force_save="1"/>
+                    <field name="decision" widget="radio" options="{'horizontal': true}"/>
+                    <field name="note" placeholder="Required when rejecting"
+                           required="decision == 'reject'"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

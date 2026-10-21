@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Multi-company: every model carries its own rule, the budget's own rule
+         does not cascade to these separate models. -->
+    <record id="budget_approval_rule_company_rule" model="ir.rule">
+        <field name="name">Budget Approval Rule: multi-company</field>
+        <field name="model_id" ref="model_budget_approval_rule"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="budget_approval_rule_step_company_rule" model="ir.rule">
+        <field name="name">Budget Approval Rule Step: multi-company</field>
+        <field name="model_id" ref="model_budget_approval_rule_step"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="budget_approval_company_rule" model="ir.rule">
+        <field name="name">Budget Approval: multi-company</field>
+        <field name="model_id" ref="model_budget_approval"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="budget_approval_step_company_rule" model="ir.rule">
+        <field name="name">Budget Approval Step: multi-company</field>
+        <field name="model_id" ref="model_budget_approval_step"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_budget_analytic_form_approval" model="ir.ui.view">
+        <field name="name">budget.analytic.form.approval</field>
+        <field name="model">budget.analytic</field>
+        <field name="inherit_id" ref="account_budget.view_budget_analytic_form"/>
+        <field name="arch" type="xml">
+            <!-- The Open button stays hidden until the budget is approved. The same rule is
+                 enforced server-side in write(), hiding is only for usability. -->
+            <xpath expr="//header/button[@name='action_budget_confirm']" position="attributes">
+                <attribute name="invisible" add="approval_required and approval_state != 'approved'" separator=" or "/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_request_approval" type="object" string="Request Approval"
+                        class="btn-primary"
+                        invisible="state != 'draft' or not approval_required or approval_state in ('to_approve', 'approved')"/>
+                <button name="action_approval_approve" type="object" string="Approve"
+                        class="btn-primary" invisible="not can_decide_approval"/>
+                <button name="action_approval_reject" type="object" string="Reject"
+                        invisible="not can_decide_approval"/>
+                <button name="action_withdraw_approval" type="object" string="Withdraw Approval"
+                        invisible="approval_state != 'to_approve'"/>
+                <button name="action_withdraw_approval" type="object" string="Reset Approval"
+                        invisible="approval_state != 'approved' or state != 'draft'"/>
+            </xpath>
+            <xpath expr="//field[@name='budget_type']" position="after">
+                <field name="approval_required" invisible="1"/>
+                <field name="can_decide_approval" invisible="1"/>
+                <field name="approval_state" widget="badge"
+                       invisible="approval_state == 'none' and not approval_required"
+                       decoration-info="approval_state == 'to_approve'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-muted="approval_state == 'none'"/>
+                <field name="pending_approver_ids" widget="many2many_tags"
+                       string="Waiting For" invisible="approval_state != 'to_approve'"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Approvals" name="approvals" invisible="not approval_step_ids">
+                    <field name="approval_step_ids" readonly="1">
+                        <list>
+                            <field name="approval_id"/>
+                            <field name="sequence" column_invisible="True"/>
+                            <field name="name"/>
+                            <field name="job_ids" widget="many2many_tags"/>
+                            <field name="needs_label"/>
+                            <field name="eligible_approver_ids" widget="many2many_tags"/>
+                            <field name="approved_by_ids" widget="many2many_tags"/>
+                            <field name="decided_by" string="Decided By"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'pending'" decoration-success="state == 'approved'"
+                                   decoration-danger="state == 'rejected'"
+                                   decoration-muted="state in ('waiting', 'cancelled')"/>
+                            <field name="decided_at"/>
+                            <field name="note"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_budget_analytic_search_approval" model="ir.ui.view">
+        <field name="name">budget.analytic.search.approval</field>
+        <field name="model">budget.analytic</field>
+        <field name="inherit_id" ref="account_budget.view_budget_analytic_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="To Approve by Me" name="approval_to_approve_by_me"
+                        domain="[('approval_step_ids', 'any', [('state', '=', 'pending'), ('approver_ids', 'in', [uid])])]"/>
+                <filter string="Waiting for Approval" name="approval_waiting"
+                        domain="[('approval_state', '=', 'to_approve')]"/>
+                <filter string="Approved" name="approval_approved" domain="[('approval_state', '=', 'approved')]"/>
+                <filter string="Rejected" name="approval_rejected" domain="[('approval_state', '=', 'rejected')]"/>
+                <filter string="My Approval Requests" name="approval_my_requests"
+                        domain="[('approval_ids.submitted_by', '=', uid)]"/>
+                <separator/>
+                <filter string="Approval Status" name="group_approval_state"
+                        context="{'group_by': 'approval_state'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_budget_analytic_tree_approval" model="ir.ui.view">
+        <field name="name">budget.analytic.list.approval</field>
+        <field name="model">budget.analytic</field>
+        <field name="inherit_id" ref="account_budget.view_budget_analytic_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="approval_state" widget="badge" optional="show"
+                       decoration-info="approval_state == 'to_approve'"
+                       decoration-success="approval_state == 'approved'"
+                       decoration-danger="approval_state == 'rejected'"
+                       decoration-muted="approval_state == 'none'"/>
+                <field name="pending_approver_ids" widget="many2many_tags" optional="show"
+                       string="Waiting For"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Mass decision from any budget list: select budgets, then Actions. -->
+    <record id="action_budget_approve_selected" model="ir.actions.server">
+        <field name="name">Approve Budgets</field>
+        <field name="model_id" ref="account_budget.model_budget_analytic"/>
+        <field name="binding_model_id" ref="account_budget.model_budget_analytic"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records._action_approval_decision('approve')</field>
+    </record>
+
+    <record id="action_budget_reject_selected" model="ir.actions.server">
+        <field name="name">Reject Budgets</field>
+        <field name="model_id" ref="account_budget.model_budget_analytic"/>
+        <field name="binding_model_id" ref="account_budget.model_budget_analytic"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records._action_approval_decision('reject')</field>
+    </record>
+
+    <record id="action_budget_my_requests" model="ir.actions.act_window">
+        <field name="name">My Budget Requests</field>
+        <field name="res_model">budget.analytic</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('approval_ids.submitted_by', '=', uid)]</field>
+    </record>
+
+    <record id="action_budget_to_approve_by_me" model="ir.actions.act_window">
+        <field name="name">Budgets to Approve</field>
+        <field name="res_model">budget.analytic</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_approval_to_approve_by_me': 1}</field>
+    </record>
+</odoo>

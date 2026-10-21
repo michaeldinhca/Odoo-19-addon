@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_approval_rule_manager,budget.approval.rule.manager,model_budget_approval_rule,account.group_account_manager,1,1,1,1
+access_budget_approval_rule_user,budget.approval.rule.user,model_budget_approval_rule,account.group_account_user,1,0,0,0
+access_budget_approval_rule_step_manager,budget.approval.rule.step.manager,model_budget_approval_rule_step,account.group_account_manager,1,1,1,1
+access_budget_approval_rule_step_user,budget.approval.rule.step.user,model_budget_approval_rule_step,account.group_account_user,1,0,0,0
+access_budget_approval_user,budget.approval.user,model_budget_approval,base.group_user,1,0,0,0
+access_budget_approval_step_user,budget.approval.step.user,model_budget_approval_step,base.group_user,1,0,0,0
+access_budget_approval_decision_wizard,budget.approval.decision.wizard,model_budget_approval_decision_wizard,base.group_user,1,1,1,1

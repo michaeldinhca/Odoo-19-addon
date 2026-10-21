@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_budget_approval_step_list" model="ir.ui.view">
+        <field name="name">budget.approval.step.list</field>
+        <field name="model">budget.approval.step</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_approve_selected" type="object" string="Approve Selected"
+                            class="btn-primary"/>
+                    <button name="action_reject_selected" type="object" string="Reject Selected"/>
+                </header>
+                <field name="budget_id"/>
+                <field name="name"/>
+                <field name="job_ids" widget="many2many_tags"/>
+                <field name="needs_label"/>
+                <field name="eligible_approver_ids" widget="many2many_tags"/>
+                <field name="approved_by_ids" widget="many2many_tags"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'pending'" decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'" decoration-muted="state in ('waiting', 'cancelled')"/>
+                <field name="decided_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_budget_approval_step_form" model="ir.ui.view">
+        <field name="name">budget.approval.step.form</field>
+        <field name="model">budget.approval.step</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_open_budget" type="object" string="Open Budget" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="waiting,pending,approved"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="budget_id"/>
+                            <field name="name"/>
+                            <field name="job_ids" widget="many2many_tags"/>
+                            <field name="needs_label"/>
+                            <field name="eligible_approver_ids" widget="many2many_tags"/>
+                            <field name="approved_by_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="decided_by"/>
+                            <field name="decided_at"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_budget_approval_step_search" model="ir.ui.view">
+        <field name="name">budget.approval.step.search</field>
+        <field name="model">budget.approval.step</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="budget_id"/>
+                <field name="approver_ids"/>
+                <filter string="To Approve" name="pending" domain="[('state', '=', 'pending')]"/>
+                <filter string="Mine" name="mine" domain="[('approver_ids', 'in', uid)]"/>
+                <group>
+                                        <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_budget_approval_step_my" model="ir.actions.act_window">
+        <field name="name">My Budget Approvals</field>
+        <field name="res_model">budget.approval.step</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('approver_ids', 'in', uid)]</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+</odoo>
